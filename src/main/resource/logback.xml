@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}\(%L\) - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="rootout" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/opt/resin/log/finder.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>finder.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}\(%L\) - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="rootout"/>
+    </root>
+
+    <logger name="com.skin" level="DEBUG" additivity="false">
+        <appender-ref ref="rootout"/>
+    </logger>
+
+    <logger name="com.skin.ayada" level="INFO" additivity="false">
+        <appender-ref ref="rootout"/>
+    </logger>
+</configuration>
