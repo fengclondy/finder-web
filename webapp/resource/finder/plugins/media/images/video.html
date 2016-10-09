@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Finder - finder.workspace.html</title>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+<script type="text/javascript">
+<!--
+function create() {
+    var table = document.getElementById("mytable");
+
+    for(var i = 0; i < 12; i++) {
+        var tr = table.insertRow(-1);
+
+        for(var j = 0; j < 12; j++) {
+            var td = tr.insertCell(-1);
+            td.style.cssText = "width: 10px; height: 10px; background-color: #000000;";
+
+            td.onclick = function() {
+                if(this.style.backgroundColor = "#000000") {
+                    this.style.backgroundColor = "#ffffff";
+                }
+                else {
+                    this.style.backgroundColor = "#000000";
+                }
+            }
+        }
+    }
+};
+
+window.onload = function() {
+    create();
+};
+//-->
+</script>
+</head>
+<body contextPath="">
+<table id="mytable">
+</table>
+</body>
+</html>
