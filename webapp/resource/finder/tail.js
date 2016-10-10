@@ -268,6 +268,10 @@ Tail.init = function() {
         window.location.reload();
     });
 
+    jQuery("#tail-auto-scroll").click(function() {
+        Tail.setScroll(this.checked);
+    });
+
     this.workspace = document.body.getAttribute("workspace");
     this.work = document.body.getAttribute("work");
     this.parent = document.body.getAttribute("parent");

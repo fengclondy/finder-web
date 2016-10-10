@@ -1,3 +1,7 @@
+if(typeof(localStorage) == "undefined") {
+    localStorage = {};
+}
+
 var Less = {};
 Less.rows = 0;
 Less.length = 0;
@@ -383,6 +387,27 @@ Less.getEditor = function() {
         this.editor = document.getElementById(this.editorId);
     }
     return this.editor;
+};
+
+Less.extend = function(child, parent){
+    if(child == null) {
+        child = {};
+    }
+
+    for(var property in parent) {
+        child[property] = parent[property];
+    }
+    return child;
+};
+
+Less.getConfig = function() {
+    var config = (localStorage.lessConfig || {});
+    var defaultConfig = {
+        "charset": "utf-8",
+        "backgroundColor": "#000000",
+        "fontColor": "#c0c0c0"
+    };
+    return this.extend(defaultConfig, config);
 };
 
 /**
