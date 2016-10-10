@@ -164,9 +164,9 @@ public class LessServlet extends HttpServlet {
         }
 
         int count = 0;
+        int readBytes = 0;
         long start = position;
         long end = position;
-        int readBytes = 0;
 
         while(true) {
             end = start;

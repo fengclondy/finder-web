@@ -14,6 +14,18 @@ Tail.editorId = "tail-editor";
 Tail.containerId = "tail-container";
 Tail.tailURL = "/finder/getTail.html";
 
+Tail.getContextPath = function() {
+    if(this.contextPath == null || this.contextPath == undefined) {
+        var contextPath = document.body.getAttribute("contextPath");
+
+        if(contextPath == null || contextPath == "/") {
+            contextPath = "";
+        }
+        this.contextPath = contextPath;
+    }
+    return this.contextPath;
+};
+
 Tail.getTailURL = function(position, rows) {
     var params = [];
     params[params.length] = "workspace=" + encodeURIComponent(this.workspace);
@@ -23,7 +35,7 @@ Tail.getTailURL = function(position, rows) {
     params[params.length] = "position=" + position;
     params[params.length] = "rows=" + rows;
     params[params.length] = "charset=" + this.charset;
-    return this.tailURL + "?" + params.join("&");
+    return this.getContextPath() + this.tailURL + "?" + params.join("&");
 };
 
 Tail.setScroll = function(b) {
@@ -31,7 +43,7 @@ Tail.setScroll = function(b) {
 };
 
 Tail.getTimeout = function() {
-    var e = document.getElementById("reloadInterval");
+    var e = document.getElementById("tail-reload-interval");
 
     if(e != null) {
         var timeout = parseInt(e.value);
@@ -238,6 +250,22 @@ Tail.init = function() {
 
     jQuery("select[name=charset]").change(function() {
         Tail.charset = this.value;
+    });
+
+    jQuery("#tail-stop-btn").toggle(function() {
+        this.value = " 开 始 ";
+        Tail.stop();
+    }, function() {
+        this.value = " 停 止 ";
+        Tail.start();
+    });
+
+    jQuery("#tail-select-btn").click(function() {
+        Tail.select();
+    });
+
+    jQuery("#tail-reload-btn").click(function() {
+        window.location.reload();
     });
 
     this.workspace = document.body.getAttribute("workspace");

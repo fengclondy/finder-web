@@ -8,6 +8,18 @@ Less.editorId = "less-editor";
 Less.containerId = "less-container";
 Less.rangeURL = "/finder/getRange.html";
 
+Less.getContextPath = function() {
+    if(this.contextPath == null || this.contextPath == undefined) {
+        var contextPath = document.body.getAttribute("contextPath");
+
+        if(contextPath == null || contextPath == "/") {
+            contextPath = "";
+        }
+        this.contextPath = contextPath;
+    }
+    return this.contextPath;
+};
+
 Less.getRangeURL = function(position, type, rows) {
     var params = [];
     params[params.length] = "workspace=" + encodeURIComponent(this.workspace);
@@ -18,7 +30,7 @@ Less.getRangeURL = function(position, type, rows) {
     params[params.length] = "type=" + type;
     params[params.length] = "rows=" + rows;
     params[params.length] = "charset=" + this.charset;
-    return this.rangeURL + "?" + params.join("&");
+    return this.getContextPath() + this.rangeURL + "?" + params.join("&");
 };
 
 /**
@@ -296,7 +308,9 @@ Less.showProgress = function() {
         var offsetTop = e.offsetTop - scrollTop;
         var bottom = offsetTop + jQuery(e).height();
 
-        if(bottom > 0 && bottom < height) {
+        if((offsetTop >= 0 && offsetTop < height)
+            || (bottom > 0 && bottom <= height)
+            || (offsetTop <= 0 && bottom >= height)) {
             var end = parseInt(e.getAttribute("end"));
 
             if(length > 0) {
@@ -305,19 +319,7 @@ Less.showProgress = function() {
             else {
                 this.setProgress(0);
             }
-            jQuery("#less-info").html(end + "/" + length + " B");
-            jQuery("#less-info").attr("title", (length / 1024 / 1024).toFixed(2) + " M");
-            break;
-        }
-        else if(offsetTop > 0 && offsetTop < height) {
-            var end = parseInt(e.getAttribute("end"));
 
-            if(length > 0) {
-                this.setProgress(end / length);
-            }
-            else {
-                this.setProgress(0);
-            }
             jQuery("#less-info").html(end + "/" + length + " B");
             jQuery("#less-info").attr("title", (length / 1024 / 1024).toFixed(2) + " M");
             break;

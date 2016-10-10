@@ -6,9 +6,8 @@
 <meta http-equiv="Cache-Control" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
 <title>帮助中心</title>
-<link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/finder.css"/>
 <style type="text/css">
-ul.list{}
+ul.list{list-style-type: disc;}
 ul.list li{line-height: 24px; font-size: 13px;}
 table{font-size: 13px;}
 table tr td{padding-left: 4px; height: 24px; font-size: 13px;}
@@ -29,7 +28,7 @@ table tr td{padding-left: 4px; height: 24px; font-size: 13px;}
 </div>
 
 <div class="finder">
-    <h3>功能</h3>
+    <h1>功能</h1>
     <ul class="list">
         <li>Finder是一个模拟windows资源浏览器的web文件管理工具。</li>
         <li>支持全键盘操作，几乎所有操作均有对应的快捷键支持。</li>
@@ -38,12 +37,23 @@ table tr td{padding-left: 4px; height: 24px; font-size: 13px;}
         <li>支持大上传，超大文件会自动分段上传，默认设置每次上传10M。</li>
         <li>支持文件拖拽上传，可同时拖拽多个文件上传。</li>
         <li>支持截图上传，截图之后按Ctrl + V。</li>
+        <li>less支持，类似linux系统的less命令。</li>
         <li>tail支持，类似linux系统的tail命令。</li>
     </ul>
 </div>
 
 <div class="finder">
-    <h3>快捷键</h3>
+    <h1>使用技巧</h1>
+    <ul class="list">
+        <li>双击文件名可以打开文件。</li>
+        <li>按住Ctrl键可以在新窗口打开less和tail。</li>
+        <li>音频播放的同时可以继续其他操作，包括切换不同的文件夹。</li>
+        <li>地址栏的suggest列表也是支持键盘上下键滚动的哦。</li>
+    </ul>
+</div>
+
+<div class="finder">
+    <h1>快捷键</h1>
     <table>
         <tr>
             <td style="width: 480px; height: 30px; background-color: #efefef;">操作</td>

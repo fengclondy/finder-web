@@ -20,7 +20,7 @@ jQuery(function() {
     var container = Less.getContainer();
 
     jQuery(window).bind("resize", function(){
-        jQuery(container).height(jQuery(window).height() - 42);
+        jQuery(container).height(jQuery(window).height() - 38);
     });
     jQuery(window).trigger("resize");
 });
@@ -32,30 +32,30 @@ jQuery(function() {
 //-->
 </script>
 </head>
-<body workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" charset="${charset}">
+<body contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" charset="${charset}">
 <!-- 设置-语言-语言和输入设置-去掉勾选 启用拼写检查 -->
-<div id="less-container" class="less-container" style="width: 100%; height: 400px;">
+<div id="less-container" class="less-container">
     <div id="less-editor" contenteditable="false"></div>
 </div>
 
 <div id="less-progress-bar" class="less-progress-bar">
     <div class="progress">
         <div class="slider">
-            <div class="pace" style="width: 0%;"></div>
-            <a class="dot" href="#" style="left: 0%;"></a>
+            <div class="pace"></div>
+            <a class="dot" href="#"></a>
             <div class="mask"></div>
         </div>
     </div>
 </div>
 
 <div id="less-status-bar" class="less-status-bar">
-    <div style="height: 16px; background-color: #333333;">
-        <div id="less-file" class="file">${absolutePath}</div>
-        <div id="less-info" class="info">0 B</div>
-        <div class="charset">
+    <div style="height: 18px; background-color: #333333;">
+        <span id="less-file" class="file">${absolutePath}</span>
+        <span id="less-info" class="info">0 B</span>
+        <span class="charset">
             <select name="charset" selected-value="${charset}"></select>
-        </div>
-        <div id="less-status" class="status">READY</div>
+        </span>
+        <span id="less-status" class="status">READY</span>
     </div>
 </div>
 <div id="less-tooltip" class="less-tooltip">50%</div>

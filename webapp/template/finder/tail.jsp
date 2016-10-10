@@ -20,7 +20,7 @@ jQuery(function() {
     var container = Tail.getContainer();
 
     jQuery(window).bind("resize", function(){
-        jQuery(container).height(jQuery(window).height() - 30);
+        jQuery(container).height(jQuery(window).height() - 26);
     });
     jQuery(window).trigger("resize");
 });
@@ -38,21 +38,21 @@ jQuery(function(){
 //-->
 </script>
 </head>
-<body workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" charset="${charset}">
+<body contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" charset="${charset}">
 <!-- 设置-语言-语言和输入设置-去掉勾选 启用拼写检查 -->
 <div id="tail-container" class="less-container" style="width: 100%; height: 400px;">
     <div id="tail-editor" target="parent" contenteditable="false"></div>
 </div>
 
 <div class="less-status-bar">
-    <input id="tailButton" type="button" class="button" value=" 停 止 " onclick="Tail.stop();"/>
-    <input type="button" class="button" value=" 全 选 " onclick="Tail.select();"/>
-    <input type="button" class="button" value=" 刷 新 " onclick="window.location.reload();"/>
-
-    <select name="charset" selected-value="${charset}"></select>
-    <span style="font-size: 12px;">重载时间：</span><input id="reloadInterval" type="text" class="text w30" value="2"/> 秒
-    <input type="checkbox" checked="true" style="margin-top: -1px; border: none; background: none; vertical-align: middle;" onclick="Tail.setScroll(this.checked);"/>
-    <span style="font-size: 12px;">自动滚动</span>
+    <div style="height: 18px; background-color: #333333;">
+        <span><input id="tail-stop-btn" type="button" class="button" value=" 停 止 "/></span>
+        <span><input id="tail-select-btn" type="button" class="button" value=" 全 选 "/></span>
+        <span><input id="tail-reload-btn" type="button" class="button" value=" 刷 新 "/></span>
+        <span class="charset"><select name="charset" selected-value="${charset}"></select></span>
+        <span>重载时间：<input id="tail-reload-interval" type="text" class="text w30" value="1"/> 秒</span>
+        <span><input id="tail-auto-scroll" type="checkbox" class="checkbox" checked="true"/>自动滚动</span>
+    </div>
 </div>
 </body>
 </html>
