@@ -180,6 +180,7 @@ Less.append = function(range) {
         }
     }
     e.appendChild(p);
+    e.parentNode.scrollTop = e.parentNode.scrollTop - jQuery(p).height();
     p.setAttribute("action", "append");
 
     /**
@@ -230,6 +231,7 @@ Less.insert = function(range) {
     else {
         e.appendChild(p);
     }
+    e.parentNode.scrollTop = p.clientHeight;
     p.setAttribute("action", "insert");
 };
 
