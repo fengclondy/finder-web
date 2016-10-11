@@ -12,6 +12,7 @@
 <title>Less</title>
 <link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/less.css"/>
 <script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${contextPath}/resource/finder/config.js"></script>
 <script type="text/javascript" src="${contextPath}/resource/finder/charset.js"></script>
 <script type="text/javascript" src="${contextPath}/resource/finder/less.js"></script>
 <script type="text/javascript">
@@ -28,7 +29,6 @@ jQuery(function() {
 jQuery(function() {
     Less.init();
 });
-
 //-->
 </script>
 </head>

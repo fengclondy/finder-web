@@ -157,7 +157,7 @@ Charset.get = function(name) {
     for(var i = 0; i < charsets.length; i++) {
         var charset = charsets[i];
 
-        if(search == charset.name.toLowerCase() || this.contains(charset.alias, search)) {
+        if(search == charset.name.toLowerCase() || this.contains(charset.alias, search, true)) {
             return charset;
         }
     }
@@ -169,6 +169,7 @@ Charset.setup = function(e, value) {
         e.options.remove(i);
     }
 
+    var flag = false;
     var selected = null;
     var charsets = this.charsets;
 
@@ -184,8 +185,9 @@ Charset.setup = function(e, value) {
         var charset = charsets[i];
         var option = new Option(charset.text, charset.name);
 
-        if(selected != null) {
+        if(selected != null && flag == false) {
             if(selected == charset.name.toLowerCase() || this.contains(charset.alias, selected, true)) {
+                flag = true;
                 option.selected = true;
             }
         }

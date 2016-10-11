@@ -47,6 +47,15 @@ public class FinderAction extends BaseAction {
      * @throws ServletException
      * @throws IOException
      */
+    @UrlPattern("/finder/config.html")
+    public void config() throws ServletException, IOException {
+        new FinderServlet(this.getServletContext(), "/template").config(this.getRequest(), this.getResponse());
+    }
+
+    /**
+     * @throws ServletException
+     * @throws IOException
+     */
     @UrlPattern("/finder/tree.html")
     public void tree() throws ServletException, IOException {
         new FinderServlet(this.getServletContext(), "/template").tree(this.getRequest(), this.getResponse());

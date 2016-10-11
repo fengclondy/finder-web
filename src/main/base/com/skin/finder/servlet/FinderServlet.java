@@ -112,6 +112,16 @@ public class FinderServlet {
      * @throws ServletException
      * @throws IOException
      */
+    public void config(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        this.forward(request, response, this.prefix + "/finder/config.jsp");
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     public void blank(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.forward(request, response, this.prefix + "/finder/blank.jsp");
     }

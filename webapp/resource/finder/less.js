@@ -1,5 +1,5 @@
-if(typeof(localStorage) == "undefined") {
-    localStorage = {};
+if(typeof(window.localStorage) == "undefined") {
+    window.localStorage = {};
 }
 
 var Less = {};
@@ -7,7 +7,7 @@ Less.rows = 0;
 Less.length = 0;
 Less.loadding = 0;
 Less.maxRows = 3000;
-Less.charset = "gbk";
+Less.charset = "utf-8";
 Less.editorId = "less-editor";
 Less.containerId = "less-container";
 Less.rangeURL = "/finder/getRange.html";
@@ -180,7 +180,6 @@ Less.append = function(range) {
         }
     }
     e.appendChild(p);
-    e.parentNode.scrollTop = e.parentNode.scrollTop - jQuery(p).height();
     p.setAttribute("action", "append");
 
     /**
@@ -231,7 +230,6 @@ Less.insert = function(range) {
     else {
         e.appendChild(p);
     }
-    e.parentNode.scrollTop = p.clientHeight;
     p.setAttribute("action", "insert");
 };
 
@@ -389,27 +387,6 @@ Less.getEditor = function() {
     return this.editor;
 };
 
-Less.extend = function(child, parent){
-    if(child == null) {
-        child = {};
-    }
-
-    for(var property in parent) {
-        child[property] = parent[property];
-    }
-    return child;
-};
-
-Less.getConfig = function() {
-    var config = (localStorage.lessConfig || {});
-    var defaultConfig = {
-        "charset": "utf-8",
-        "backgroundColor": "#000000",
-        "fontColor": "#c0c0c0"
-    };
-    return this.extend(defaultConfig, config);
-};
-
 /**
  * 创建块内容
  * range: {"start": 269027, "end": 269361, "length": 269389, "rows": 2, "content": "1 0123456789\r\n2 0123456789\r\n"}}
@@ -439,9 +416,16 @@ Less.init = function() {
     this.work = document.body.getAttribute("work");
     this.parent = document.body.getAttribute("parent");
     this.path = document.body.getAttribute("path");
-    this.charset = document.body.getAttribute("charset");
+    this.charset = Finder.getConfig("global.charset", "utf-8");
+    this.fontFamily = Finder.getConfig("less.fontFamily", "Lucida Console");
+    this.fontColor = Finder.getConfig("less.fontColor", "#009900");
+    this.backgroundColor = Finder.getConfig("less.backgroundColor", "#000000");
 
-    Charset.setup(jQuery("select[name=charset]").get(0));
+    container.style.color = this.fontColor;
+    container.style.fontFamily = this.fontFamily;
+    container.style.backgroundColor = this.backgroundColor;
+
+    Charset.setup(jQuery("select[name=charset]").get(0), this.charset);
 
     jQuery("select[name=charset]").change(function() {
         Less.charset = this.value;

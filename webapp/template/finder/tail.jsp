@@ -12,6 +12,7 @@
 <title>WebTail</title>
 <link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/less.css"/>
 <script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${contextPath}/resource/finder/config.js"></script>
 <script type="text/javascript" src="${contextPath}/resource/finder/charset.js"></script>
 <script type="text/javascript" src="${contextPath}/resource/finder/tail.js"></script>
 <script type="text/javascript">
@@ -40,7 +41,7 @@ jQuery(function(){
 </head>
 <body contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" charset="${charset}">
 <!-- 设置-语言-语言和输入设置-去掉勾选 启用拼写检查 -->
-<div id="tail-container" class="less-container" style="width: 100%; height: 400px;">
+<div id="tail-container" class="less-container">
     <div id="tail-editor" target="parent" contenteditable="false"></div>
 </div>
 

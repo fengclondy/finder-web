@@ -91,7 +91,8 @@ a.button span.back-disabled{background-position: -81px 0px;}
 a.button span.refresh{background-position: -162px 0px;}
 a.button span.view{background-position: 0px -27px;}
 a.button span.home{background-position: 2px -71px;}
-a.button span.help{background-position: -27px -71px;}
+a.button span.setting{background-position: -27px -71px;}
+a.button span.help{background-position: -54px -71px;}
 
 div.finder input.address{width: 480px; height: 24px; line-height: 24px; padding-left: 4px;}
 

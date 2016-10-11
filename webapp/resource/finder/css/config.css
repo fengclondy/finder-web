@@ -1,0 +1,102 @@
+html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, table, th, td, embed, object, button{
+    margin: 0;
+    padding: 0;
+    word-wrap: break-word;
+    color: #444444;
+}
+html, body, img{border: 0px; font-size: 12px;}
+body, input, button, select, textarea{color: #444444;}
+input.finder-color-text{width: 180px; height: 18px; border: 1px solid #c0c0c0; background-color: #ffffff; outline: none;}
+input.finder-color-picker{width: 60px; height: 18px; border-width: 1px; border-style: solid; border-color: #cccccc #666666 #666666 #cccccc;}
+
+div.finder-nav {float: left; margin: 0px; width: 200px; height: 480px; background-color: #ffffff; border-right: 4px solid #f6f6f6;}
+div.menu-head {padding-left: 24px; border-bottom: 2px dashed #ff6a00; background: url(../images/viewtip.gif) no-repeat 4px 14px #f5faff; overflow: hidden;}
+div.menu-head h4 {float: left; margin: 11px 0px 2px 0px; font-size: 14px; font-weight: bold; color: #ff6a00;}
+div.menu-head h4 span{font-size: 12px; color: #999999;}
+div.menu-body{padding-left: 0px;}
+
+div.finder-nav ul.menu{}
+div.finder-nav ul.menu li {margin: 2px 0px;}
+div.finder-nav ul.menu li.active {background-color: #f3f9fc;}
+div.finder-nav ul.menu li:hover {background-color: #f3f9fc;}
+div.finder-nav ul.menu li.active a {color: #2366a8;}
+
+div.finder-nav ul.menu li a {
+    display: block;
+    height: 26px;
+    padding-left: 32px;
+    line-height: 26px;
+    background: url(../images/dot.gif) no-repeat 20px 10px transparent;
+    text-decoration: none;
+    color: #666666;
+}
+
+div.finder-nav ul.menu li a em{
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: url(../images/window.gif) repeat-y scroll 0px 4px transparent;
+}
+
+div.menu-bar {
+    margin: 10px 0px 10px 0px;
+    height: 28px;
+    overflow: hidden;
+}
+
+div.menu-panel {border-bottom: 2px solid #ff6a00; overflow: hidden;}
+div.menu-panel h4 {float: left; margin: 11px 0px 2px 0px; font-size: 14px; font-weight: bold; color: #ff6a00;}
+div.menu-panel h4 span{font-size: 12px; color: #999999;}
+
+div.finder-form div.finder-row {padding-bottom: 0px; border-bottom: 1px dashed #dddddd; overflow: hidden;}
+div.finder-form div.finder-c300 {float: left; width: 300px}
+div.finder-form div.finder-m300 {margin-left: 300px}
+div.finder-form div.finder-comment {line-height: 1.8em; color: #9c9c9c}
+div.finder-form div.finder-row a.finder-faq {margin-left: 10px; padding: 1px; background: url(../images/faq.gif) no-repeat 0px 1px; text-decoration: none; display: none;}
+div.finder-form div.finder-row:hover a.finder-faq {display: inline;}
+div.finder-form div.finder-row:hover .finder-comment {color: #555555;}
+
+div.finder-form div.finder-label {padding: 10px 0px 10px 0px; font-size: 12px; font-weight: bold; overflow: hidden; color: #555555;}
+div.finder-form div.finder-field {margin-bottom: 10px; padding: 4px 0px 4px 0px; overflow: hidden;}
+div.finder-form div.finder-field span.block {display: inline-block; height: 24px; border: 1px solid #d0d0d0;}
+div.finder-form div.finder-field input.finder-text {width: 250px; height: 18px; border: 1px solid #c0c0c0; background-color: #ffffff; outline: none;}
+div.finder-form div.finder-field select {width: 256px; height: 20px; border: 1px solid #d0d0d0; outline: none; font-size: 13px; color: #000000;}
+div.finder-form div.finder-field textarea {padding-left: 4px; width: 250px; height: 100px; border: 1px solid #d0d0d0;}
+
+div.finder-form div.finder-field input.finder-text:hover {border: 1px solid #ff9900; background-color: #ffffff;}
+div.finder-form div.finder-field select:hover {border: 1px solid #ff9900; background-color: #ffffff;}
+div.finder-form div.finder-field textarea:hover {border: 1px solid #ff9900; background-color: #ffffff;}
+
+div.finder-form div.finder-field ul li {float: left; margin-right: 20px; white-space: nowrap; cursor: pointer; overflow: hidden;}
+div.finder-form div.finder-field ul li.checked {color: #00dd00;}
+
+div.finder-form div.finder-field ul.list li {float: none; margin: 6px 20px 6px 0px; white-space: nowrap; cursor: pointer; overflow: hidden;}
+div.finder-form div.finder-field ul.list li.checked {color: #00dd00;}
+div.finder-form div.finder-field .radio {margin-top: -2px; border: none; background: none; vertical-align: middle;}
+
+
+div.finder-form div.button{margin: 20px 0px 20px 0px;}
+div.finder-form button.button{
+    margin-right: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    color: #666666;
+    text-decoration: none;
+    border-radius: 4px;
+    -webkit-user-select: none;
+}
+
+div.finder-form button.ensure {}
+div.finder-form button.ensure {border: 1px solid #d73104; background-color: #d73104; color: #ffffff;}
+div.finder-form button.ensure:hover {border: 1px solid #ff6600; background-color: #ff6600; color: #ffffff;}
+
+div.finder-form button.submit {}
+div.finder-form button.submit {border: 1px solid #d73104; background-color: #d73104; color: #ffffff;}
+div.finder-form button.submit:hover {border: 1px solid #ff6600; background-color: #ff6600; color: #ffffff;}

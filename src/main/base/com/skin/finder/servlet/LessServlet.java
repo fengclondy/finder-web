@@ -66,7 +66,7 @@ public class LessServlet extends HttpServlet {
         }
 
         /**
-         * 客户端可以指定读取文件的字符集, 默认为utf-8
+         * 默认为utf-8
          */
         if(charset.length() < 1) {
             charset = "utf-8";
@@ -118,7 +118,7 @@ public class LessServlet extends HttpServlet {
         }
 
         /**
-         * 客户端可以指定读取文件的字符集, 默认为utf-8
+         * 默认为utf-8
          */
         if(charset.length() < 1) {
             charset = "utf-8";

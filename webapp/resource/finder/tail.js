@@ -246,6 +246,21 @@ Tail.create = function(range) {
 };
 
 Tail.init = function() {
+    var editor = this.getEditor();
+    var container = this.getContainer();
+
+    this.workspace = document.body.getAttribute("workspace");
+    this.work = document.body.getAttribute("work");
+    this.parent = document.body.getAttribute("parent");
+    this.path = document.body.getAttribute("path");
+    this.charset = Finder.getConfig("global.charset", "utf-8");
+    this.fontFamily = Finder.getConfig("less.fontFamily", "Lucida Console");
+    this.fontColor = Finder.getConfig("less.fontColor", "#009900");
+    this.backgroundColor = Finder.getConfig("less.backgroundColor", "#000000");
+
+    container.style.color = this.fontColor;
+    container.style.fontFamily = this.fontFamily;
+    container.style.backgroundColor = this.backgroundColor;
     Charset.setup(jQuery("select[name=charset]").get(0));
 
     jQuery("select[name=charset]").change(function() {
@@ -271,11 +286,5 @@ Tail.init = function() {
     jQuery("#tail-auto-scroll").click(function() {
         Tail.setScroll(this.checked);
     });
-
-    this.workspace = document.body.getAttribute("workspace");
-    this.work = document.body.getAttribute("work");
-    this.parent = document.body.getAttribute("parent");
-    this.path = document.body.getAttribute("path");
-    this.charset = document.body.getAttribute("charset");
     this.start();
 };

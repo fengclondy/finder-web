@@ -2523,6 +2523,33 @@ ImageViewer.close = function() {
     this.getImageDialog().close();
 };
 
+var Util = {};
+Util.open = function(url, name, width, height, features){
+    var w = width;
+    var h = height;
+    if(w == null) w = window.screen.availWidth;
+    if(h == null) h = window.screen.availHeight;
+
+    var x = Math.floor((screen.availWidth  - w) / 2);
+    var y = Math.floor((screen.availHeight - h - 60) / 2);
+
+    if(x < 0) {
+        x = 0;
+    }
+
+    if(y < 0) {
+        y = 0;
+    }
+
+    if(features == null || features == "") {
+        features = "top=" + y + ",left=" + x + ",width=" + w + ",height=" + h;
+    }
+    else {
+        features = "top=" + y + ",left=" + x + ",width=" + w + ",height=" + h + "," + features;
+    }
+    return window.open(url, name, features);
+};
+
 /* =========================================================
  * 以下页面初始化和事件注册
  * =========================================================
@@ -2579,6 +2606,9 @@ jQuery(function() {
 
     jQuery("a.home").attr("href", Finder.getContextPath() + "/finder/index.html?workspace=" + encodeURIComponent(Finder.getWorkspace()));
     jQuery("a.help").attr("href", Finder.getContextPath() + "/finder/help.html");
+    jQuery("a.setting").click(function(event) {
+        Util.open(Finder.getContextPath() + "/finder/config.html", "_blank", 800, 600);
+    });
 
     jQuery("#address").keydown(function(event) {
         return Finder.keydown(event);

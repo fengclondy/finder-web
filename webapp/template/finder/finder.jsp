@@ -44,8 +44,9 @@
                 </ul>
             </div>
         </div>
-        <div style="float: right; width: 80px;">
+        <div style="float: right; width: 120px;">
             <a class="button home" href="javascript:void(0)" title="首页"><span class="home"></span></a>
+            <a class="button setting" href="javascript:void(0)" title="首页"><span class="setting"></span></a>
             <a class="button help" href="javascript:void(0)" title="帮助" target="_blank"><span class="help"></span></a>
         </div>
     </div>

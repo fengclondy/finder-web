@@ -105,15 +105,13 @@ div.less-container{
     line-height: 16px;
     font-size: 12px;
     font-family: Lucida Console;
-    color: #c0c0c0;
+    color: #009900;
     resize: none;
 }
 
 div.less-container p, .less-container pre{
     border-bottom: 0px solid #111111;
-    font-size: 12px;
-    font-family: Lucida Console;
-    line-height: 16px;
+    font-family: inherit;
     outline: none;
 }
 
