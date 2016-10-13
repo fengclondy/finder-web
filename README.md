@@ -36,7 +36,7 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
 4. 将webapp目录中的文件拷贝到tomcat的webapps/ROOT目录 或者 直接配置tomcat的server.xml，配置一个context指到webapp目录。
 5. 启动应用之后访问： http://localhost/finder/index.html
 6. 测试日志功能请找一个较大的日志文件进行测试，太小的日志文件显示不出来效果。
-注：workspace.xml中name是你自己指定的，你可以随便指定一个名字，文件夹也是你自己指定的，你可以指向任意目录，不一定非得直到logback.xml中配置的目录。
+7. 注：workspace.xml中可以配置任意多个workspace，每一个workspace的name可以随便指定一个名字，文件夹也是自定义的，你可以指向任意目录，不一定非得指到logback.xml中配置的目录。
     finder并不限制你要查看的文件，你可以使用日志监控功能监控任意的文件，但请不要查看非文本文件，less和tail都是按行拉取的。
     如果一个文件超大又不存在换行符，你的服务器或者浏览器可能会崩溃，所以请只监控文本文件。
     less和tail功能在当前窗口不会显示过多的内容，以避免浏览器消耗太多内存，当内容超过一定数量的时候会自动将处于窗口之外的内容清除。
