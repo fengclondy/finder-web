@@ -197,6 +197,10 @@ public class LessServlet extends HttpServlet {
         byte[] bytes = new byte[readBytes];
         readBytes = raf.read(bytes, 0, readBytes);
 
+        if(count < 1 && readBytes > 0) {
+            count = 1;
+        }
+
         FileRange range = new FileRange();
         range.setStart(start);
         range.setEnd(start + readBytes - 1);
@@ -305,6 +309,11 @@ public class LessServlet extends HttpServlet {
         }
 
         byte[] bytes = bos.toByteArray();
+
+        if(count < 1 && bytes.length > 0) {
+            count = 1;
+        }
+
         FileRange range = new FileRange();
         range.setStart(start);
         range.setEnd(start + bytes.length - 1);

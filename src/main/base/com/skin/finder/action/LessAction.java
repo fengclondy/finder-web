@@ -133,7 +133,7 @@ public class LessAction extends BaseAction {
         String work = workspace.getValue(name.trim());
 
         if(work == null) {
-            throw new NullPointerException("workspace must be not null !");
+            throw new NullPointerException("[" + name + "] workspace not exists !");
         }
 
         if(work.startsWith("file:")) {
@@ -143,7 +143,7 @@ public class LessAction extends BaseAction {
         if(work.startsWith("contextPath:")) {
             return this.getServletContext().getRealPath(work.substring(12));
         }
-        throw new NullPointerException("work directory error: " + work);
+        throw new NullPointerException("work directory not exists: " + work);
     }
 
     /**

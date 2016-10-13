@@ -104,10 +104,16 @@ Tail.append = function(range){
     if(range != null && range.rows > 0) {
         var e = this.getEditor();
         var p = this.create(range);
+        var list = e.childNodes;
+
+        while(list.length > 100) {
+            var node = list[0];
+            var count = parseInt(node.getAttribute("rows"));
+            e.removeChild(node);
+            this.rows -= count;
+        }
 
         while(this.rows > this.maxRows) {
-            var list = e.childNodes;
-
             if(list.length > 1) {
                 var node = list[0];
                 var count = parseInt(node.getAttribute("rows"));
@@ -121,7 +127,15 @@ Tail.append = function(range){
         e.appendChild(p);
 
         if(this.scroll == true) {
-            e.parentNode.scrollTop = e.parentNode.scrollHeight;
+            var scrollHeight = e.parentNode.scrollHeight;
+
+            if(range.rows <= 5) {
+                e.parentNode.scrollTop = scrollHeight;
+            }
+            else {
+                jQuery(e.parentNode).stop();
+                jQuery(e.parentNode).animate({"scrollTop": scrollHeight}, range.rows * 5);
+            }
         }
     }
     var timeout = this.getTimeout();
@@ -202,7 +216,8 @@ Tail.getEnd = function() {
  * 暂时先写死吧
  */
 Tail.getRows = function() {
-    return this.rows;
+    var c = this.getContainer();
+    return Math.max(3 * Math.floor(jQuery(c).height() / 16), 1000);
 };
 
 /**

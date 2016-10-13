@@ -43,7 +43,7 @@ App.setViewType = function(flag) {
         f2.style.display = "block";
         f1.style.display = "block";
         f3.style.marginLeft = "250px";
-        f4.src = "/resource/images/lt.gif";
+        f4.src = "${contextPath}/resource/images/lt.gif";
     }
     else if(viewType == 3) {
         /* [0, 10, *] */
@@ -53,13 +53,13 @@ App.setViewType = function(flag) {
         f2.style.marginLeft = "0px";
         f2.style.display = "block";
         f3.style.marginLeft = "10px";
-        f4.src = "/resource/images/gt.gif";
+        f4.src = "${contextPath}/resource/images/gt.gif";
     }
     else if(viewType == 4) {
         /* [0, 0, *] */
         f1.parentNode.style.display = "none";
         f3.style.marginLeft = "0px";
-        f4.src = "/resource/images/gt.gif";
+        f4.src = "${contextPath}/resource/images/gt.gif";
     }
 };
 
@@ -85,12 +85,10 @@ jQuery(function() {
     jQuery("#ctrlBtn").click(function(event){
         var viewType = 2;
 
-        if(this.src.indexOf("/resource/images/gt.gif") > -1)
-        {
+        if(this.src.indexOf("${contextPath}/resource/images/gt.gif") > -1) {
             viewType = 2;
         }
-        else
-        {
+        else {
             viewType = 3;
         }
         App.setViewType(viewType);
@@ -160,10 +158,10 @@ jQuery(function() {
     <div style="float: left; width: 10px;">
         <div id="leftPanel" class="left-panel"><iframe id="leftFrame" name="leftFrame" class="left-frame"
             src="${contextPath}/finder/tree.html?workspace=${workspace}" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>
-        <div id="ctrlPanel" class="ctrl-panel"><img id="ctrlBtn" style="border: none; cursor: default;" src="${resource}/resource/finder/images/gt.gif"/></div>
+        <div id="ctrlPanel" class="ctrl-panel"><img id="ctrlBtn" style="border: none; cursor: default;" src="${contextPath}/resource/finder/images/gt.gif"/></div>
     </div>
     <div id="mainPanel" class="main-panel"><iframe id="mainFrame" name="mainFrame" class="main-frame"
-        src="/finder/display.html?workspace=${workspace}" frameborder="0" scrolling="auto" marginwidth="0" marginheight="0"></iframe></div>
+        src="${contextPath}/finder/display.html?workspace=${workspace}" frameborder="0" scrolling="auto" marginwidth="0" marginheight="0"></iframe></div>
 </div>
 <div id="statusBar" class="status-bar hide">
     <div id="_task_bar" class="widget-task-bar"></div>

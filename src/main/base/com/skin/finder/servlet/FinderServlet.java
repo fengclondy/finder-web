@@ -429,8 +429,12 @@ public class FinderServlet {
         response.setHeader("Last-Modified", GMTUtil.format(lastModified));
         response.setHeader("ETag", etag);
         response.setHeader("Date", httpDate);
-        response.setHeader("Content-Type", contentType);
 
+        /**
+         * 不要设置Content-Type, Chrome下将会出现下面的警告, 虽然这不是一个错误
+         * Resource interpreted as Document but transferred with MIME type application/x-tex:
+         * response.setHeader("Content-Type", contentType);
+         */
         if(range == null) {
             response.setHeader("Content-Length", String.valueOf(length));
 
@@ -508,6 +512,7 @@ public class FinderServlet {
             response.setHeader("Content-Range", contentRange);
             response.setHeader("Content-Length", String.valueOf(size));
             response.setHeader("Part-Size", String.valueOf(maxBodySize));
+            response.setHeader("Content-Type", contentType);
 
             try {
                 raf = new RandomAccessFile(file, "r");

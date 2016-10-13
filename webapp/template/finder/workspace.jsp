@@ -33,7 +33,7 @@ window.onload = function(){
             </tr>
             <c:forEach items="${workspaces}" var="workspace" varStatus="status">
             <tr workspace="${workspace}">
-                <td><img src="${contextPath}/resource/finder/images/folder.gif"/>&nbsp;<a class="file" href="/finder/index.html?workspace=${URLUtil.encode(workspace)}" title="${workspace}">${workspace}</a></td>
+                <td><img src="${contextPath}/resource/finder/images/folder.gif"/>&nbsp;<a class="file" href="${contextPath}/finder/index.html?workspace=${URLUtil.encode(workspace)}" title="${workspace}">${workspace}</a></td>
             </tr>
             </c:forEach>
         </table>

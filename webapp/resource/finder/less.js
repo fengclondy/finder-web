@@ -187,7 +187,7 @@ Less.append = function(range) {
      * bug: 当页面第一次进来的时候不会触发任何事件，所以也不会计算加载进度，导致进度条仍然显示0
      * 这个bug不好解决，没有地方可以方便的检查，所以在此处做一个检查，简单处理掉
      */
-    if(this.first == null) {
+    if(this.first != true) {
         this.first = true;
         this.showProgress();
     }
@@ -318,14 +318,11 @@ Less.showProgress = function() {
             var end = parseInt(e.getAttribute("end"));
 
             if(length > 0) {
-                this.setProgress(end / length);
+                this.setProgress(end);
             }
             else {
                 this.setProgress(0);
             }
-
-            jQuery("#less-info").html(end + "/" + length + " B");
-            jQuery("#less-info").attr("title", (length / 1024 / 1024).toFixed(2) + " M");
             break;
         }
     }
@@ -333,12 +330,17 @@ Less.showProgress = function() {
 
 /**
  * 显示进度
- * @param percent - 百分比
+ * @param end - 当前位置
  */
-Less.setProgress = function(percent) {
+Less.setProgress = function(position) {
+    var length = this.length;
+    var percent = position / length;
     var ratio = percent * 100;
+
     jQuery("#less-progress-bar").find(".progress .pace").css("width", ratio + "%");
     jQuery("#less-progress-bar").find(".progress .slider a").css("left", ratio + "%").attr("percent", Math.floor(ratio) + "%");
+    jQuery("#less-info").val(position + "/" + length + " B");
+    jQuery("#less-info").attr("title", (length / 1024 / 1024).toFixed(2) + " M");
 };
 
 /**
@@ -351,20 +353,20 @@ Less.setStatus = function(status, message) {
         Less.loadding = 0;
 
         if(message != null) {
-            jQuery("#less-status").html(message);
+            jQuery("#less-status").val(message);
         }
         else {
-            jQuery("#less-status").html("READY");
+            jQuery("#less-status").val("READY");
         }
     }
     else {
         Less.loadding = 1;
 
         if(message != null) {
-            jQuery("#less-status").html(message);
+            jQuery("#less-status").val(message);
         }
         else {
-            jQuery("#less-status").html("loading...");
+            jQuery("#less-status").val("loading...");
         }
     }
 };
@@ -472,7 +474,7 @@ Less.init = function() {
 
         var x = event.offsetX;
         var width = jQuery(this).width();
-        Less.setProgress(x / width);
+        Less.setProgress(Math.floor(x / width * Less.length));
         Less.load(x / width);
     });
 

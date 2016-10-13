@@ -47,12 +47,14 @@ jQuery(function(){
 
 <div class="less-status-bar">
     <div style="height: 18px; background-color: #333333;">
-        <span><input id="tail-stop-btn" type="button" class="button" value=" 停 止 "/></span>
-        <span><input id="tail-select-btn" type="button" class="button" value=" 全 选 "/></span>
-        <span><input id="tail-reload-btn" type="button" class="button" value=" 刷 新 "/></span>
         <span class="charset"><select name="charset" selected-value="${charset}"></select></span>
-        <span>重载时间：<input id="tail-reload-interval" type="text" class="text w30" value="1"/> 秒</span>
-        <span><input id="tail-auto-scroll" type="checkbox" class="checkbox" checked="true"/>自动滚动</span>
+        <span class="ctrl">
+            <input id="tail-stop-btn" type="button" class="button" value=" 停 止 "/>
+            <input id="tail-select-btn" type="button" class="button" value=" 全 选 "/>
+            <input id="tail-reload-btn" type="button" class="button" value=" 刷 新 "/>
+        </span>
+        <span class="pad4">重载时间：<input id="tail-reload-interval" type="text" class="text w30" value="1"/> 秒</span>
+        <span class="pad4"><input id="tail-auto-scroll" type="checkbox" class="checkbox" checked="true"/>自动滚动</span>
     </div>
 </div>
 </body>

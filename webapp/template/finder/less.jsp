@@ -9,7 +9,7 @@
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Cache-Control" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
-<title>Less</title>
+<title>WebLess</title>
 <link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/less.css"/>
 <script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="${contextPath}/resource/finder/config.js"></script>
@@ -50,12 +50,12 @@ jQuery(function() {
 
 <div id="less-status-bar" class="less-status-bar">
     <div style="height: 18px; background-color: #333333;">
-        <span id="less-file" class="file">${absolutePath}</span>
-        <span id="less-info" class="info">0 B</span>
         <span class="charset">
             <select name="charset" selected-value="${charset}"></select>
         </span>
-        <span id="less-status" class="status">READY</span>
+        <span class="file"><input id="less-file" type="text" class="text w240" readonly="true" value="${absolutePath}"/></span>
+        <span class="info"><input id="less-info" type="text" class="text w160" readonly="true" value="0 B"/></span>
+        <span class="status"><input id="less-status" type="text" class="text w160" readonly="true" value="READY"/></span>
     </div>
 </div>
 <div id="less-tooltip" class="less-tooltip">50%</div>

@@ -11,7 +11,22 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
 
 运行截图
 =================
-请到项目附件中查看： [http://git.oschina.net/xuesong123/finder-web/attach_files](http://git.oschina.net/xuesong123/finder-web/attach_files "http://git.oschina.net/xuesong123/finder-web/attach_files")
+ **less示例**
+绿色的进度条可以随着内容的滚动自动显示当前进度，也可以单击某一个位置直接跳转到文件的指定位置显示。可以指定文件的字符集，也可以在finder的文件夹页面设置全局字符集和less的显示样式，包括字体，字体颜色，背景颜色等。
+![less示例](http://git.oschina.net/uploads/images/2016/1013/001137_3200dc48_615195.jpeg "less示例")
+
+ **tail示例**
+可以通过设置自动拉取时间调整拉取频率
+![tail示例](http://git.oschina.net/uploads/images/2016/1013/001151_f65afc3d_615195.jpeg "tail示例")
+
+ **音频播放**
+在播放音频的同时仍然允许切换不同的文件夹。你也可以将音频播放器最小化到左下角。
+![音频播放](http://git.oschina.net/uploads/images/2016/1013/001204_7d139006_615195.jpeg "音频播放")
+
+ **文件管理**
+支持全键盘操作，几乎所有的操作都有对应的快捷键，并且尽可能与windows资源管理器的快捷键相同。
+支持多文件剪切，拷贝，支持超大文件上传下载，支持使用多线程工具下载文件。
+![文件管理](http://git.oschina.net/uploads/images/2016/1013/001214_cdc0ae21_615195.jpeg "文件管理")
 
 编译运行
 =================
@@ -23,6 +38,15 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
 5. 启动应用之后访问： http://localhost/finder/index.html
 6. 测试日志功能请找一个较大的日志文件进行测试，太小的日志文件显示不出来效果。
 
+常见问题
+=================
+1. 中文乱码
+请在tomcat的server.xml中配置URIEncoding:
+``xml
+<Connector port="80" protocol="HTTP/1.1"
+    connectionTimeout="20000"
+    redirectPort="8443" URIEncoding="UTF-8"/>
+``
 
 自定义插件
 =================

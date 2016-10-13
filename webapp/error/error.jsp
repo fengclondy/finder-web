@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" session="false" isErrorPage="true"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="false" isErrorPage="true"%>
 <%@ page import="com.skin.ayada.template.TemplateManager"%>
 <%@ page import="com.skin.ayada.template.TemplateContext"%>
 <%@ page import="com.skin.ayada.web.TemplateDispatcher"%>
@@ -20,7 +20,7 @@
             logger.debug(exception.getMessage(), exception);
         }
         else {
-            logger.debug("exception: null");
+            logger.debug(status + " - exception: null");
         }
     }
     // String home = application.getRealPath("/template");

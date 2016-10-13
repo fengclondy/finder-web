@@ -94,6 +94,7 @@ public class MimeType {
         map.put("js", "application/x-javascript");
         map.put("latex", "application/x-latex");
         map.put("lha", "application/octet-stream");
+        map.put("log", "application/x-tex");
         map.put("lsf", "video/x-la-asf");
         map.put("lsx", "video/x-la-asf");
         map.put("lzh", "application/octet-stream");
@@ -166,6 +167,7 @@ public class MimeType {
         map.put("snd", "audio/basic");
         map.put("spc", "application/x-pkcs7-certificates");
         map.put("spl", "application/futuresplash");
+        map.put("sql", "application/x-tex");
         map.put("src", "application/x-wais-source");
         map.put("sst", "application/vnd.ms-pkicertstore");
         map.put("stl", "application/vnd.ms-pkistl");

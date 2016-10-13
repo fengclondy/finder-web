@@ -232,7 +232,7 @@ FileType.execute = function(file, options) {
         window.open(url + "?" + params.join("&"), options.target);
     }
     else {
-         window.location.href = url + "?" + params.join("&");
+        window.location.href = url + "?" + params.join("&");
     }
     return true;
 };
@@ -2211,7 +2211,7 @@ FinderSuggestDialog.handler = function(value, action) {
             e.value = "/" + value;
         }
         else {
-            if(path.endsWith("/")) {
+            if(StringUtil.endsWith(path, "/")) {
                 e.value = path + value;
             }
             else {
@@ -2256,7 +2256,7 @@ FinderSuggestDialog.open = function(json) {
         }
         else {
             for(var i = 0; i < json.length; i++) {
-                b[b.length] = "<li option-value=\"" + HtmlUtil.encode(json[i]) + "\" index=\"0\"><a href=\"javascript:void(0)\" onclick=\"FinderSuggestDialog.click(event)\" target=\"_blank\">" + HtmlUtil.encode(json[i]) + "</a></li>";
+                b[b.length] = "<li option-value=\"" + HtmlUtil.encode(json[i]) + "\" index=\"0\"><a href=\"javascript:void(0)\" onclick=\"FinderSuggestDialog.click(event)\">" + HtmlUtil.encode(json[i]) + "</a></li>";
             }
         }
 
