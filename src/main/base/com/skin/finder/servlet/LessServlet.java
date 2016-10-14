@@ -310,8 +310,8 @@ public class LessServlet extends HttpServlet {
 
         byte[] bytes = bos.toByteArray();
 
-        if(count < 1 && bytes.length > 0) {
-            count = 1;
+        if(bytes.length > 0 && bytes[bytes.length - 1] != LF) {
+            count++;
         }
 
         FileRange range = new FileRange();

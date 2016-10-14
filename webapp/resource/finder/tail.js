@@ -84,7 +84,7 @@ Tail.poll = function() {
         url: url,
         dataType: "json",
         error: function(req, status, error) {
-            var message = "/* ** ERROR: ** */\r\n" + status + ": " + error + "\r\n\r\n\r\n";
+            var message = "#* ** ERROR: ** *#\r\n" + status + ": " + error + "\r\n\r\n\r\n";
             Tail.append({"start": position, "end": position, "rows": 1, "length": length, "content": message});
         },
         success: function(result) {
@@ -100,11 +100,12 @@ Tail.poll = function() {
     });
 };
 
-Tail.append = function(range){
+Tail.append = function(range) {
     if(range != null && range.rows > 0) {
         var e = this.getEditor();
         var p = this.create(range);
         var list = e.childNodes;
+        this.length = range.length;
 
         while(list.length > 100) {
             var node = list[0];
@@ -133,11 +134,24 @@ Tail.append = function(range){
                 e.parentNode.scrollTop = scrollHeight;
             }
             else {
+                /**
+                 * 此处的动画效果会出现卡顿的现象
+                 * 这是因为浏览器的单线程模型导致的，这个问题无法避免
+                 * 无论怎么做ajax请求只要发起都会导致在当前的UI线程队列里增加一个函数调用
+                 * 这将阻塞动画效果连续执行，从而出现卡顿
+                 */
                 jQuery(e.parentNode).stop();
-                jQuery(e.parentNode).animate({"scrollTop": scrollHeight}, range.rows * 5);
+                jQuery(e.parentNode).animate({"scrollTop": scrollHeight}, range.rows * 5, function() {
+                    console.log("animate end.");
+                });
             }
         }
     }
+
+    if(this.timer != null) {
+        clearTimeout(this.timer);
+    }
+
     var timeout = this.getTimeout();
     this.timer = setTimeout(function(){Tail.poll();}, timeout);
 };
