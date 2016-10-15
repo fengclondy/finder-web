@@ -29,6 +29,9 @@ import com.skin.j2ee.util.ScrollPage;
  * @version 1.0
  */
 public class MailLogDao extends Dao<MailLog, Long> {
+    /**
+     * default
+     */
     public MailLogDao() {
     }
 

@@ -28,6 +28,9 @@ import com.skin.j2ee.dao.Insert;
  * @version 1.0
  */
 public class AngleDao extends Dao<Angle, Long> {
+    /**
+     * default
+     */
     public AngleDao() {
     }
 

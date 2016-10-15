@@ -35,6 +35,9 @@ import com.skin.j2ee.util.JsonUtil;
  * @version 1.0
  */
 public class MailConfigAction extends BaseAction {
+    /**
+     * mail config
+     */
     public static final String MAIL_CONFIG_NAME = "skin.config.mail";
     private static final Logger logger = LoggerFactory.getLogger(MailConfigAction.class);
 

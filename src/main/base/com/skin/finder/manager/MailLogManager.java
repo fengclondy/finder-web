@@ -24,6 +24,9 @@ import com.skin.j2ee.util.ScrollPage;
 public class MailLogManager {
     private MailLogService mailLogService = null;
 
+    /**
+     * default
+     */
     public MailLogManager() {
         this.mailLogService = new MailLogService();
     }

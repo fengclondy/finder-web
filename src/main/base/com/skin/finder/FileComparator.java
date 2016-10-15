@@ -28,6 +28,11 @@ public class FileComparator implements java.util.Comparator<File> {
         return instance;
     }
 
+    /**
+     * @param f1
+     * @param f2
+     * @return int
+     */
     @Override
     public int compare(File f1, File f2) {
         if(f1 == null && f2 == null) {

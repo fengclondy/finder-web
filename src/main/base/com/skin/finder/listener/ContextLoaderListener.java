@@ -33,6 +33,9 @@ import com.skin.util.ClassUtil;
 public class ContextLoaderListener implements ServletContextListener {
     private static final Logger logger = LoggerFactory.getLogger(ContextLoaderListener.class);
 
+    /**
+     * @param servletContextEvent
+     */
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
@@ -61,6 +64,9 @@ public class ContextLoaderListener implements ServletContextListener {
         }
     }
 
+    /**
+     * @param servletContextEvent
+     */
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
     }

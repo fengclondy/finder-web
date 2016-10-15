@@ -25,6 +25,9 @@ import com.skin.finder.service.AngleService;
 public class AngleManager {
     private AngleService angleService;
 
+    /**
+     * default
+     */
     public AngleManager() {
         this.angleService = new AngleService();
     }
