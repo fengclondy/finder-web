@@ -54,6 +54,8 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
     redirectPort="8443" URIEncoding="UTF-8"/>
 ``
 
+2. 'javax.tools.JavaCompiler', finder使用的jsp编译器要求必须加载tools.jar, 所以在环境变量里面配置%JAVA_HOME%\lib\tools.jar即可。
+
 自定义插件
 =================
 finder允许你自定义自己的插件，finder会根据不同的文件扩展名调用不同的插件打开文件。
