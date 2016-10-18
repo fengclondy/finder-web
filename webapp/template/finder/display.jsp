@@ -65,8 +65,8 @@
             <a class="button" href="/finder/help.html" title="帮助"><span class="help"></span></a>
         </div>
     </div>
-    <c:if test="${offset > 0}">
-    <div style="height: 24px; line-height: 24px; background-color: #efefef; font-size: 12px;">range: ${offset} - ${offset + length}</div>
+    <c:if test="${start > 0}">
+    <div style="height: 24px; line-height: 24px; background-color: #efefef; font-size: 12px;">range: ${start} - ${end}/${length}</div>
     </c:if>
     <div>
         <c:choose>

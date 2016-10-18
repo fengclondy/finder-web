@@ -43,6 +43,7 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
     当你再此滚动到那个位置的时候会再次加载，这个对用户来说是感觉不出来的。
     所以理论上less和tail功能可以实时监控任意大小的日志文件，当你有一个超大的日志文件，一般百兆以上，其他文本编辑器打不开时，finder是个很好的工具。
     less可以任意定义文件位置，tail只实时的显示文件的尾部数据。下一步将会考虑给tail功能添加grep功能，这样可以只监控关心的数据。
+8. 开两个窗口，一个使用tail打开finder的日志，另外一个访问/log.jsp，不断刷新log.jsp，可以看到tail不断刷新日志的效果。如果你把finder部署在了生产环境，请删除log.jsp文件。
 
 你也可以直接将release/finder.war部署到tomcat, 启动之后tomcat会自动解压finder.war, 然后修改对应目录内的配置文件，修改之后重启tomcat即可。
 
@@ -55,8 +56,10 @@ finder本身只是打算作为其他系统的一部分，因此也不会支持�
 安全问题: 由于finder是开源的, 任何人都可能看到源码, 所以你最好修改cookiekey.properties文件中的cookie.md5key，这个是用来签名的，如果泄露就可能自己伪造cookie。
 以下链接不会在界面中体现，需要添加用户或者登出系统，请直接在地址栏输入地址：
 添加用户: /finder/user/add.html
+修改密码: /finder/user/add.html
 系统登录: /finder/login.html
 系统登出: /finder/logout.html
+修改密码只需重新添加用户即可。
 
 常见问题
 =================

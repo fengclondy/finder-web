@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skin.finder.FileRange;
 import com.skin.finder.FileType;
 import com.skin.finder.FinderManager;
 import com.skin.finder.MimeType;
@@ -303,27 +303,31 @@ public class FinderServlet {
             return;
         }
 
-        long offset = 0;
+        long start = 0L;
+        long end = 0L;
         long length = file.length();
-        String content = null;
+        FileRange range = null;
         String charset = encoding;
 
         if(charset == null || charset.trim().length() < 1) {
             charset = "utf-8";
         }
 
-        if(length > 512L * 1024L) {
-            offset = file.length() - 512L * 1024L;
-            length = file.length() - offset;
-            content = this.read(file, offset, charset);
+        if(length > 128L * 1024L) {
+            long offset = length - 128L * 1024L;
+            range = this.getRange(file, offset, charset);
         }
         else if(length > 0L) {
-            content = IO.read(file, charset);
+            range = this.getRange(file, 0L, charset);
         }
-        else {
-            content = "";
+
+        String content = "";
+
+        if(range != null) {
+            start = range.getStart();
+            end = range.getEnd();
+            content = HtmlUtil.encode(range.getContent());
         }
-        content = HtmlUtil.encode(content);
 
         request.setAttribute("workspace", workspace);
         request.setAttribute("work", finderManager.getWork());
@@ -333,7 +337,8 @@ public class FinderServlet {
         request.setAttribute("encoding", encoding);
         request.setAttribute("type", type);
         request.setAttribute("theme", theme);
-        request.setAttribute("offset", offset);
+        request.setAttribute("start", start);
+        request.setAttribute("end", end);
         request.setAttribute("length", length);
         this.forward(request, response, this.prefix + "/finder/display.jsp");
     }
@@ -791,38 +796,76 @@ public class FinderServlet {
      * @param charset
      * @return String
      */
-    public String read(File file, long offset, String charset) {
-        InputStream inputStream = null;
-        InputStreamReader inputStreamReader = null;
+    public FileRange getRange(File file, long offset, String charset) {
+        RandomAccessFile raf = null;
 
         try {
-            inputStream = new FileInputStream(file);
+            raf = new RandomAccessFile(file, "r");
 
-            if(charset == null || charset.length() < 1) {
-                inputStreamReader = new InputStreamReader(inputStream);
-            }
-            else {
-                inputStreamReader = new InputStreamReader(inputStream, charset);
-            }
-
-            inputStream.skip(offset);
-
-            int length = 0;
+            byte LF = 0x0A;
+            int readBytes = 0;
             int bufferSize = 4096;
-            char[] buffer = new char[bufferSize];
-            StringBuilder result = new StringBuilder();
+            byte[] buffer = new byte[bufferSize];
 
-            while((length = inputStreamReader.read(buffer, 0, bufferSize)) > -1) {
-                result.append(buffer, 0, length);
+            long start = offset;
+            long length = raf.length();
+            raf.seek(start);
+
+            if(offset > 0) {
+                boolean flag = false;
+
+                while((readBytes = raf.read(buffer, 0, bufferSize)) > 0) {
+                    for(int i = 0; i < readBytes; i++) {
+                        if(buffer[i] == LF) {
+                            start = start + i + 1;
+                            flag = true;
+                            break;
+                        }
+                    }
+
+                    if(flag) {
+                        break;
+                    }
+                    else {
+                        start += readBytes;
+                    }
+                }
+
+                if(flag) {
+                    raf.seek(start);
+                }
+                else {
+                    FileRange range = new FileRange();
+                    range.setStart(length - 1);
+                    range.setEnd(length - 1);
+                    range.setLength(length);
+                    range.setRows(-1);
+                    range.setCharset(charset);
+                    return range;
+                }
             }
-            return result.toString();
+
+            readBytes = Math.max((int)(length - start), 0);
+            byte[] bytes = new byte[readBytes];
+
+            if(readBytes > 0) {
+                readBytes = raf.read(bytes, 0, readBytes);
+            }
+
+            FileRange range = new FileRange();
+            range.setStart(start);
+            range.setEnd(start + readBytes - 1);
+            range.setLength(length);
+            range.setRows(-1);
+            range.setBuffer(bytes);
+            range.setCharset(charset);
+            return range;
         }
         catch(IOException e) {
-            logger.warn(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         finally {
-            IO.close(inputStreamReader);
-            IO.close(inputStream);
+            IO.close(raf);
         }
         return null;
     }
