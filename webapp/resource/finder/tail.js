@@ -29,8 +29,6 @@ Tail.getContextPath = function() {
 Tail.getTailURL = function(position, rows) {
     var params = [];
     params[params.length] = "workspace=" + encodeURIComponent(this.workspace);
-    params[params.length] = "work=" + encodeURIComponent(this.work);
-    params[params.length] = "parent=" + encodeURIComponent(this.parent);
     params[params.length] = "path=" + encodeURIComponent(this.path);
     params[params.length] = "position=" + position;
     params[params.length] = "rows=" + rows;
@@ -128,10 +126,10 @@ Tail.append = function(range) {
         e.appendChild(p);
 
         if(this.scroll == true) {
-            var scrollHeight = e.parentNode.scrollHeight;
+            var scrollHeight = e.scrollHeight;
 
             if(range.rows <= 5) {
-                e.parentNode.scrollTop = scrollHeight;
+                e.scrollTop = scrollHeight;
             }
             else {
                 /**
@@ -140,10 +138,8 @@ Tail.append = function(range) {
                  * 无论怎么做ajax请求只要发起都会导致在当前的UI线程队列里增加一个函数调用
                  * 这将阻塞动画效果连续执行，从而出现卡顿
                  */
-                jQuery(e.parentNode).stop();
-                jQuery(e.parentNode).animate({"scrollTop": scrollHeight}, range.rows * 5, function() {
-                    console.log("animate end.");
-                });
+                jQuery(e).stop();
+                jQuery(e).animate({"scrollTop": scrollHeight}, range.rows * 5);
             }
         }
     }
@@ -248,10 +244,10 @@ Tail.getContainer = function() {
  * 获取显示区域的容器
  */
 Tail.getEditor = function() {
-    if(this.editor == null) {
-        this.editor = document.getElementById(this.editorId);
+    if(this.container == null) {
+        this.container = document.getElementById(this.containerId);
     }
-    return this.editor;
+    return this.container;
 };
 
 /**
@@ -275,12 +271,9 @@ Tail.create = function(range) {
 };
 
 Tail.init = function() {
-    var editor = this.getEditor();
     var container = this.getContainer();
 
     this.workspace = document.body.getAttribute("workspace");
-    this.work = document.body.getAttribute("work");
-    this.parent = document.body.getAttribute("parent");
     this.path = document.body.getAttribute("path");
     this.charset = Finder.getConfig("global.charset", "utf-8");
     this.fontFamily = Finder.getConfig("less.fontFamily", "Lucida Console");

@@ -4,4 +4,4 @@
 
 @SET PATH=%PATH%;%ANT_HOME%\bin
 call ant "-buildfile" "build.xml"
-@REM pause
+@pause

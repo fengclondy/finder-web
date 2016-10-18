@@ -32,12 +32,9 @@ jQuery(function() {
 //-->
 </script>
 </head>
-<body contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" charset="${charset}">
+<body contextPath="${contextPath}" workspace="${workspace}" parent="${parent}" path="${path}" charset="${charset}">
 <!-- 设置-语言-语言和输入设置-去掉勾选 启用拼写检查 -->
-<div id="less-container" class="less-container">
-    <div id="less-editor" contenteditable="false"></div>
-</div>
-
+<div id="less-container" class="less-container" contenteditable="false"></div>
 <div id="less-progress-bar" class="less-progress-bar">
     <div class="progress">
         <div class="slider">
@@ -47,7 +44,6 @@ jQuery(function() {
         </div>
     </div>
 </div>
-
 <div id="less-status-bar" class="less-status-bar">
     <div style="height: 18px; background-color: #333333;">
         <span class="charset">

@@ -34,7 +34,7 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
 2. 修改src/main/resource/META-INF/conf/workspace.xml，指定可管理的目录。
 3. 修改logback.xml，如果不修改，windows系统下请确保tomcat所在的磁盘存在 /opt/resin/log 目录。
 4. 将webapp目录中的文件拷贝到tomcat的webapps/ROOT目录 或者 直接配置tomcat的server.xml，配置一个context指到webapp目录。
-5. 启动应用之后访问： http://localhost/finder/index.html
+5. 启动应用之后访问： http://localhost/finder/index.html, 默认的用户名: admin, 密码: 1234, 请登录之后及时修改密码。
 6. 测试日志功能请找一个较大的日志文件进行测试，太小的日志文件显示不出来效果。
 7. 注：workspace.xml中可以配置任意多个workspace，每一个workspace的name可以随便指定一个名字，文件夹也是自定义的，你可以指向任意目录，不一定非得指到logback.xml中配置的目录。
     finder并不限制你要查看的文件，你可以使用日志监控功能监控任意的文件，但请不要查看非文本文件，less和tail都是按行拉取的。
@@ -44,17 +44,32 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
     所以理论上less和tail功能可以实时监控任意大小的日志文件，当你有一个超大的日志文件，一般百兆以上，其他文本编辑器打不开时，finder是个很好的工具。
     less可以任意定义文件位置，tail只实时的显示文件的尾部数据。下一步将会考虑给tail功能添加grep功能，这样可以只监控关心的数据。
 
+你也可以直接将release/finder.war部署到tomcat, 启动之后tomcat会自动解压finder.war, 然后修改对应目录内的配置文件，修改之后重启tomcat即可。
+
+用户控制
+=================
+finder默认的用户数据存储在WEB-INF/user目录下，一个用户一个文件，文件名以用户名命名。
+这个实现是一个及其简陋的实现，只是为了满足用户控制的功能，未来不打算也不会提供更过的用户控制功能。
+finder本身只是打算作为其他系统的一部分，因此也不会支持权限控制，如果你需要更多更强大的用户和权限控制，请参考SessionFilter的方式，将Finder默认的SessionFilter替换为你自己的Filter。
+默认的用户控制：SessionFilter, 如果你不需要这个功能，将它从web.xml配置中移除即可。默认的用户是admin, 密码是1234。
+安全问题: 由于finder是开源的, 任何人都可能看到源码, 所以你最好修改cookiekey.properties文件中的cookie.md5key，这个是用来签名的，如果泄露就可能自己伪造cookie。
+以下链接不会在界面中体现，需要添加用户或者登出系统，请直接在地址栏输入地址：
+添加用户: /finder/user/add.html
+系统登录: /finder/login.html
+系统登出: /finder/logout.html
+
 常见问题
 =================
 1. 中文乱码
 请在tomcat的server.xml中配置URIEncoding:
-``xml
+``
 <Connector port="80" protocol="HTTP/1.1"
     connectionTimeout="20000"
     redirectPort="8443" URIEncoding="UTF-8"/>
 ``
 
-2. 'javax.tools.JavaCompiler', finder使用的jsp编译器要求必须加载tools.jar, 所以在环境变量里面配置%JAVA_HOME%\lib\tools.jar即可。
+2. 'javax.tools.JavaCompiler' not found
+   finder使用的jsp编译器要求必须加载tools.jar, 所以在环境变量里面配置%JAVA_HOME%\lib\tools.jar即可。
 
 自定义插件
 =================
@@ -76,6 +91,6 @@ finder本身不提供任何的权限控制, 所以对于权限敏感的系统，
 
 BUG反馈
 =================
-这个东西是我平时常用的一个小工具，我自己发现的bug都会及时修改并提交。使用过程中发现的bug也请反馈给我，我会及时修改。另外发现bug也请及时下载新版本。
+我自己发现的bug都会及时修改并提交。使用过程中发现的bug也请反馈给我，我会及时修改。另外发现bug也请及时下载新版本。
 
 

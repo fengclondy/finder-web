@@ -39,12 +39,9 @@ jQuery(function(){
 //-->
 </script>
 </head>
-<body contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" charset="${charset}">
+<body contextPath="${contextPath}" workspace="${workspace}" parent="${parent}" path="${path}" charset="${charset}">
 <!-- 设置-语言-语言和输入设置-去掉勾选 启用拼写检查 -->
-<div id="tail-container" class="less-container">
-    <div id="tail-editor" target="parent" contenteditable="false"></div>
-</div>
-
+<div id="tail-container" class="less-container" contenteditable="false"></div>
 <div class="less-status-bar">
     <div style="height: 18px; background-color: #333333;">
         <span class="charset"><select name="charset" selected-value="${charset}"></select></span>

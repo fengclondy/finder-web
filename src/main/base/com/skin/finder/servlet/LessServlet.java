@@ -464,28 +464,36 @@ public class LessServlet extends HttpServlet {
 
             switch (c) {
                 case '"': {
-                    buffer.append("\\\"");break;
+                    buffer.append("\\\"");
+                    break;
                 }
                 case '\r': {
-                    buffer.append("\\r");break;
+                    buffer.append("\\r");
+                    break;
                 }
                 case '\n': {
-                    buffer.append("\\n");break;
+                    buffer.append("\\n");
+                    break;
                 }
                 case '\t': {
-                    buffer.append("\\t");break;
+                    buffer.append("\\t");
+                    break;
                 }
                 case '\b': {
-                    buffer.append("\\b");break;
+                    buffer.append("\\b");
+                    break;
                 }
                 case '\f': {
-                    buffer.append("\\f");break;
+                    buffer.append("\\f");
+                    break;
                 }
                 case '\\': {
-                    buffer.append("\\\\");break;
+                    buffer.append("\\\\");
+                    break;
                 }
                 default : {
-                    buffer.append(c);break;
+                    buffer.append(c);
+                    break;
                 }
             }
         }

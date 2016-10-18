@@ -15,6 +15,11 @@
     </filter>
 
     <filter>
+        <filter-name>SessionFilter</filter-name>
+        <filter-class>com.skin.finder.filter.SessionFilter</filter-class>
+    </filter>
+
+    <filter>
         <filter-name>DispatchFilter</filter-name>
         <filter-class>com.skin.j2ee.filter.DispatchFilter</filter-class>
         <init-param>
@@ -59,6 +64,12 @@
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>SessionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <filter-mapping>

@@ -27,8 +27,6 @@ Less.getContextPath = function() {
 Less.getRangeURL = function(position, type, rows) {
     var params = [];
     params[params.length] = "workspace=" + encodeURIComponent(this.workspace);
-    params[params.length] = "work=" + encodeURIComponent(this.work);
-    params[params.length] = "parent=" + encodeURIComponent(this.parent);
     params[params.length] = "path=" + encodeURIComponent(this.path);
     params[params.length] = "position=" + position;
     params[params.length] = "type=" + type;
@@ -180,7 +178,6 @@ Less.append = function(range) {
         }
     }
     e.appendChild(p);
-    e.parentNode.scrollTop = e.parentNode.scrollTop - jQuery(p).height();
     p.setAttribute("action", "append");
 
     /**
@@ -231,7 +228,7 @@ Less.insert = function(range) {
     else {
         e.appendChild(p);
     }
-    e.parentNode.scrollTop = p.clientHeight;
+    e.scrollTop = p.clientHeight;
     p.setAttribute("action", "insert");
 };
 
@@ -299,12 +296,11 @@ Less.getRows = function() {
  * 根据当前显示区域显示的内容显示当前显示的文件进度
  */
 Less.showProgress = function() {
-    var e = this.getEditor();
     var c = this.getContainer();
     var top = jQuery(c).position().top;
     var height = jQuery(c).height();
     var scrollTop = jQuery(c).scrollTop();
-    var list = e.childNodes;
+    var list = c.childNodes;
     var length = this.length;
 
     for(var i = list.length - 1; i > -1; i--) {
@@ -372,7 +368,7 @@ Less.setStatus = function(status, message) {
 };
 
 /**
- * 获取根容器
+ * 获取显示区域的容器
  */
 Less.getContainer = function() {
     if(this.container == null) {
@@ -385,10 +381,10 @@ Less.getContainer = function() {
  * 获取显示区域的容器
  */
 Less.getEditor = function() {
-    if(this.editor == null) {
-        this.editor = document.getElementById(this.editorId);
+    if(this.container == null) {
+        this.container = document.getElementById(this.containerId);
     }
-    return this.editor;
+    return this.container;
 };
 
 /**
@@ -413,12 +409,9 @@ Less.create = function(range) {
 };
 
 Less.init = function() {
-    var editor = this.getEditor();
     var container = this.getContainer();
 
     this.workspace = document.body.getAttribute("workspace");
-    this.work = document.body.getAttribute("work");
-    this.parent = document.body.getAttribute("parent");
     this.path = document.body.getAttribute("path");
     this.charset = Finder.getConfig("global.charset", "utf-8");
     this.fontFamily = Finder.getConfig("less.fontFamily", "Lucida Console");
