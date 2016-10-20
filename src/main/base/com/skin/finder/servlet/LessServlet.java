@@ -147,13 +147,19 @@ public class LessServlet extends HttpServlet {
      * @param rows
      * @param charset
      * @return FileRange
-     * @throws IOException 
+     * @throws IOException
      */
     public FileRange prev(RandomAccessFile raf, long position, int rows, String charset) throws IOException {
         long length = raf.length();
 
         if(position < 0 || position >= length) {
-            return null;
+            FileRange range = new FileRange();
+            range.setStart(position);
+            range.setEnd(position);
+            range.setLength(length);
+            range.setRows(0);
+            range.setCharset(charset);
+            return range;
         }
 
         int bufferSize = 4096;
@@ -225,8 +231,8 @@ public class LessServlet extends HttpServlet {
 
         if((start + 1) >= length) {
             FileRange range = new FileRange();
-            range.setStart(length - 1);
-            range.setEnd(length - 1);
+            range.setStart(length);
+            range.setEnd(length);
             range.setLength(length);
             range.setRows(0);
             range.setCharset(charset);

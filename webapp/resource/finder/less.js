@@ -36,19 +36,10 @@ Less.getRangeURL = function(position, type, rows) {
 };
 
 /**
- * 请求前一块内容
+ * 拉取数据
  */
-Less.prev = function() {
-    var position = this.getStart() - 1;
-
-    if(position <= 0) {
-        return;
-    }
-
+Less.poll = function(url, callback) {
     this.setStatus(1);
-
-    var rows = this.getRows();
-    var url = this.getRangeURL(position, 0, rows);
 
     jQuery.ajax({
         type: "get",
@@ -61,8 +52,7 @@ Less.prev = function() {
             var range = result.value;
 
             if(result.status == 200 && range != null) {
-                Less.success(range);
-                Less.insert(range);
+                callback(range);
                 Less.setStatus(0);
             }
             else {
@@ -73,33 +63,42 @@ Less.prev = function() {
 };
 
 /**
+ * 请求前一块内容
+ */
+Less.prev = function(callback) {
+    var position = this.getStart() - 1;
+
+    if(position <= 0) {
+        return;
+    }
+
+    var rows = this.getRows();
+    var url = this.getRangeURL(position, 0, rows);
+
+    Less.poll(url, function(range) {
+        Less.success(range);
+        Less.insert(range);
+
+        if(callback != null) {
+            callback();
+        }
+    });
+};
+
+/**
  * 请求下一块内容
  */
-Less.next = function() {
-    this.setStatus(1);
-
+Less.next = function(callback) {
     var position = this.getEnd();
     var rows = this.getRows();
     var url = this.getRangeURL(position, 1, rows);
 
-    jQuery.ajax({
-        type: "get",
-        url: url,
-        dataType: "json",
-        error: function(req, status, error) {
-            Less.setStatus(0, status + ": " + error);
-        },
-        success: function(result) {
-            var range = result.value;
+    Less.poll(url, function(range) {
+        Less.success(range);
+        Less.append(range);
 
-            if(result.status == 200 && range != null) {
-                Less.success(range);
-                Less.append(range);
-                Less.setStatus(0);
-            }
-            else {
-                Less.setStatus(0, result.message);
-            }
+        if(callback != null) {
+            callback();
         }
     });
 };
@@ -108,86 +107,16 @@ Less.next = function() {
  * 请求指定位置的内容
  * @param percent - 百分比位置
  */
-Less.load = function(percent) {
-    this.setStatus(1);
-
-    var position = (percent < 1 ? Math.floor(percent * this.length) : this.length);
+Less.load = function(position) {
     var rows = this.getRows();
     var url = this.getRangeURL(position, 1, rows);
 
-    jQuery.ajax({
-        type: "get",
-        url: url,
-        dataType: "json",
-        error: function(req, status, error) {
-            Less.setStatus(0, status + ": " + error);
-        },
-        success: function(result) {
-            var range = result.value;
-
-            if(result.status == 200 && range != null) {
-                Less.clear();
-                Less.success(range);
-                Less.append(range);
-
-                /**
-                 * 追加完成之后会导致立即触发scroll事件, 然后再次出发next请求, 导致接下来计算的进度总是比点击的位置大很多
-                 * 所以此处稍等一会再设置状态为空闲
-                 *
-                 */
-                setTimeout(function() {
-                    Less.setStatus(0);
-                }, 200);
-            }
-            else {
-                Less.setStatus(0, result.message);
-            }
-        }
+    Less.poll(url, function(range) {
+        Less.clear();
+        Less.success(range);
+        Less.append(range);
+        Less.scroll(160);
     });
-};
-
-/**
- * 显示区域追加内容
- * @param range - 服务端返回的文件片段对象
- */
-Less.append = function(range) {
-    if(range == null || range.rows < 1) {
-        return;
-    }
-
-    var e = this.getEditor();
-    var p = this.create(range);
-    var list = e.childNodes;
-
-    while(list.length > 100) {
-        var node = list[0];
-        var count = parseInt(node.getAttribute("rows"));
-        e.removeChild(node);
-        this.rows -= count;
-    }
-
-    while(this.rows > this.maxRows) {
-        if(list.length > 1) {
-            var node = list[0];
-            var count = parseInt(node.getAttribute("rows"));
-            e.removeChild(node);
-            this.rows -= count;
-        }
-        else {
-            break;
-        }
-    }
-    e.appendChild(p);
-    p.setAttribute("action", "append");
-
-    /**
-     * bug: 当页面第一次进来的时候不会触发任何事件，所以也不会计算加载进度，导致进度条仍然显示0
-     * 这个bug不好解决，没有地方可以方便的检查，所以在此处做一个检查，简单处理掉
-     */
-    if(this.first != true) {
-        this.first = true;
-        this.showProgress();
-    }
 };
 
 /**
@@ -200,27 +129,8 @@ Less.insert = function(range) {
     }
 
     var e = this.getEditor();
-    var p = this.create(range);
     var list = e.childNodes;
-
-    while(list.length > 100) {
-        var node = list[list.length - 1];
-        var count = parseInt(node.getAttribute("rows"));
-        e.removeChild(node);
-        this.rows -= count;
-    }
-
-    while(this.rows > this.maxRows) {
-        if(list.length > 1) {
-            var node = list[list.length - 1];
-            var count = parseInt(node.getAttribute("rows"));
-            e.removeChild(node);
-            this.rows -= count;
-        }
-        else {
-            break;
-        }
-    }
+    var p = this.create("insert", range);
 
     if(list.length > 0) {
         e.insertBefore(p, list[0]);
@@ -229,7 +139,76 @@ Less.insert = function(range) {
         e.appendChild(p);
     }
     e.scrollTop = p.clientHeight;
-    p.setAttribute("action", "insert");
+};
+
+/**
+ * 显示区域追加内容
+ * @param range - 服务端返回的文件片段对象
+ */
+Less.append = function(range) {
+    if(range == null || range.rows < 1) {
+        return;
+    }
+
+    var e = this.getEditor();
+    var p = this.create("append", range);
+    e.appendChild(p);
+};
+
+Less.cut1 = function() {
+    var e = this.getEditor();
+    var list = e.childNodes;
+    var flag = false;
+
+    while(list.length > 100) {
+        var node = list[0];
+        var count = parseInt(node.getAttribute("rows"));
+        e.removeChild(node);
+        this.rows -= count;
+        flag = true;
+    }
+
+    while(this.rows > this.maxRows) {
+        if(list.length > 1) {
+            var node = list[0];
+            var count = parseInt(node.getAttribute("rows"));
+            e.removeChild(node);
+            this.rows -= count;
+            flag = true;
+        }
+        else {
+            break;
+        }
+    }
+    return flag;
+};
+
+Less.cut2 = function() {
+    var e = this.getEditor();
+    var list = e.childNodes;
+    var flag = false;
+
+    while(list.length > 100) {
+        var node = list[list.length - 1];
+        var count = parseInt(node.getAttribute("rows"));
+        e.removeChild(node);
+        this.rows -= count;
+        flag = true;
+    }
+
+    while(this.rows > this.maxRows) {
+        if(list.length > 1) {
+            var node = list[list.length - 1];
+            var count = parseInt(node.getAttribute("rows"));
+            e.removeChild(node);
+            this.rows -= count;
+            flag = true;
+        }
+        else {
+            break;
+        }
+    }
+    return flag;
 };
 
 /**
@@ -289,7 +268,16 @@ Less.getEnd = function() {
  */
 Less.getRows = function() {
     var c = this.getContainer();
-    return 3 * Math.floor(jQuery(c).height() / 16);
+    var rows = 3 * Math.floor(jQuery(c).height() / 16);
+
+    if(rows < 100) {
+        rows = 100;
+    }
+
+    if(rows > 2000) {
+        rows = 2000;
+    }
+    return rows;
 };
 
 /**
@@ -301,7 +289,6 @@ Less.showProgress = function() {
     var height = jQuery(c).height();
     var scrollTop = jQuery(c).scrollTop();
     var list = c.childNodes;
-    var length = this.length;
 
     for(var i = list.length - 1; i > -1; i--) {
         var e = list[i];
@@ -312,16 +299,14 @@ Less.showProgress = function() {
             || (bottom > 0 && bottom <= height)
             || (offsetTop <= 0 && bottom >= height)) {
             var end = parseInt(e.getAttribute("end"));
-
-            if(length > 0) {
-                this.setProgress(end);
-            }
-            else {
-                this.setProgress(0);
-            }
+            this.setProgress(end);
             break;
         }
     }
+};
+
+Less.scroll = function(height) {
+    this.getContainer().scrollTop = height;
 };
 
 /**
@@ -330,7 +315,7 @@ Less.showProgress = function() {
  */
 Less.setProgress = function(position) {
     var length = this.length;
-    var percent = position / length;
+    var percent = (length > 0 ? (position / length) : 0);
     var ratio = percent * 100;
 
     jQuery("#less-progress-bar").find(".progress .pace").css("width", ratio + "%");
@@ -397,14 +382,19 @@ Less.getEditor = function() {
  *          一般情况下日志文件会不断增大, 但也有可能从很大变为很小, 例如按天滚动的日志文件, 在凌晨时会重新产生新文件.
  * @param range - 服务器返回的文本块
  */
-Less.create = function(range) {
+Less.create = function(type, range) {
     var p = document.createElement("pre");
-    p.setAttribute("action", "unknown");
+    p.setAttribute("action", type);
     p.setAttribute("start", range.start);
     p.setAttribute("end",   range.end);
     p.setAttribute("rows",  range.rows);
     p.setAttribute("length",  range.length);
     p.appendChild(document.createTextNode(range.content));
+
+    if(range.truncate == true) {
+        p.setAttribute("rows",  range.rows + 1);
+        p.appendChild(document.createTextNode("<<< data truncated >>>"));
+    }
     return p;
 };
 
@@ -428,6 +418,8 @@ Less.init = function() {
         Less.charset = this.value;
     });
 
+    var lastScrollTop = 0;
+
     jQuery(container).bind("scroll", function() {
         if(Less.loadding != 0 || Less.flag == true) {
             return;
@@ -440,23 +432,26 @@ Less.init = function() {
 
         /**
          * 计算当前显示的进度
-         * 这个不能放到加载完成之后计算，那样显示出来的进度不准，并且还与手动点击进度条显示的进度冲突
          */
         Less.showProgress();
 
-        /**
-         * 160 = 16 * 10, 提前10行加载, 16为行高
-         * 当还有10行未显示时提前加载, 避免滚动到内容时加载的延迟, 可以提高使用体验
-         */
-        if((clientHeight + scrollTop + 160) >= scrollHeight) {
-            Less.next();
-        }
-        else if(scrollTop <= 160) {
-            Less.prev();
+        if(lastScrollTop < scrollTop) {
+            /**
+             * 128 = 8 * 10, 提前8行加载，16为行高
+             * 当还有8行未显示时提前加载，避免滚动到内容时加载的延迟
+             */
+            if((clientHeight + scrollTop + 128) >= scrollHeight) {
+                Less.cut1();
+                Less.next();
+            }
         }
         else {
-            // do nothing
+            if(scrollTop <= 128) {
+                Less.cut2();
+                Less.prev();
+            }
         }
+        lastScrollTop = scrollTop;
     });
 
     jQuery("#less-progress-bar .progress .slider .mask").unbind();
@@ -467,8 +462,9 @@ Less.init = function() {
 
         var x = event.offsetX;
         var width = jQuery(this).width();
-        Less.setProgress(Math.floor(x / width * Less.length));
-        Less.load(x / width);
+        var position = Math.floor(x / width * Less.length);
+        Less.setProgress(position);
+        Less.load(position);
     });
 
     jQuery("#less-progress-bar .progress .slider .mask").mousemove(function(event) {
@@ -487,5 +483,8 @@ Less.init = function() {
     jQuery("#less-progress-bar .progress .slider .mask").mouseout(function() {
         jQuery("#less-tooltip").hide();
     });
-    jQuery(container).trigger("scroll");
+
+    Less.next(function() {
+        Less.showProgress();
+    });
 };

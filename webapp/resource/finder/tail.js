@@ -82,17 +82,30 @@ Tail.poll = function() {
         url: url,
         dataType: "json",
         error: function(req, status, error) {
-            var message = "#* ** ERROR: ** *#\r\n" + status + ": " + error + "\r\n\r\n\r\n";
+            var message = "\r\n## ** ERROR: ** ##\r\n" + status + ": " + error + "\r\n\r\n";
             Tail.append({"start": position, "end": position, "rows": 1, "length": length, "content": message});
         },
         success: function(result) {
             var range = result.value;
 
+            if(range == null) {
+                var message = "\r\n## ** ERROR: ** ##\r\n500: no data\r\n\r\n";
+                Tail.append({"start": position, "end": position, "rows": 1, "length": length, "content": message});
+                return;
+            }
+
+            if(range.length < Tail.length) {
+                window.location.reload();
+                return;
+            }
+
             if(result.status == 200) {
                 Tail.append(range);
             }
             else {
-                // Tail.append("error - " + result.message + ": " + result.message);
+                var message = "\r\n## ** ERROR: ** ##\r\n500: " + result.message + "\r\n\r\n";
+                Tail.append({"start": position, "end": position, "rows": 0, "length": length, "content": message});
+                return;
             }
         }
     });
@@ -215,7 +228,7 @@ Tail.getEnd = function() {
         return parseInt(node.getAttribute("end"));
     }
     else {
-        return 0;
+        return this.length - 1;
     }
 };
 
@@ -287,6 +300,10 @@ Tail.init = function() {
 
     jQuery("select[name=charset]").change(function() {
         Tail.charset = this.value;
+    });
+
+    jQuery("#tail-clear-btn").click(function() {
+        Tail.clear();
     });
 
     jQuery("#tail-stop-btn").toggle(function() {

@@ -306,6 +306,7 @@ public class FinderServlet {
         long start = 0L;
         long end = 0L;
         long length = file.length();
+        long maxLength = 128L * 1024L;
         FileRange range = null;
         String charset = encoding;
 
@@ -313,8 +314,11 @@ public class FinderServlet {
             charset = "utf-8";
         }
 
-        if(length > 128L * 1024L) {
-            long offset = length - 128L * 1024L;
+        /**
+         * 返回不超过128k的数据
+         */
+        if(length > maxLength) {
+            long offset = length - maxLength;
             range = this.getRange(file, offset, charset);
         }
         else if(length > 0L) {

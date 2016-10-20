@@ -2,29 +2,79 @@ if(typeof(window.Finder) == "undefined") {
     window.Finder = {};
 }
 
+Finder.setCookie = function(cookie) {
+    var expires = "";
+    if(cookie.value == null) {
+        cookie.value = "";
+        cookie.expires = -1;
+    }
+
+    if(cookie.expires != null) {
+        var date = null;
+        if(typeof(cookie.expires) == "number") {
+            date = new Date();
+            date.setTime(date.getTime() + cookie.expires * 1000);
+        }
+        else if(cookie.expires.toUTCString != null) {
+            date = cookie.expires;
+        }
+        expires = "; expires=" + date.toUTCString();
+    }
+
+    var path = cookie.path ? "; path=" + (cookie.path) : "";
+    var domain = cookie.domain ? "; domain=" + (cookie.domain) : "";
+    var secure = cookie.secure ? "; secure" : "";
+    document.cookie = [cookie.name, "=", (cookie.value != null ? encodeURIComponent(cookie.value) : ""), expires, path, domain, secure].join("");
+};
+
+Finder.getCookie = function(name) {
+    var value = null;
+    if(document.cookie && document.cookie != "") {
+        var cookies = document.cookie.split(';');
+        for(var i = 0; i < cookies.length; i++) {
+            var cookie = StringUtil.trim(cookies[i]);
+            if(cookie.substring(0, name.length + 1) == (name + "=")) {
+                value = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return value;
+};
+
+Finder.getLocalVariable = function(name) {
+    if(typeof(window.localStorage) != "undefined") {
+        return window.localStorage[name];
+    }
+    else {
+        return Finder.getCookie(name);
+    }
+};
+
+Finder.setLocalVariable = function(name, value) {
+    var json = JSON.stringify(value);
+
+    if(typeof(window.localStorage) != "undefined") {
+        window.localStorage[name] = json;
+    }
+    else {
+        Finder.setCookie({"name": name, "value": value, "expires": 7 * 24 * 60 * 60});
+    }
+};
+
 Finder.getFinderConfig = function() {
     var config = null;
 
-    if(typeof(window.localStorage) == "undefined") {
-        config = {};
+    try {
+        config = JSON.parse(Finder.getLocalVariable("finder"));
     }
-    else {
-        try {
-            config = JSON.parse(window.localStorage.finder);
-        }
-        catch(e) {
-        }
+    catch(e) {
     }
     return (config != null ? config : {});
 };
 
 Finder.setFinderConfig = function(config) {
-    if(typeof(window.localStorage) != "undefined") {
-        window.localStorage.finder = JSON.stringify(config);
-    }
-    else {
-        alert("您的浏览器不支持本地存储，请升级浏览器之后再试！");
-    }
+    Finder.setLocalVariable("finder", config);
 };
 
 Finder.setConfig = function(name, value) {
