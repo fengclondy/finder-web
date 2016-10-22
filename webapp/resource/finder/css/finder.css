@@ -76,10 +76,19 @@ div.menu-head{height: 30px; padding-left: 18px; border-bottom: 2px dashed #a3c4d
 div.menu-head h4{font-size: 14px; font-weight: bold;}
 div.menu-body{padding-left: 8px; overflow: scroll;}
 
-div.finder {margin: 0px 8px 8px 8px;}
+div.finder {margin: 0px 0px 0px 0px;}
 div.finder select {height: 28px;}
 div.finder span.label {margin-left: 4px;}
-div.finder div.menu-bar{height: 42px; padding-top: 4px; border-left: 1px solid #aaaaab; border-right: 1px solid #aaaaab; border-top: 0px solid #aaaaab; border-bottom: 1px solid #aaaaab; background: url(../images/menubar.gif) repeat-x scroll 0px 0px transparent;}
+div.finder div.menu-bar{
+    padding-top: 4px;
+    height: 32px;
+    border-left: 0px solid #d0d0d0;
+    border-right: 0px solid #d0d0d0;
+    border-top: 0px solid #d0d0d0;
+    border-bottom: 1px solid #d0d0d0;
+    background-color: #f8f8f8;
+    /* background: transparent url(../images/menubar.gif) repeat-x scroll 0px 0px; */
+}
 
 a.button{float: left; margin-left: 4px; width: 27px; height: 28px; background: url(../images/sprite.gif) no-repeat scroll 0px 0px transparent; display: block;}
 a.button:hover{background-position: -27px 0px;}
@@ -94,7 +103,7 @@ a.button span.home{background-position: 2px -71px;}
 a.button span.setting{background-position: -27px -71px;}
 a.button span.help{background-position: -54px -71px;}
 
-div.finder input.address{width: 480px; height: 24px; line-height: 24px; padding-left: 4px;}
+div.finder input.address{padding-left: 24px; width: 460px; height: 26px; line-height: 26px; outline: none; border: 1px solid #d0d0d0; background: #ffffff url(../images/address.gif) no-repeat scroll 4px 5px;}
 
 /* detail-view */
 div.detail-view{width: 100%; font-size: 12px; display: none;}
