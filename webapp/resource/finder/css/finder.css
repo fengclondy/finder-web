@@ -119,8 +119,8 @@ div.detail-view .head{
 }
 
 div.detail-view span{float: left; display: block; text-align: left; cursor: default;}
-div.detail-view span.icon{width: 18px;}
-div.detail-view span.icon img{margin: -4px 0px 0px 0px; padding: 0px; border: 0px solid #ffffff; vertical-align: middle;}
+div.detail-view span.icon{width: 18px; padding-left: 4px;}
+div.detail-view span.icon img{margin: -2px 0px 0px 0px; padding: 0px; border: 0px solid #ffffff; vertical-align: middle;}
 div.detail-view span a.file{margin-left: 2px; text-decoration: none; color: #000000;}
 div.detail-view span a.file:hover{color: #ff0000;}
 
