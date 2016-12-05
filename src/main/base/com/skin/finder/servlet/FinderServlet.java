@@ -418,13 +418,12 @@ public class FinderServlet {
             return;
         }
 
-        long length = file.length();
-
         if(file.exists() == false) {
             response.setStatus(404);
             return;
         }
 
+        long length = file.length();
         long lastModified = file.lastModified();
         String contentType = MimeType.getMimeType(file.getName());
         String etag = this.getETag(lastModified, 0L, length);

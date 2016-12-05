@@ -25,7 +25,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.skin.util.Attributes;
-import com.skin.util.JsonUtil;
 
 /**
  * <p>Title: KeyInfo</p>
@@ -35,25 +34,6 @@ import com.skin.util.JsonUtil;
  * @version 1.0
  */
 public class KeyConfigFactory {
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        ClassLoader classLoader = KeyConfigFactory.class.getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream("META-INF/conf/usergroup.xml");
-
-        try {
-            List<KeyInfo> keys = KeyConfigFactory.parse(inputStream);
-
-            for(KeyInfo keyInfo : keys) {
-                System.out.println(JsonUtil.stringify(keyInfo));
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * @param resource
      * @return List<KeyInfo>

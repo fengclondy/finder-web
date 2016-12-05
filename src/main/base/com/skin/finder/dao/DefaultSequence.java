@@ -52,9 +52,7 @@ public class DefaultSequence extends Sequence {
             }
             else {
                 this.nextId++;
-                System.out.println("2 this.nextId: " + this.nextId);
             }
-
             return this.nextId;
         }
     }
