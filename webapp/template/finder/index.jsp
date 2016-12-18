@@ -161,7 +161,7 @@ jQuery(function() {
         <div id="ctrlPanel" class="ctrl-panel"><img id="ctrlBtn" style="border: none; cursor: default;" src="${contextPath}/resource/finder/images/gt.gif"/></div>
     </div>
     <div id="mainPanel" class="main-panel"><iframe id="mainFrame" name="mainFrame" class="main-frame"
-        src="${contextPath}/finder/display.html?workspace=${workspace}" frameborder="0" scrolling="auto" marginwidth="0" marginheight="0"></iframe></div>
+        src="${contextPath}/finder/blank.html" frameborder="0" scrolling="auto" marginwidth="0" marginheight="0"></iframe></div>
 </div>
 <div id="statusBar" class="status-bar hide">
     <div id="_task_bar" class="widget-task-bar"></div>
