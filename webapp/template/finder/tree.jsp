@@ -160,7 +160,7 @@ jQuery(function() {
             }, 100);
         }
     });
-    buildTree("htree", "${contextPath}/finder/getFolderXml.html?workspace=${workspace}", "${contextPath}/finder/display.html?workspace=${workspace}");
+    buildTree("htree", "${contextPath}/finder/getWorkspaceXml.html", "${contextPath}/finder/blank.jsp");
 });
 //]]>
 </script>

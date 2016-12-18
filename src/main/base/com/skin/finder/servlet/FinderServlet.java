@@ -19,7 +19,6 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -143,17 +142,7 @@ public class FinderServlet {
      * @throws IOException
      */
     public void index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
-
-        if(workspace == null || workspace.trim().length() < 1) {
-            Set<String> workspaces = Workspace.getInstance().keySet();
-            request.setAttribute("workspaces", workspaces);
-            this.forward(request, response, this.prefix + "/finder/workspace.jsp");
-        }
-        else {
-            request.setAttribute("workspace", workspace.trim());
-            this.forward(request, response, this.prefix + "/finder/index.jsp");
-        }
+        this.forward(request, response, this.prefix + "/finder/index.jsp");
     }
 
     /**

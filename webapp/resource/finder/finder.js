@@ -2669,11 +2669,10 @@ jQuery(function() {
     }
 
     DispatchAction.execute(window.location.hash);
-
     var leftFrame = window.top.leftFrame;
 
     if(leftFrame != null && leftFrame.expand != null) {
-        leftFrame.expand(Finder.getPath());
+        leftFrame.expand("/" + Finder.getWorkspace() + Finder.getPath());
     }
 });
 
