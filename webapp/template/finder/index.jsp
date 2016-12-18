@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Finder - ${workspace}</title>
+<title>Finder</title>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Cache-Control" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
@@ -157,7 +157,7 @@ jQuery(function() {
 <div id="viewPanel" mainPanel="view">
     <div style="float: left; width: 10px;">
         <div id="leftPanel" class="left-panel"><iframe id="leftFrame" name="leftFrame" class="left-frame"
-            src="${contextPath}/finder/tree.html?workspace=${workspace}" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>
+            src="${contextPath}/finder/tree.html" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>
         <div id="ctrlPanel" class="ctrl-panel"><img id="ctrlBtn" style="border: none; cursor: default;" src="${contextPath}/resource/finder/images/gt.gif"/></div>
     </div>
     <div id="mainPanel" class="main-panel"><iframe id="mainFrame" name="mainFrame" class="main-frame"
