@@ -9,7 +9,7 @@
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Cache-Control" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
-<title>Less</title>
+<title>Preferences</title>
 <link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/config.css"/>
 <script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="${contextPath}/resource/finder/charset.js"></script>
@@ -51,6 +51,14 @@ jQuery(function() {
 
     jQuery("select[name=fontFamily]").change(function() {
         jQuery("#fontExample").css("fontFamily", this.value);
+    });
+
+    jQuery("#default-btn").click(function() {
+        jQuery("select[name=theme]").val("RDark");
+        jQuery("select[name=charset]").val("utf-8");
+        jQuery("select[name=fontFamily]").val("Lucida Console");
+        jQuery("input[name=fontColor]").val("#009900");
+        jQuery("input[name=backgroundColor]").val("#000000");
     });
 
     jQuery("#ensure-btn").click(function() {
@@ -171,8 +179,9 @@ jQuery(function() {
                 </div>
             </div>
             <div class="button">
-                <button id="ensure-btn" class="button ensure"> 确 定 </button>
-                <button id="cancel-btn" class="button cancel"> 取 消 </button>
+                <button id="default-btn" class="button">恢复默认</button>
+                <button id="ensure-btn" class="button ensure">确 定</button>
+                <button id="cancel-btn" class="button cancel">取 消 </button>
             </div>
         </div>
     </div>

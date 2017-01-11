@@ -84,6 +84,7 @@
     <!-- Compiles the source directory and creates a .jar file               -->
     <!-- =================================================================== -->
     <target name="buildjar" depends="compile">
+        <delete file="${build.base}/${appName}-res-${version}.jar"/>
         <delete file="${build.base}/${appName}-web-${version}.jar"/>
 
         <jar destfile="${build.base}/${appName}-web-${version}.jar">
@@ -94,6 +95,17 @@
                 <attribute name="Built-By" value="xuesong.net"/>
             </manifest>
         </jar>
+
+        <jar destfile="${build.base}/${appName}-res-${version}.jar">
+            <fileset dir="${src.webapp}">
+                <include name="/template/"/>
+                <include name="/resource/"/>
+            </fileset>
+            <manifest>
+                <attribute name="Built-By" value="xuesong.net"/>
+            </manifest>
+        </jar>
+
         <echo>Jar: ${build.base}/${jarFileName}</echo>
     </target>
 
@@ -119,6 +131,7 @@
         <delete file="${build.release}/${appName}-web-${version}.jar"/>
         <delete file="${build.release}/${appName}.war"/>
 
+        <copy file="${build.base}/${appName}-res-${version}.jar" todir="${build.release}"/>
         <copy file="${build.base}/${appName}-web-${version}.jar" todir="${build.release}"/>
         <copy file="${build.base}/${appName}.war" todir="${build.release}"/>
         <echo>War: ${build.release}/${appName}.war</echo>

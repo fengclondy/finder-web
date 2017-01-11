@@ -29,7 +29,7 @@ jQuery(function() {
             },
             success: function(result) {
                 if(result.status == 200) {
-                    window.location.href = "${contextPath}/finder/index.html";
+                    window.location.href = "${contextPath}/index.html";
                 }
                 else {
                     alert(result.message);
@@ -49,7 +49,7 @@ jQuery(function() {
             <td style="height: 32px;"><input id="s1" type="text" style="width: 196px; height: 24px;" placeholder="UserName" value=""/></td>
         </tr>
         <tr>
-            <td style="height: 32px;"><input id="s2" type="text" style="width: 196px; height: 24px;" placeholder="Password" value=""/></td>
+            <td style="height: 32px;"><input id="s2" type="password" style="width: 196px; height: 24px;" placeholder="Password" value=""/></td>
         </tr>
         <tr>
             <td style="height: 32px;"><input id="submit" type="button" style="width: 200px; height: 40px;" value="login"/></td>

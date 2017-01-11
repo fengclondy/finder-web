@@ -46,7 +46,7 @@
         </div>
         <div style="float: right; width: 120px;">
             <a class="button home" href="javascript:void(0)" title="首页"><span class="home"></span></a>
-            <a class="button setting" href="javascript:void(0)" title="首页"><span class="setting"></span></a>
+            <a class="button setting" href="javascript:void(0)" title="设置"><span class="setting"></span></a>
             <a class="button help" href="javascript:void(0)" title="帮助" target="_blank"><span class="help"></span></a>
         </div>
     </div>
@@ -86,8 +86,9 @@
                 <span class="fileType">${file.fileType}文件</span>
                 <span class="lastModified">${DateUtil.format(file.lastModified, "yyyy-MM-dd HH:mm")}</span>
                 <span class="w300">
-                    <a action="finder-less" href="javascript:void(0)">less</a>&nbsp;
                     <a action="finder-tail" href="javascript:void(0)">tail</a>&nbsp;
+                    <a action="finder-less" href="javascript:void(0)">less</a>&nbsp;
+                    <a action="finder-grep" href="javascript:void(0)">grep</a>&nbsp;
                     <a action="finder-open" href="javascript:void(0)">open</a>&nbsp;
                     <a action="finder-download" href="javascript:void(0)">download</a>&nbsp;
                     <a action="finder-remove" href="javascript:void(0)">delete</a>

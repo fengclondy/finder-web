@@ -19,7 +19,7 @@ import javax.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skin.j2ee.context.WebApplicationContext;
+import com.skin.j2ee.context.WebContext;
 import com.skin.util.FileUtil;
 import com.skin.util.IO;
 
@@ -47,7 +47,7 @@ public class FileScanJob {
     public void execute(String bind) {
         File home = null;
         File logFile = null;
-        ServletContext servletContext = WebApplicationContext.getServletContext();
+        ServletContext servletContext = WebContext.getServletContext();
 
         if(servletContext != null) {
             home = new File(servletContext.getRealPath("/"));

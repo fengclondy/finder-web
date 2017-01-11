@@ -78,7 +78,7 @@ public class AccessLogDao extends Dao<AccessLog, Long> {
      * @return List<AccessLog>
      */
     public List<AccessLog> list(int pageNum, int pageSize) {
-        String sql = "select * from skin_access_log order by create_time desc";
+        String sql = "select * from skin_access_log order by access_time desc";
         return this.getList(sql, new Object[0], pageNum, pageSize);
     }
 
@@ -99,8 +99,11 @@ public class AccessLogDao extends Dao<AccessLog, Long> {
     public AccessLog getBean(ResultSet resultSet) throws SQLException {
         AccessLog accessLog = new AccessLog();
         accessLog.setLogId(resultSet.getLong("log_id"));
+        accessLog.setAccessTime(resultSet.getTimestamp("access_time"));
         accessLog.setUserId(resultSet.getLong("user_id"));
         accessLog.setUserName(resultSet.getString("user_name"));
+        accessLog.setLocalIp(resultSet.getString("local_ip"));
+        accessLog.setThreadName(resultSet.getString("thread_name"));
         accessLog.setRemoteHost(resultSet.getString("remote_host"));
         accessLog.setRequestMethod(resultSet.getString("request_method"));
         accessLog.setRequestProtocol(resultSet.getString("request_protocol"));
@@ -109,7 +112,6 @@ public class AccessLogDao extends Dao<AccessLog, Long> {
         accessLog.setClientId(resultSet.getString("client_id"));
         accessLog.setClientUserAgent(resultSet.getString("client_user_Agent"));
         accessLog.setClientCookie(resultSet.getString("client_cookie"));
-        accessLog.setCreateTime(resultSet.getTimestamp("create_time"));
         return accessLog;
     }
 }

@@ -150,6 +150,12 @@ jQuery(function() {
         }
     });
 });
+
+jQuery(function() {
+    setTimeout(function() {
+        jQuery("#upgrade-tips").fadeOut();
+    }, 10000);
+});
 //-->
 </script>
 </head>
@@ -169,5 +175,11 @@ jQuery(function() {
         <img style="margin-top: -2px; margin-right: 4px;" src="${contextPath}/resource/finder/images/sound.gif"/>欢迎您，祝您工作愉快！
     </div>
 </div>
+
+<c:if test="${hasNewVersion}">
+<div id="upgrade-tips" style="position: fixed; bottom: 2px; right: 2px; padding: 6px; width: 300px; height: 16px; border: 1px solid #22b14c; background-color: #ffc90e;">
+    发现新版本，请及时更新！<a href="${appDownloadUrl}" target="_blank">点击下载</a>
+</div>
+</c:if>
 </body>
 </html>

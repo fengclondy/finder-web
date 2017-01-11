@@ -37,8 +37,9 @@ table tr td{padding-left: 4px; height: 24px; font-size: 13px;}
         <li>支持大上传，超大文件会自动分段上传，默认设置每次上传10M。</li>
         <li>支持文件拖拽上传，可同时拖拽多个文件上传。</li>
         <li>支持截图上传，截图之后按Ctrl + V。</li>
-        <li>less支持，类似linux系统的less命令。</li>
-        <li>tail支持，类似linux系统的tail命令。</li>
+        <li>grep支持，类似linux系统的grep命令，支持任意大小的文件。</li>
+        <li>less支持，类似linux系统的less命令，支持任意大小的文件。</li>
+        <li>tail支持，类似linux系统的tail命令，支持任意大小的文件。</li>
     </ul>
 </div>
 

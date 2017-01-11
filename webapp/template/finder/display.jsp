@@ -66,7 +66,10 @@
         </div>
     </div>
     <c:if test="${start > 0}">
-    <div style="height: 24px; line-height: 24px; background-color: #efefef; font-size: 12px;">range: ${start} - ${end}/${length}</div>
+    <div style="padding-left: 4px; height: 28px; line-height: 28px; background-color: #efefef; font-size: 12px;">
+        文件较大，只显示部分数据。要查看全部数据请使用 <a href="${contextPath}/finder/less.html?workspace=${workspace}&path=${path}" style="color: #ff0000;">less</a> 打开。
+        [${start} - ${end}/${length}]
+    </div>
     </c:if>
     <div>
         <c:choose>

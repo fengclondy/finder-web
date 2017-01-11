@@ -25,6 +25,8 @@ import com.skin.j2ee.sso.Client;
 import com.skin.j2ee.sso.session.UserSession;
 import com.skin.j2ee.util.CookieUtil;
 import com.skin.j2ee.util.Request;
+import com.skin.util.IP;
+import com.skin.util.StringUtil;
 
 /**
  * <p>Title: AccessLogAction</p>
@@ -53,6 +55,9 @@ public class AccessLogAction extends BaseAction {
     public AccessLog getAccessLog(HttpServletRequest request, HttpServletResponse response) {
         UserSession userSession = Client.getSession(this.getRequest());
         AccessLog accessLog = new AccessLog();
+        accessLog.setAccessTime(new Date());
+        accessLog.setLocalIp(IP.LOCAL);
+        accessLog.setThreadName(StringUtil.right(Thread.currentThread().getName(), 64));
         accessLog.setRemoteHost(Request.getRemoteAddress(request));
         accessLog.setRequestMethod(request.getMethod());
         accessLog.setRequestProtocol(request.getProtocol());
@@ -104,8 +109,6 @@ public class AccessLogAction extends BaseAction {
         if(accessLog.getClientCookie() == null) {
             accessLog.setClientCookie("");
         }
-
-        accessLog.setCreateTime(new Date(System.currentTimeMillis()));
         return accessLog;
     }
 }

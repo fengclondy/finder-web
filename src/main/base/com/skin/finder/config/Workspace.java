@@ -10,8 +10,6 @@
  */
 package com.skin.finder.config;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skin.config.Config;
-import com.skin.config.XmlConfigFactory;
+import com.skin.config.Skinx;
 import com.skin.resource.StringResource;
 
 /**
@@ -48,42 +46,17 @@ public class Workspace extends Config {
      * @return Workspace
      */
     private static Workspace load() {
-        Workspace workspace = null;
-        String appName = AppConfig.getName();
-        String userHome = System.getProperty("user.home");
-        File file = new File(userHome, "skinx/" + appName + "/conf/workspace.xml");
-        logger.info("try load: {}", file.getAbsolutePath());
+        Workspace workspace = new Workspace();
+        InputStream inputStream = Skinx.getInputStream("META-INF/conf/workspace.xml");
 
-        if(file.exists() && file.isFile()) {
-            logger.info("load from: {}", file.getAbsolutePath());
-            workspace = load(file);
-        }
-
-        if(workspace == null) {
-            logger.info("load from: META-INF/conf/workspace.xml");
-            workspace = XmlConfigFactory.getConfig("META-INF/conf/workspace.xml", Workspace.class);
-        }
-        return workspace;
-    }
-
-    /**
-     * @param file
-     * @return Workspace
-     */
-    private static Workspace load(File file) {
-        InputStream inputStream = null;
-
-        try {
-            inputStream = new FileInputStream(file);
-            Workspace workspace = new Workspace();
-            StringResource.load(inputStream, workspace);
-            return workspace;
-        }
-        catch(Exception e) {
-            logger.warn(e.getMessage(), e);
-        }
-        finally {
-            if(inputStream != null) {
+        if(inputStream != null) {
+            try {
+                StringResource.load(inputStream, workspace);
+            }
+            catch(Exception e) {
+                logger.warn(e.getMessage(), e);
+            }
+            finally {
                 try {
                     inputStream.close();
                 }
@@ -91,7 +64,7 @@ public class Workspace extends Config {
                 }
             }
         }
-        return null;
+        return workspace;
     }
 
     /**

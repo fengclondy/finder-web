@@ -100,7 +100,7 @@ Tail.poll = function() {
             }
 
             if(result.status == 200) {
-                Tail.append(range);
+                Tail.append(Tail.filter(range));
             }
             else {
                 var message = "\r\n## ** ERROR: ** ##\r\n500: " + result.message + "\r\n\r\n";
@@ -109,6 +109,31 @@ Tail.poll = function() {
             }
         }
     });
+};
+
+Tail.filter = function(range) {
+    var keyword = this.getKeyword();
+    var regexp = this.getRegexp();
+
+    if(keyword != null && keyword.length > 0 && range.rows > 0) {
+        var buffer = [];
+        var content = range.content;
+        var array = content.split("\n");
+        var reg = new RegExp(keyword);
+        reg.compile(keyword);
+
+        for(var i = 0; i < array.length; i++) {
+            if(regexp == true && reg.test(array[i])) {
+                buffer[buffer.length] = array[i];
+            }
+            else if(array[i].indexOf(keyword) > -1) {
+                buffer[buffer.length] = array[i];
+            }
+        }
+        range.rows = buffer.length;
+        range.content = buffer.join("\r\n");
+    }
+    return range;
 };
 
 Tail.append = function(range) {
@@ -198,6 +223,29 @@ Tail.select = function() {
 Tail.clear = function() {
     this.rows = 0;
     this.getEditor().innerHTML = "";
+};
+
+Tail.getKeyword = function() {
+    return this.keyword;
+};
+
+Tail.getRegexp = function() {
+    /**
+     * 尽可能的不使用正则, 这样可以避免再去取消勾选正则
+     * 如果存在查找的文本, 那么客户端做一个校验
+     * 如果查找的文本一定不是正则, 那么直接返回false
+     */
+    if(this.keyword != null) {
+        var regExp = new RegExp("^[0-9a-zA-Z]+$");
+
+        /**
+         * 如果全部是字母或者数字, 说明一定不是正则
+         */
+        if(regExp.test(this.keyword)) {
+            return false;
+        }
+    }
+    return (this.regexp == true);
 };
 
 /**
@@ -325,5 +373,41 @@ Tail.init = function() {
     jQuery("#tail-auto-scroll").click(function() {
         Tail.setScroll(this.checked);
     });
-    this.start();
+
+    /**
+     * grep
+     */
+    jQuery("#grep-ensure").click(function() {
+        jQuery("#find-panel").hide();
+
+        Tail.keyword = jQuery("#grep-keyword").val();
+        Tail.regexp = jQuery("#grep-regexp").prop("checked");
+        Tail.stop();
+        Tail.clear();
+        Tail.start();
+    });
+
+    jQuery("#grep-close").click(function() {
+        jQuery("#find-panel").hide();
+    });
+
+    jQuery(document.body).keydown(function(event) {
+        var keyCode = event.keyCode;
+
+        if(event.ctrlKey == true && keyCode == 66) {
+            if(jQuery("#find-panel").is(":hidden")) {
+                jQuery("#find-panel").show();
+
+                try {
+                    document.getElementById("grep-keyword").select();
+                }
+                catch(e) {
+                }
+            }
+            else {
+                jQuery("#find-panel").hide();
+            }
+            return false;
+        }
+    });
 };

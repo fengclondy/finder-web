@@ -15,8 +15,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.skin.finder.FileRange;
+import com.skin.finder.servlet.GrepServlet;
 import com.skin.finder.servlet.LessServlet;
 import com.skin.util.IO;
 
@@ -32,8 +35,9 @@ public class LessTest {
      * @param args
      */
     public static void main(String[] args) {
-        prevTest();
+        // prevTest();
         // printLF2(new File("D:\\opt\\resin\\log\\root2.log"));
+        grepTest();
     }
 
     /**
@@ -167,5 +171,38 @@ public class LessTest {
         finally {
             IO.close(inputStream);
         }
+    }
+
+    /**
+     * 
+     */
+    public static void grepTest() {
+        RandomAccessFile raf = null;
+        GrepServlet grep = new GrepServlet();
+
+        try {
+            raf = new RandomAccessFile(new File("D:\\opt\\resin\\log\\test.log"), "r");
+            FileRange range1 = grep.find(raf, "test", false, 0L, 200, "gbk");
+            System.out.println(grep.getReturnValue(200, "ok", range1));
+            
+            FileRange range2 = grep.find(raf, "test", false, range1.getEnd(), 200, "gbk");
+            System.out.println(grep.getReturnValue(200, "ok", range2));
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            IO.close(raf);
+        }
+    }
+
+    /**
+     * 
+     */
+    public static void regexpTest() {
+        String input = "execute time: 3 - /finder/grep.html";
+        Pattern pattern = Pattern.compile("/finder/.*\\.html");
+        Matcher matcher = pattern.matcher(input);
+        System.out.println(matcher.find());
     }
 }

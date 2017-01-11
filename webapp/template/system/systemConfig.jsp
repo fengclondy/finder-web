@@ -17,6 +17,7 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/pagebar.css"/>
 <script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${contextPath}/resource/finder/base.js"></script>
 <script type="text/javascript" src="${contextPath}/resource/finder/scrollpage.js"></script>
 <script type="text/javascript">
 <!--

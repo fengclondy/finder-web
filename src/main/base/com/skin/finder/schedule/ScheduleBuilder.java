@@ -39,8 +39,8 @@ import com.skin.finder.model.Schedule;
  * @version 1.0
  */
 public class ScheduleBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(ScheduleBuilder.class);
     private static Scheduler instance = null;
+    private static final Logger logger = LoggerFactory.getLogger(ScheduleBuilder.class);
 
     /**
      * @throws Exception
@@ -58,11 +58,12 @@ public class ScheduleBuilder {
                 int count = 0;
 
                 for(Schedule schedule : list) {
+                    Long scheduleId = schedule.getScheduleId();
                     Integer status = schedule.getStatus();
                     String expression = schedule.getExpression();
 
                     if(status == null || status.intValue() == 0) {
-                        logger.info("ignore status: 0");
+                        logger.info("scheduleId: {} - ignore status: 0", scheduleId);
                         continue;
                     }
 
@@ -81,7 +82,7 @@ public class ScheduleBuilder {
                     JobDetail jobDetail = jobBuilder.build();
 
                     JobDataMap jobDataMap = jobDetail.getJobDataMap();
-                    jobDataMap.put("scheduleId", schedule.getScheduleId());
+                    jobDataMap.put("scheduleId", scheduleId);
 
                     CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(expression);
                     CronTrigger trigger = TriggerBuilder.newTrigger()
@@ -96,11 +97,10 @@ public class ScheduleBuilder {
                         continue;
                     }
 
-                    logger.info("nextFireTime: " + format(nextFireTime));
+                    logger.info("scheduleId: {} - nextFireTime: {}", scheduleId, format(nextFireTime));
                     Date date = instance.scheduleJob(jobDetail, trigger);
-                    logger.info(jobDetail.getKey() + " has been scheduled to run at: " + format(date)
-                            + " and repeat based on expression: "
-                            + trigger.getCronExpression());
+                    logger.info("scheduleId: {} - {} has been scheduled to run at: {}, and repeat based on expression: {}",
+                            scheduleId, jobDetail.getKey(), format(date), trigger.getCronExpression());
                     count++;
                 }
 
@@ -108,7 +108,7 @@ public class ScheduleBuilder {
                     instance.start();
                 }
                 else {
-                    logger.info("No schedule to run...");
+                    logger.info("no schedule to run...");
                 }
             }
         }

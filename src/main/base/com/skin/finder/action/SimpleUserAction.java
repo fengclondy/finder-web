@@ -1,5 +1,5 @@
 /*
- * $RCSfile: LessAction.java,v $$
+ * $RCSfile: SimpleUserAction.java,v $$
  * $Revision: 1.1 $
  * $Date: 2016-10-02 $
  *
@@ -14,15 +14,15 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import com.skin.finder.manager.SimpleUserManager;
 import com.skin.j2ee.action.BaseAction;
 import com.skin.j2ee.annotation.UrlPattern;
+import com.skin.j2ee.manager.SimpleUserManager;
 import com.skin.j2ee.util.JsonUtil;
 import com.skin.security.Password;
 import com.skin.util.RandomUtil;
 
 /**
- * <p>Title: LessAction</p>
+ * <p>Title: SimpleUserAction</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2006</p>
  * @author xuesong.net
@@ -60,7 +60,7 @@ public class SimpleUserAction extends BaseAction {
         String userSalt = RandomUtil.getRandString(8, 8);
         String userPass = Password.encode(password, userSalt);
 
-        SimpleUserManager userManager = this.getUserManager();
+        SimpleUserManager userManager = SimpleUserManager.getInstance(this.servletContext);
         userManager.update(userName, userPass, userSalt);
         JsonUtil.success(this.request, this.response, "保存成功！");
         return;
@@ -85,13 +85,5 @@ public class SimpleUserAction extends BaseAction {
             }
         }
         return true;
-    }
-
-    /**
-     * @return SimpleUserManager
-     */
-    public SimpleUserManager getUserManager() {
-        String home = this.servletContext.getRealPath("/WEB-INF/user");
-        return new SimpleUserManager(home);
     }
 }

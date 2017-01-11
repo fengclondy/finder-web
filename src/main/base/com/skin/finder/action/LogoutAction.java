@@ -1,5 +1,5 @@
 /*
- * $RCSfile: LessAction.java,v $$
+ * $RCSfile: LogoutAction.java,v $$
  * $Revision: 1.1 $
  * $Date: 2016-10-02 $
  *
@@ -19,7 +19,7 @@ import com.skin.j2ee.annotation.UrlPattern;
 import com.skin.j2ee.util.CookieUtil;
 
 /**
- * <p>Title: LessAction</p>
+ * <p>Title: LogoutAction</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2006</p>
  * @author xuesong.net
@@ -31,7 +31,7 @@ public class LogoutAction extends BaseAction {
      * @throws IOException
      */
     @UrlPattern("/finder/logout.html")
-    public void login() throws ServletException, IOException {
+    public void execute() throws ServletException, IOException {
         CookieUtil.remove(this.response, "passport", null);
         this.redirect("${contextPath}/finder/login.html");
     }

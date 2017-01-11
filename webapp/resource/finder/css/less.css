@@ -198,3 +198,9 @@ div.less-status-bar span.status{width: 200px; padding-left: 0px;}
 
 div.less-status-bar input.text{height: 16px; padding-left: 2px; border: none; outline: none; line-height: 16px;}
 div.less-status-bar input.button{margin: 0px; padding: 0px 8px 0px 8px; height: 18px; line-height: 18px; border: 1px solid #666666; background-color: #333333; color: #c0c0c0;}
+
+div.find-panel{position: fixed; display: block; bottom: 58px; left: 100px; width: 600px; height: 120px; padding: 30px; background-color: #ffffff;}
+div.find-panel p{line-height: 24px;}
+input.grep-keyword{width: 400px; height: 18px;}
+input.grep-button{height: 22px; width: 60px;}
+input.grep-search{height: 22px; width: 60px;}

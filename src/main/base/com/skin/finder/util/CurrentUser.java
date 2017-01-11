@@ -110,7 +110,6 @@ public class CurrentUser {
                 }
             }
         }
-
         return false;
     }
 

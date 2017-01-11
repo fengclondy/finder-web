@@ -13,13 +13,17 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
 
 运行截图
 =================
+ **grep示例**
+输入关键字进行查找，支持正则。
+![grep示例](http://git.oschina.net/uploads/images/2017/0107/165229_72067217_615195.jpeg "grep示例")
+
  **less示例**
 绿色的进度条可以随着内容的滚动自动显示当前进度，也可以单击某一个位置直接跳转到文件的指定位置显示。可以指定文件的字符集，也可以在finder的文件夹页面设置全局字符集和less的显示样式，包括字体，字体颜色，背景颜色等。
-![less示例](http://git.oschina.net/uploads/images/2016/1013/001137_3200dc48_615195.jpeg "less示例")
+![less示例](http://git.oschina.net/uploads/images/2017/0107/170241_971f549f_615195.jpeg "less示例")
 
  **tail示例**
 可以通过设置自动拉取时间调整拉取频率
-![tail示例](http://git.oschina.net/uploads/images/2016/1013/001151_f65afc3d_615195.jpeg "tail示例")
+![tail示例](http://git.oschina.net/uploads/images/2017/0107/170323_36bcb06d_615195.jpeg "tail示例")
 
  **音频播放**
 在播放音频的同时仍然允许切换不同的文件夹。你也可以将音频播放器最小化到左下角。
@@ -86,7 +90,7 @@ finder允许你自定义自己的插件，finder会根据不同的文件扩展�
 finder本身不提供任何的权限控制, 所以对于权限敏感的系统，可以通过添加filter的方式，过滤所有/finder/*的请求，并做权限校验。
 出于安全考虑，finder对任何文件的访问都需要该文件位于workspace.xml中配置的目录内。
 
-1. 第一种方法，也是推荐的做法，参考web.xml将相关过滤器在你的应用中注册即可。
+1. 第一种方法，也是推荐的做法，将release目录的finder-res-xxx.jar和finder-web-xxx.jar拷贝到你的应用lib下，参考web.xml将相关过滤器在你的应用中注册即可。
 2. 第二种方法，引入finder-web.jar，根据你的应用所使用的框架自己调用FinderServlet和LessServlet的相关方法，具体代码可参考FinderAction和LessAction。
 
 其他说明
@@ -98,4 +102,15 @@ BUG反馈
 =================
 我自己发现的bug都会及时修改并提交。使用过程中发现的bug也请反馈给我，我会及时修改。另外发现bug也请及时下载新版本。
 也可进QQ群反馈：341624652
+
+
+ChangeLog
+=================
+$# ........................................................
+$# version: 1.0.0.1
+$# download: http://git.oschina.net/xuesong123/finder-web
+$## change log
+$## 1. 增加grep功能;
+$## 2. 其他bug修复;
+$# ........................................................
 

@@ -5,6 +5,7 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>finder</display-name>
     <distributable/>
+
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
         <filter-class>com.skin.j2ee.filter.CharacterEncodingFilter</filter-class>
@@ -16,7 +17,11 @@
 
     <filter>
         <filter-name>SessionFilter</filter-name>
-        <filter-class>com.skin.finder.filter.SessionFilter</filter-class>
+        <filter-class>com.skin.j2ee.filter.SessionFilter</filter-class>
+        <init-param>
+            <param-name>loginUrl</param-name>
+            <param-value>/finder/login.html</param-value>
+        </init-param>
     </filter>
 
     <filter>
@@ -51,12 +56,16 @@
             <param-value>com.skin.ayada.template.JspTemplateFactory</param-value>
         </init-param>
         <init-param>
+            <param-name>ignoreJspTag</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
             <param-name>jspWork</param-name>
             <param-value>contextPath:/WEB-INF/ayada/tpl</param-value>
         </init-param>
         <init-param>
-            <param-name>ignoreJspTag</param-name>
-            <param-value>false</param-value>
+            <param-name>contentType</param-name>
+            <param-value>text/html; charset=utf-8</param-value>
         </init-param>
     </filter>
 
@@ -94,10 +103,12 @@
         <listener-class>com.skin.finder.listener.ContextLoaderListener</listener-class>
     </listener>
 
+    <!-- welcome file list -->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
+    <!-- error page -->
     <error-page>
         <error-code>403</error-code>
         <location>/error/error.jsp</location>

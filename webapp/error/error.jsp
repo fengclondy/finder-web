@@ -11,17 +11,18 @@
 %>
 <%
     int status = response.getStatus();
+    Object requestURI = request.getAttribute("DispatchFilter$requestURI");
     request.setAttribute("exception", exception);
     request.setAttribute("template_writer", out);
     request.setAttribute("TemplateFilter$servletContext", application);
+    logger.error("{} - {}", status, requestURI);
 
-    if(logger.isDebugEnabled()) {
-        if(exception != null) {
-            logger.debug(exception.getMessage(), exception);
-        }
-        else {
-            logger.debug(status + " - exception: null");
-        }
+    if(exception != null) {
+        logger.error("requestURI: {}", requestURI);
+        logger.error(exception.getMessage(), exception);
+    }
+    else {
+        logger.error("{} - {} exception: null", status, requestURI);
     }
     // String home = application.getRealPath("/template");
     // TemplateContext templateContext = TemplateManager.getTemplateContext(home, false);

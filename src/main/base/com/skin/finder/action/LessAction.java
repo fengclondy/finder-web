@@ -1,7 +1,7 @@
 /*
  * $RCSfile: LessAction.java,v $$
  * $Revision: 1.1 $
- * $Date: 2016-10-02 $
+ * $Date: 2013-10-15 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -11,15 +11,13 @@
 package com.skin.finder.action;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.servlet.ServletException;
 
 import com.skin.finder.FinderManager;
-import com.skin.finder.config.Workspace;
 import com.skin.finder.servlet.LessServlet;
+import com.skin.finder.util.FinderUtil;
 import com.skin.j2ee.action.BaseAction;
 import com.skin.j2ee.annotation.UrlPattern;
 
@@ -57,7 +55,7 @@ public class LessAction extends BaseAction {
      */
     @UrlPattern("/finder/getRange.html")
     public void getRange() throws ServletException, IOException {
-        File file = this.getFile();
+        File file = FinderUtil.getFile(this.request);
         lessServlet.getRange(this.request, this.response, file);
     }
 
@@ -67,7 +65,7 @@ public class LessAction extends BaseAction {
      */
     @UrlPattern("/finder/getTail.html")
     public void getTail() throws ServletException, IOException {
-        File file = this.getFile();
+        File file = FinderUtil.getFile(this.request);
         lessServlet.getTail(this.getRequest(), this.getResponse(), file);
     }
 
@@ -79,7 +77,7 @@ public class LessAction extends BaseAction {
     public void execute(String page) throws ServletException, IOException {
         String workspace = this.request.getParameter("workspace");
         String path = this.request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String home = FinderUtil.getWorkspace(this.request, workspace);
         String charset = this.getTrimString("charset", "utf-8");
         FinderManager finderManager = new FinderManager(home);
         String realPath = finderManager.getRealPath(path);
@@ -99,89 +97,5 @@ public class LessAction extends BaseAction {
         this.setAttribute("charset", charset);
         this.setAttribute("absolutePath", file.getCanonicalPath());
         this.forward(page);
-    }
-
-    /**
-     * @return File
-     * @throws ServletException
-     */
-    public File getFile() throws ServletException {
-        String workspace = this.request.getParameter("workspace");
-        String path = this.request.getParameter("path");
-        String home = this.getWorkspace(workspace);
-        FinderManager finderManager = new FinderManager(home);
-        String realPath = finderManager.getRealPath(path);
-
-        if(realPath == null) {
-            throw new ServletException("Can't access !");
-        }
-
-        String filePath = this.getFilePath(realPath);
-        return new File(filePath);
-    }
-
-    /**
-     * @param name
-     * @return String
-     */
-    public String getWorkspace(String name) {
-        if(name == null) {
-            throw new NullPointerException("workspace must be not null !");
-        }
-
-        Workspace workspace = Workspace.getInstance();
-        String work = workspace.getValue(name.trim());
-
-        if(work == null) {
-            throw new NullPointerException("[" + name + "] workspace not exists !");
-        }
-
-        if(work.startsWith("file:")) {
-            return new File(work.substring(5)).getAbsolutePath();
-        }
-
-        if(work.startsWith("contextPath:")) {
-            return this.getServletContext().getRealPath(work.substring(12));
-        }
-        throw new NullPointerException("work directory not exists: " + work);
-    }
-
-    /**
-     * @param filePath
-     * @return String
-     */
-    public String getFilePath(String filePath) {
-        if(filePath.endsWith(".link.tail")) {
-            InputStream inputStream = null;
-
-            try {
-                byte[] buffer = new byte[1024];
-                inputStream = new FileInputStream(filePath);
-                int length = inputStream.read(buffer);
-                String realPath = new String(buffer, 0, length, "utf-8");
-
-                if(realPath.trim().length() > 0) {
-                    return realPath;
-                }
-                else {
-                    return filePath;
-                }
-            }
-            catch(Exception e) {
-            }
-            finally {
-                if(inputStream != null) {
-                    try {
-                        inputStream.close();
-                    }
-                    catch (IOException e) {
-                    }
-                }
-            }
-            return filePath;
-        }
-        else {
-            return filePath;
-        }
     }
 }

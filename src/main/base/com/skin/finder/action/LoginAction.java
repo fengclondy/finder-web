@@ -16,9 +16,9 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import com.skin.finder.manager.SimpleUserManager;
 import com.skin.j2ee.action.BaseAction;
 import com.skin.j2ee.annotation.UrlPattern;
+import com.skin.j2ee.manager.SimpleUserManager;
 import com.skin.j2ee.sso.Client;
 import com.skin.j2ee.sso.session.UserSession;
 import com.skin.j2ee.util.CookieUtil;
@@ -52,7 +52,7 @@ public class LoginAction extends BaseAction {
             return;
         }
 
-        SimpleUserManager userManager = this.getUserManager();
+        SimpleUserManager userManager = SimpleUserManager.getInstance(this.servletContext);
         Map<String, String> user = userManager.getByName(userName);
 
         if(user == null) {
@@ -87,13 +87,5 @@ public class LoginAction extends BaseAction {
             JsonUtil.error(this.request, this.response, 501, "密码错误！");
             return;
         }
-    }
-
-    /**
-     * @return SimpleUserManager
-     */
-    public SimpleUserManager getUserManager() {
-        String home = this.servletContext.getRealPath("/WEB-INF/user");
-        return new SimpleUserManager(home);
     }
 }

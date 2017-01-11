@@ -1,7 +1,7 @@
 /*
  * $RCSfile: ScheduleManager.java,v $$
- * $Revision: 1.1  $
- * $Date: 2012-10-30  $
+ * $Revision: 1.1 $
+ * $Date: 2012-10-30 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -10,6 +10,7 @@
  */
 package com.skin.finder.manager;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -29,6 +30,7 @@ import com.skin.finder.service.ScheduleLogService;
 import com.skin.finder.service.ScheduleService;
 import com.skin.j2ee.util.ScrollPage;
 import com.skin.util.ClassUtil;
+import com.skin.util.HttpUtil;
 
 /**
  * <p>Title: ScheduleManager</p>
@@ -142,41 +144,50 @@ public class ScheduleManager {
     public void execute(long scheduleId, String invocation, Date nextFireTime) {
         Schedule schedule = this.getById(scheduleId);
 
-        if(logger.isDebugEnabled()) {
-            logger.debug("schedule: {}", new Object[]{schedule});
-        }
-
         if(schedule == null) {
-            logger.warn("scheduleId: " + scheduleId + " failed !");
+            logger.warn("scheduleId: {} not exists.", scheduleId);
             return;
         }
 
-        if(logger.isInfoEnabled()) {
-            logger.info("scheduleId: " + scheduleId + ", action: " + schedule.getAction()
-                    + ", nextFireTime: " + this.format(nextFireTime));
-        }
-
         String owner = schedule.getOwner();
-        Date updateTime = schedule.getUpdateTime();
+        String action = schedule.getAction();
 
         if(owner == null) {
             owner = "anyone";
         }
 
-        /**
-         * 如果任务已经被其他机器执行那么检查最后更新事件
-         * 如果最后更新事件小于5分钟那么认为任务还在执行
-         * 否则当前机器抢占任务并执行
-         */
-        if(!owner.equals("anyone") && Math.abs(updateTime.getTime() - System.currentTimeMillis()) < 5L * 60L * 1000L) {
-            logger.info("schedule - {} running, owner: ", scheduleId, owner);
+        logger.info("scheduleId: {}, owner: {}, action: {} , nextFireTime: ",
+                scheduleId, owner, action, this.format(nextFireTime));
+
+        if(action == null || action.trim().length() < 0) {
             return;
         }
 
+        /**
+         * 如果任务已经被其他机器执行那么检查最后更新事件
+         * 如果owner还活着那么认为任务还在执行
+         * 否则当前机器抢占任务并执行
+         */
+        if(!owner.equals("anyone")) {
+            logger.info("scheduleId: {}, owner: {} running.", scheduleId, owner);
+
+            /**
+             * 如果owner还活着
+             * owner必须开放80端口
+             */
+            if(this.test(owner)) {
+                return;
+            }
+        }
+
+        /**
+         * 使用数据库的乐观锁锁定任务
+         * 如果锁定成功则执行, 否则退出
+         */
         boolean lock = this.lock(scheduleId, schedule.getOwner(), ID);
 
         if(!lock) {
-            logger.info("schedule - {} lock faild", scheduleId);
+            logger.info("scheduleId: {}, lock faild.", scheduleId);
             return;
         }
 
@@ -184,20 +195,19 @@ public class ScheduleManager {
         int executeStatus = 200;
         String executeResult = "success";
         Map<String, Object> model = new HashMap<String, Object>();
+        model.put("lastFireTime", sysTime);
+        model.put("updateTime", sysTime);
 
         try {
-            String action = schedule.getAction();
-            action = (action != null ? action.trim() : "");
-
             if(logger.isDebugEnabled()) {
-                logger.debug("scheduleId: {}, action: [{}]", new Object[]{scheduleId, action});
+                logger.debug("scheduleId: {}, action: [{}]", scheduleId, action);
             }
 
-            if(action.length() > 0) {
-                model.put("lastFireTime", sysTime);
-                this.update(scheduleId, model);
-                this.execute(action, schedule.getProperties());
-            }
+            /**
+             * 更新调度时间
+             */
+            this.update(scheduleId, model);
+            this.execute(action, schedule.getProperties());
         }
         catch(Exception e) {
             executeStatus = 500;
@@ -205,23 +215,35 @@ public class ScheduleManager {
             logger.warn(e.getMessage(), e);
         }
 
+        /**
+         * 更新调度时间和执行结果
+         */
+        model.remove("lastFireTime");
         model.put("nextFireTime", nextFireTime);
         model.put("executeStatus", executeStatus);
         model.put("executeResult", executeResult);
-        model.put("updateTime", sysTime);
         model.put("owner", "anyone");
+        model.put("updateTime", new Date());
         this.update(scheduleId, model);
 
-        ScheduleLog scheduleLog = new ScheduleLog();
-        scheduleLog.setScheduleId(scheduleId);
-        scheduleLog.setScheduleName(schedule.getScheduleName());
-        scheduleLog.setScheduleType(schedule.getScheduleType());
-        scheduleLog.setInvocation(invocation);
-        scheduleLog.setFireTime(sysTime);
-        scheduleLog.setNextFireTime(nextFireTime);
-        scheduleLog.setExecuteStatus(executeStatus);
-        scheduleLog.setExecuteResult(executeResult);
-        this.scheduleLogService.create(scheduleLog);
+        try {
+            /**
+             * 保存执行日志
+             */
+            ScheduleLog scheduleLog = new ScheduleLog();
+            scheduleLog.setScheduleId(scheduleId);
+            scheduleLog.setScheduleName(schedule.getScheduleName());
+            scheduleLog.setScheduleType(schedule.getScheduleType());
+            scheduleLog.setInvocation(invocation);
+            scheduleLog.setFireTime(sysTime);
+            scheduleLog.setNextFireTime(nextFireTime);
+            scheduleLog.setExecuteStatus(executeStatus);
+            scheduleLog.setExecuteResult(executeResult);
+            this.scheduleLogService.create(scheduleLog);
+        }
+        catch(Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     /**
@@ -249,6 +271,24 @@ public class ScheduleManager {
                 throw e;
             }
         }
+    }
+
+    /**
+     * @param host
+     * @return boolean
+     */
+    private boolean test(String host) {
+        try {
+            String result = HttpUtil.get("http://" + host + "/status.html");
+
+            if(result != null && result.trim().equals("ok")) {
+                return true;
+            }
+        }
+        catch(IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     /**

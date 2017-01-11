@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 public class FileRange {
     private long start;
     private long end;
+    private long count;
     private long length;
     private int rows;
     private byte[] buffer;
@@ -58,6 +59,20 @@ public class FileRange {
      */
     public void setEnd(long end) {
         this.end = end;
+    }
+
+    /**
+     * @return the count
+     */
+    public long getCount() {
+        return this.count;
+    }
+
+    /**
+     * @param count the count to set
+     */
+    public void setCount(long count) {
+        this.count = count;
     }
 
     /**
@@ -138,7 +153,8 @@ public class FileRange {
         }
 
         try {
-            return new String(this.buffer, 0, (int)(this.end - this.start + 1), charset);
+            // return new String(this.buffer, 0, (int)(this.end - this.start + 1), charset);
+            return new String(this.buffer, 0, (int)(this.count), charset);
         }
         catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);

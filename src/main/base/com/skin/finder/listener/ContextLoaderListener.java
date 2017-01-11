@@ -10,6 +10,8 @@
  */
 package com.skin.finder.listener;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import javax.servlet.ServletContext;
@@ -21,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import com.skin.finder.config.SiteConfig;
 import com.skin.finder.jstl.util.FileType;
+import com.skin.finder.util.FinderUtil;
 import com.skin.util.ClassUtil;
+import com.skin.util.ZipUtil;
 
 /**
  * <p>Title: ContextLoaderListener</p>
@@ -39,16 +43,21 @@ public class ContextLoaderListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
+        FinderUtil.setServletContext(servletContext);
         SiteConfig siteConfig = SiteConfig.getInstance();
         servletContext.setAttribute("siteConfig", siteConfig);
         servletContext.setAttribute("FileType",   new FileType());
-        this.build();
+        this.build(servletContext);
+        this.unzip(servletContext);
     }
 
     /**
-     *
+     * build schedule
+     * @param servletContext
      */
-    public void build() {
+    protected void build(ServletContext servletContext) {
+        logger.info("build shcedule.");
+
         try {
             Object[] arguments = null;
             Class<?> clazz = ClassUtil.getClass("org.quartz.SchedulerFactory");
@@ -56,12 +65,46 @@ public class ContextLoaderListener implements ServletContextListener {
             Method method = clazz.getDeclaredMethod("build", new Class<?>[0]);
             method.invoke(null, arguments);
         }
-        catch(ClassNotFoundException e) {
-            logger.warn("java.lang.ClassNotFoundException: " + e.getMessage());
-        }
         catch(Exception e) {
-            logger.warn("com.skin.finder.schedule: error.");
+            logger.warn("com.skin.finder.schedule: {}", e.getMessage());
         }
+    }
+
+    /**
+     * unzip resource
+     * @param servletContext
+     */
+    protected void unzip(ServletContext servletContext) {
+        File file = this.getResource(servletContext.getRealPath("/WEB-INF/lib"));
+
+        if(file != null) {
+            logger.info("unzip: {}", file.getAbsolutePath());
+            File webapp = new File(servletContext.getRealPath("/"));
+
+            try {
+                ZipUtil.unzip(file, webapp);
+            }
+            catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * @param lib
+     * @return File
+     */
+    public File getResource(String lib) {
+        File[] files = new File(lib).listFiles();
+
+        for(File file : files) {
+            String name = file.getName().toLowerCase();
+
+            if(name.startsWith("finder-res-") && name.endsWith(".jar")) {
+                return file;
+            }
+        }
+        return null;
     }
 
     /**

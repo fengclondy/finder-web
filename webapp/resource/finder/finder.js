@@ -686,6 +686,23 @@ Finder.less = function(file, options) {
     return true;
 };
 
+Finder.grep = function(file, options) {
+    var workspace = Finder.getWorkspace();
+    var path = Finder.getPath() + "/" + file.fileName;
+
+    var params = [];
+    params[params.length] = "workspace=" + encodeURIComponent(workspace);
+    params[params.length] = "path=" + encodeURIComponent(path);
+
+    if(options.target != null) {
+        window.open(this.getContextPath() + "/finder/grep.html?" + params.join("&"), options.target);
+    }
+    else {
+         window.location.href = this.getContextPath() + "/finder/grep.html?" + params.join("&");
+    }
+    return true;
+};
+
 Finder.mkdir = function(options) {
     var params = [];
     params.workspace = Finder.getWorkspace();
@@ -1114,8 +1131,9 @@ Finder.list = function() {
             buffer[buffer.length] = "   <span class=\"fileType\">" + FileType.getType(file.fileName) + "文件</span>";
             buffer[buffer.length] = "   <span class=\"lastModified\">" + Finder.format(file.lastModified) + "</span>";
             buffer[buffer.length] = "   <span class=\"w300\">";
-            buffer[buffer.length] = "       <a action=\"finder-less\" href=\"javascript:void(0)\">less</a>&nbsp;";
             buffer[buffer.length] = "       <a action=\"finder-tail\" href=\"javascript:void(0)\">tail</a>&nbsp;";
+            buffer[buffer.length] = "       <a action=\"finder-less\" href=\"javascript:void(0)\">less</a>&nbsp;";
+            buffer[buffer.length] = "       <a action=\"finder-grep\" href=\"javascript:void(0)\">grep</a>&nbsp;";
             buffer[buffer.length] = "       <a action=\"finder-open\" href=\"javascript:void(0)\">open</a>&nbsp;";
             buffer[buffer.length] = "       <a action=\"finder-download\" href=\"javascript:void(0)\">download</a>&nbsp;";
             buffer[buffer.length] = "       <a action=\"finder-remove\" href=\"javascript:void(0)\">delete</a>";
@@ -1279,6 +1297,9 @@ Finder.click = function(event, name) {
     }
     else if(action == "finder-less") {
         Finder.less(file, options);
+    }
+    else if(action == "finder-grep") {
+        Finder.grep(file, options);
     }
     else {
         Finder.open(file, options);
@@ -1697,6 +1718,7 @@ Finder.keyup = function(event) {
         }
     }
     Finder.suggest(Finder.getWorkspace(), path);
+    EventUtil.stop(e);
     return false;
 };
 

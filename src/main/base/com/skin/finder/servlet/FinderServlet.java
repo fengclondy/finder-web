@@ -39,6 +39,7 @@ import com.skin.j2ee.upload.MultipartHttpRequest;
 import com.skin.j2ee.util.JsonUtil;
 import com.skin.j2ee.util.Request;
 import com.skin.j2ee.util.Response;
+import com.skin.j2ee.util.UpdateChecker;
 import com.skin.util.GMTUtil;
 import com.skin.util.HtmlUtil;
 import com.skin.util.IO;
@@ -142,6 +143,11 @@ public class FinderServlet {
      * @throws IOException
      */
     public void index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String url = UpdateChecker.getUrl();
+        boolean hasNewVersion = UpdateChecker.has();
+
+        request.setAttribute("appDownloadUrl", url);
+        request.setAttribute("hasNewVersion", hasNewVersion);
         this.forward(request, response, this.prefix + "/finder/index.jsp");
     }
 
@@ -847,6 +853,7 @@ public class FinderServlet {
             FileRange range = new FileRange();
             range.setStart(start);
             range.setEnd(start + readBytes - 1);
+            range.setCount(readBytes);
             range.setLength(length);
             range.setRows(-1);
             range.setBuffer(bytes);

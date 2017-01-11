@@ -23,8 +23,11 @@ import java.util.Date;
 public class AccessLog implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long logId;
+    private Date accessTime;
     private Long userId;
     private String userName;
+    private String localIp;
+    private String threadName;
     private String remoteHost;
     private String requestMethod;
     private String requestProtocol;
@@ -33,7 +36,6 @@ public class AccessLog implements Serializable {
     private String clientId;
     private String clientUserAgent;
     private String clientCookie;
-    private Date createTime;
 
     /**
      * 
@@ -53,6 +55,20 @@ public class AccessLog implements Serializable {
      */
     public Long getLogId() {
         return this.logId;
+    }
+
+    /**
+     * @return the accessTime
+     */
+    public Date getAccessTime() {
+        return this.accessTime;
+    }
+
+    /**
+     * @param accessTime the accessTime to set
+     */
+    public void setAccessTime(Date accessTime) {
+        this.accessTime = accessTime;
     }
 
     /**
@@ -81,6 +97,34 @@ public class AccessLog implements Serializable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    /**
+     * @return the localIp
+     */
+    public String getLocalIp() {
+        return this.localIp;
+    }
+
+    /**
+     * @param localIp the localIp to set
+     */
+    public void setLocalIp(String localIp) {
+        this.localIp = localIp;
+    }
+
+    /**
+     * @return the threadName
+     */
+    public String getThreadName() {
+        return this.threadName;
+    }
+
+    /**
+     * @param threadName the threadName to set
+     */
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
     }
 
     /**
@@ -193,19 +237,5 @@ public class AccessLog implements Serializable {
      */
     public String getClientCookie() {
         return this.clientCookie;
-    }
-
-    /**
-     * @param createTime the createTime to set
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    /**
-     * @return the createTime
-     */
-    public Date getCreateTime() {
-        return this.createTime;
     }
 }

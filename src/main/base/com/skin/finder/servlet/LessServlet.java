@@ -1,7 +1,7 @@
 /*
  * $RCSfile: LessServlet.java,v $$
  * $Revision: 1.1 $
- * $Date: 2016-10-02 $
+ * $Date: 2010-04-28 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,7 +34,7 @@ import com.skin.util.IO;
  * @author xuesong.net
  * @version 1.0
  */
-public class LessServlet extends HttpServlet {
+public class LessServlet extends BaseServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(LessServlet.class);
 
@@ -156,6 +155,7 @@ public class LessServlet extends HttpServlet {
             FileRange range = new FileRange();
             range.setStart(position);
             range.setEnd(position);
+            range.setCount(0L);
             range.setLength(length);
             range.setRows(0);
             range.setCharset(charset);
@@ -210,6 +210,7 @@ public class LessServlet extends HttpServlet {
         FileRange range = new FileRange();
         range.setStart(start);
         range.setEnd(start + readBytes - 1);
+        range.setCount(readBytes);
         range.setLength(length);
         range.setRows(count);
         range.setBuffer(bytes);
@@ -233,6 +234,7 @@ public class LessServlet extends HttpServlet {
             FileRange range = new FileRange();
             range.setStart(length);
             range.setEnd(length);
+            range.setCount(0L);
             range.setLength(length);
             range.setRows(0);
             range.setCharset(charset);
@@ -283,6 +285,7 @@ public class LessServlet extends HttpServlet {
                 FileRange range = new FileRange();
                 range.setStart(length - 1);
                 range.setEnd(length - 1);
+                range.setCount(0L);
                 range.setLength(length);
                 range.setRows(0);
                 range.setCharset(charset);
@@ -323,6 +326,7 @@ public class LessServlet extends HttpServlet {
         FileRange range = new FileRange();
         range.setStart(start);
         range.setEnd(start + bytes.length - 1);
+        range.setCount(bytes.length);
         range.setLength(length);
         range.setRows(count);
         range.setBuffer(bytes);
@@ -406,103 +410,6 @@ public class LessServlet extends HttpServlet {
             buffer.append("\"}");
         }
         buffer.append("}");
-        return buffer.toString();
-    }
-
-    /**
-     * @param request
-     * @param name
-     * @param defaultValue
-     * @return int
-     */
-    protected int getInteger(HttpServletRequest request, String name, int defaultValue) {
-        String value = request.getParameter(name);
-
-        try {
-            return Integer.parseInt(value);
-        }
-        catch(NumberFormatException e) {
-        }
-        return defaultValue;
-    }
-
-    /**
-     * @param request
-     * @param name
-     * @return String
-     */
-    public String getTrimString(HttpServletRequest request, String name) {
-        String value = request.getParameter(name);
-        return (value != null ? value.trim() : "");
-    }
-
-    /**
-     * @param request
-     * @param name
-     * @param defaultValue
-     * @return long
-     */
-    protected long getLong(HttpServletRequest request, String name, long defaultValue) {
-        String value = request.getParameter(name);
-
-        try {
-            return Long.parseLong(value);
-        }
-        catch(NumberFormatException e) {
-        }
-        return defaultValue;
-    }
-
-    /**
-     * @param source
-     * @return String
-     */
-    private String escape(String source) {
-        if(source == null) {
-            return "";
-        }
-
-        char c;
-        StringBuilder buffer = new StringBuilder();
-
-        for(int i = 0, length = source.length(); i < length; i++) {
-            c = source.charAt(i);
-
-            switch (c) {
-                case '"': {
-                    buffer.append("\\\"");
-                    break;
-                }
-                case '\r': {
-                    buffer.append("\\r");
-                    break;
-                }
-                case '\n': {
-                    buffer.append("\\n");
-                    break;
-                }
-                case '\t': {
-                    buffer.append("\\t");
-                    break;
-                }
-                case '\b': {
-                    buffer.append("\\b");
-                    break;
-                }
-                case '\f': {
-                    buffer.append("\\f");
-                    break;
-                }
-                case '\\': {
-                    buffer.append("\\\\");
-                    break;
-                }
-                default : {
-                    buffer.append(c);
-                    break;
-                }
-            }
-        }
         return buffer.toString();
     }
 }
