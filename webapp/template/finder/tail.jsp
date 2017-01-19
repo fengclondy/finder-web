@@ -46,16 +46,17 @@ jQuery(function(){
     <div style="height: 18px; background-color: #333333;">
         <span class="charset"><select name="charset" selected-value="${charset}"></select></span>
         <span class="ctrl">
+            <input id="tail-reload-btn" type="button" class="button" value="刷 新"/>
             <input id="tail-clear-btn" type="button" class="button" value="清 空"/>
             <input id="tail-stop-btn" type="button" class="button" value="停 止"/>
             <input id="tail-select-btn" type="button" class="button" value="全 选"/>
-            <input id="tail-reload-btn" type="button" class="button" value="刷 新"/>
+            <input id="tail-find-btn" type="button" class="button" value="查 找"/>
         </span>
         <span class="pad4">重载时间：<input id="tail-reload-interval" type="text" class="text w30" value="1"/> 秒</span>
         <span class="pad4"><input id="tail-auto-scroll" type="checkbox" class="checkbox" checked="true"/>自动滚动</span>
     </div>
 </div>
-<div id="find-panel" class="find-panel">
+<div id="find-panel" class="find-panel" style="display: none;">
     <div>
         查找内容: <input id="grep-keyword" type="text" class="grep-keyword" value="" placeholder="正则示例: /finder/.*\.html"/>
         <input id="grep-ensure" type="button" class="grep-search" value="确定"/>
@@ -69,7 +70,7 @@ jQuery(function(){
         <p><span style="color: #ff0000;">说明：</span>正则相关文档请参考JavaScript正则表达式 。</p>
     </div>
     <div style="text-align: center;">
-        <input id="grep-close" type="button" class="grep-button" value="关闭"/>
+        <input id="grep-close" type="button" class="grep-button" value="取消"/>
     </div>
 </div>
 </body>

@@ -13,7 +13,8 @@ package com.skin.finder.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -32,8 +33,21 @@ import com.skin.resource.StringResource;
  */
 public class Workspace extends Config {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(Workspace.class);
     private static final Workspace instance = load();
+    private static final Logger logger = LoggerFactory.getLogger(Workspace.class);
+
+    /**
+     * default
+     */
+    public Workspace() {
+    }
+
+    /**
+     * @param attributes
+     */
+    public Workspace(HashMap<String, String> attributes) {
+        super(attributes);
+    }
 
     /**
      * @return Workspace
@@ -46,7 +60,7 @@ public class Workspace extends Config {
      * @return Workspace
      */
     private static Workspace load() {
-        Workspace workspace = new Workspace();
+        Workspace workspace = new Workspace(new LinkedHashMap<String, String>());
         InputStream inputStream = Skinx.getInputStream("META-INF/conf/workspace.xml");
 
         if(inputStream != null) {
@@ -74,7 +88,6 @@ public class Workspace extends Config {
         Set<String> set = this.keySet();
         List<String> list = new ArrayList<String>();
         list.addAll(set);
-        Collections.sort(list);
         return list;
     }
 }

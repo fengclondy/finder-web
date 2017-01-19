@@ -80,28 +80,28 @@ jQuery(function(){
         <a class="button" href="javascript:void(0)" onclick="window.location.reload();"><span class="refresh">&nbsp;</span>刷新</a>
     </div>
 </div>
-<table class="list">
+<table class="table highlight">
     <tr class="head">
-        <td class="w200">AccessTime</td>
+        <td class="w150">AccessTime</td>
         <td class="w100">IP</td>
-        <td>URL</td>
-        <td class="w100">Referer</td>
-        <td class="w200">ClientId</td>
-        <td class="w100">User</td>
+        <td class="w240">URL</td>
+        <td class="w240">Referer</td>
+        <td class="w240">ClientId</td>
+        <td>User</td>
     </tr>
     <c:forEach items="${accessLogList}" var="accessLog" varStatus="status">
     <tr>
-        <td>${DateUtil.format(accessLog.accessTime, 'yyyy-MM-dd HH:mm:ss')}</td>
+        <td title="${status.index + 1}">${DateUtil.format(accessLog.accessTime, 'yyyy-MM-dd HH:mm:ss')}</td>
         <td>${accessLog.remoteHost}</td>
-        <td><span title="${accessLog.requestUrl}"><a href="${accessLog.requestUrl}" target="_blank">${StringUtil.substring(accessLog.requestUrl, 30, "...")}</a></span></td>
-        <td><span title="${URLUtil.decode(accessLog.requestReferer)}">${StringUtil.substring(accessLog.requestReferer, 30, "...")}</span></td>
+        <td><span class="w200 ellipsis" title="${accessLog.requestUrl}"><a href="${accessLog.requestUrl}" target="_blank">${StringUtil.substring(accessLog.requestUrl, 30, "...")}</a></span></td>
+        <td><span class="w200 ellipsis" title="${URLUtil.decode(accessLog.requestReferer)}">${StringUtil.substring(accessLog.requestReferer, 30, "...")}</span></td>
         <td>${accessLog.clientId}</td>
         <td><span class="user-info" clientCookie="${accessLog.clientCookie}" title="${accessLog.clientUserAgent}">${accessLog.userName}</span></td>
     </tr>
     </c:forEach>
 </table>
 <div class="pagebar">
-    <div name="scrollpage" class="scrollpage" theme="2" pageNum="${pageNum}" pageSize="${pageSize}" count="${logCount}" href="${siteConfig.host}/admin/accesslog/index.html?pageNum=%s"></div>
+    <div name="scrollpage" class="scrollpage" theme="2" pageNum="${pageNum}" pageSize="${pageSize}" count="${logCount}" href="${siteConfig.host}/system/accesslog/index.html?pageNum=%s"></div>
 </div>
 <%@include file="/include/common/footer.jsp"%>
 </body>

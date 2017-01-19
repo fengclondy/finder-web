@@ -45,7 +45,7 @@ public class MailLogAction extends BaseAction {
         try {
             MailLogManager mailLogManager = new MailLogManager();
 
-            if(StringUtil.notEmpty(customerCode)) {
+            if(!StringUtil.isBlank(customerCode)) {
                 mailLogManager.getListByUserId(appId, userId, page);
             }
             else {

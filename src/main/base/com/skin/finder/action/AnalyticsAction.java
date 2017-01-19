@@ -33,7 +33,7 @@ public class AnalyticsAction extends BaseAction {
     @com.skin.j2ee.annotation.UrlPattern("/system/accesslog/index.html")
     public void log() throws ServletException, IOException {
         int pageNum = this.getInteger("pageNum", 1);
-        int pageSize = 20;
+        int pageSize = 50;
 
         AccessLogManager accessLogManager = new AccessLogManager();
         int logCount = accessLogManager.getCount();

@@ -11,10 +11,7 @@
 package com.skin.finder.servlet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.List;
@@ -31,18 +28,15 @@ import org.slf4j.LoggerFactory;
 import com.skin.finder.FileRange;
 import com.skin.finder.FileType;
 import com.skin.finder.FinderManager;
-import com.skin.finder.MimeType;
-import com.skin.finder.Range;
 import com.skin.finder.config.Workspace;
 import com.skin.j2ee.upload.FileItem;
 import com.skin.j2ee.upload.MultipartHttpRequest;
 import com.skin.j2ee.util.JsonUtil;
-import com.skin.j2ee.util.Request;
 import com.skin.j2ee.util.Response;
 import com.skin.j2ee.util.UpdateChecker;
-import com.skin.util.GMTUtil;
 import com.skin.util.HtmlUtil;
 import com.skin.util.IO;
+import com.skin.util.IP;
 import com.skin.util.Path;
 
 /**
@@ -51,11 +45,11 @@ import com.skin.util.Path;
  * <p>Copyright: Copyright (c) 2006</p>
  * @version 1.0
  */
-public class FinderServlet {
+public class FinderServlet extends FileServlet {
     private String prefix;
-    private ServletContext servletContext;
     private static final Map<String, String> map = new HashMap<String, String>();
     private static final Logger logger = LoggerFactory.getLogger(FinderServlet.class);
+    private static final long serialVersionUID = 1L;
 
     static{
         map.put("exe",    "exe");
@@ -92,6 +86,7 @@ public class FinderServlet {
      * @throws ServletException
      * @throws IOException
      */
+    @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.error(request, response, 404, "Not Found !");
     }
@@ -249,7 +244,6 @@ public class FinderServlet {
         String home = this.getWorkspace(workspace);
         FinderManager finderManager = new FinderManager(home);
         String realPath = finderManager.getRealPath(path);
-        String loacalIp = Request.getLocalHostAddress();
 
         if(realPath == null) {
             throw new ServletException("Can't access !");
@@ -274,7 +268,7 @@ public class FinderServlet {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
 
-            request.setAttribute("loacalIp", loacalIp);
+            request.setAttribute("localIp", IP.LOCAL);
             request.setAttribute("workspace", workspace);
             this.forward(request, response, this.prefix + "/finder/finder.jsp");
             return;
@@ -417,125 +411,7 @@ public class FinderServlet {
             response.setStatus(404);
             return;
         }
-
-        long length = file.length();
-        long lastModified = file.lastModified();
-        String contentType = MimeType.getMimeType(file.getName());
-        String etag = this.getETag(lastModified, 0L, length);
-        String httpDate = GMTUtil.format(lastModified);
-        Range range = Range.parse(request, length);
-
-        // cache
-        // response.setHeader("Cache-Control", "private");
-        // response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expires", System.currentTimeMillis() + 60L * 60L * 1000L);
-        response.setHeader("Last-Modified", GMTUtil.format(lastModified));
-        response.setHeader("ETag", etag);
-        response.setHeader("Date", httpDate);
-
-        /**
-         * 不要设置Content-Type, Chrome下将会出现下面的警告, 虽然这不是一个错误
-         * Resource interpreted as Document but transferred with MIME type application/x-tex:
-         * response.setHeader("Content-Type", contentType);
-         */
-        if(range == null) {
-            response.setHeader("Content-Length", String.valueOf(length));
-
-            if(download || contentType.equals("application/octet-stream")) {
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + FinderManager.urlEncode(FileType.getName(path), "UTF-8") + "\"");
-            }
-
-            InputStream inputStream = null;
-
-            try {
-                inputStream = new FileInputStream(file);
-                IO.copy(inputStream, response.getOutputStream());
-            }
-            catch(IOException e) {
-                // do nothing
-            }
-            finally {
-                IO.close(inputStream);
-            }
-        }
-        else {
-            RandomAccessFile raf = null;
-            long maxBodySize = 5L * 1024L * 1024L;
-
-            if(range.getSize() >= maxBodySize) {
-                range.end = range.start + maxBodySize - 1;
-            }
-
-            boolean modified = false;
-            String ifRange = request.getHeader("If-Range");
-            String ifMatch = request.getHeader("If-Match");
-            String ifNoneMatch = request.getHeader("If-None-Match");
-            String ifUnmodifiedSince = request.getHeader("If-Unmodified-Since");
-            String unlessModifiedSince = request.getHeader("Unless-Modified-Since");
-
-            if(ifRange != null) {
-                if(!ifRange.equals(etag) && !ifRange.equals(httpDate)) {
-                    modified = true;
-                }
-            }
-
-            if(ifMatch != null) {
-                if(!ifMatch.equals(etag)) {
-                    modified = false;
-                }
-            }
-
-            if(ifNoneMatch != null) {
-                if(!ifNoneMatch.equals(etag)) {
-                    modified = true;
-                }
-            }
-
-            if(ifUnmodifiedSince != null) {
-                if(!ifUnmodifiedSince.equals(httpDate)) {
-                    modified = true;
-                }
-            }
-
-            if(unlessModifiedSince != null) {
-                if(!unlessModifiedSince.equals(httpDate)) {
-                    modified = true;
-                }
-            }
-
-            if(modified) {
-                range.start = 0L;
-                range.end = Math.min(maxBodySize, length);
-            }
-
-            long size = range.getSize();
-            String contentRange = range.getContentRange();
-            response.setStatus(206);
-            response.setHeader("Accept-Ranges", "bytes");
-            response.setHeader("Content-Range", contentRange);
-            response.setHeader("Content-Length", String.valueOf(size));
-            response.setHeader("Part-Size", String.valueOf(maxBodySize));
-            response.setHeader("Content-Type", contentType);
-
-            try {
-                raf = new RandomAccessFile(file, "r");
-
-                if(range.start > 0) {
-                    raf.seek(range.start);
-                }
-
-                if(logger.isDebugEnabled()) {
-                    logger.debug("read - offset: {}, length: {}", range.start, size);
-                }
-                this.copy(raf, response.getOutputStream(), 4096, size);
-            }
-            catch(Exception e) {
-                // do nothing
-            }
-            finally {
-                IO.close(raf);
-            }
-        }
+        this.service(request, response, file, download);
     }
 
     /**
@@ -674,6 +550,77 @@ public class FinderServlet {
             }
             logger.info("thread: {} complete !", Thread.currentThread().getName());
         }
+    }
+
+    /**
+     * @param request
+     * @param etag
+     * @param httpDate
+     * @return boolean
+     */
+    public int getHttpStatus(HttpServletRequest request, String etag, String httpDate) {
+        String ifMatch = request.getHeader("If-Match");
+        String ifNoneMatch = request.getHeader("If-None-Match");
+        String ifModifiedSince = request.getHeader("If-Modified-Since");
+        String ifUnmodifiedSince = request.getHeader("If-Unmodified-Since");
+        String unlessModifiedSince = request.getHeader("Unless-Modified-Since");
+
+        /**
+         * match
+         */
+        if(ifMatch != null) {
+            if(ifMatch.equals(etag)) {
+                return 200;
+            }
+            else {
+                return 412;
+            }
+        }
+
+        if(ifNoneMatch != null) {
+            if(!ifNoneMatch.equals(etag)) {
+                return 200;
+            }
+            else {
+                return 304;
+            }
+        }
+
+        if(ifModifiedSince != null) {
+            if(ifModifiedSince.equals(httpDate)) {
+                /**
+                 * 如果没有修改
+                 */
+                return 304;
+            }
+            else {
+                /**
+                 * 如果有修改
+                 */
+                return 200;
+            }
+        }
+
+        if(ifUnmodifiedSince != null) {
+            if(ifUnmodifiedSince.equals(httpDate)) {
+                /**
+                 * 如果没有修改
+                 */
+                return 200;
+            }
+            else {
+                /**
+                 * 如果有修改
+                 * 412: Precondition failed
+                 */
+                return 412;
+            }
+        }
+
+        if(unlessModifiedSince != null && !unlessModifiedSince.equals(httpDate)) {
+            return 200;
+        }
+        return 200;
     }
 
     /**
@@ -870,38 +817,6 @@ public class FinderServlet {
     }
 
     /**
-     * @param raf
-     * @param outputStream
-     * @param bufferSize
-     * @param size
-     * @throws IOException
-     */
-    protected void copy(RandomAccessFile raf, OutputStream outputStream, int bufferSize, long size) throws IOException {
-        int readBytes = 0;
-        long count = size;
-        int length = Math.min(bufferSize, (int)(size));
-        byte[] buffer = new byte[length];
-
-        while(count > 0) {
-            if(count > length) {
-                readBytes = raf.read(buffer, 0, length);
-            }
-            else {
-                readBytes = raf.read(buffer, 0, (int)count);
-            }
-
-            if(readBytes > 0) {
-                outputStream.write(buffer, 0, readBytes);
-                count -= readBytes;
-            }
-            else {
-                break; 
-            }
-        }
-        outputStream.flush();
-    }
-
-    /**
      * @param dir
      * @param name
      * @return File
@@ -940,16 +855,6 @@ public class FinderServlet {
             }
         }
         return null;
-    }
-
-    /**
-     * @param lastModified
-     * @param start
-     * @param end
-     * @return String
-     */
-    protected String getETag(long lastModified, long start, long end) {
-        return ("W/\"f-" + lastModified + "\"");
     }
 
     /**
@@ -993,19 +898,5 @@ public class FinderServlet {
     public void error(HttpServletRequest request, HttpServletResponse response, int status, String message) throws ServletException, IOException {
         request.setAttribute("javax_servlet_error", message);
         response.sendError(status);
-    }
-
-    /**
-     * @return the servletContext
-     */
-    public ServletContext getServletContext() {
-        return this.servletContext;
-    }
-
-    /**
-     * @param servletContext the servletContext to set
-     */
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
     }
 }

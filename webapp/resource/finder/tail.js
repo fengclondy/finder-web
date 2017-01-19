@@ -137,53 +137,60 @@ Tail.filter = function(range) {
 };
 
 Tail.append = function(range) {
-    if(range != null && range.rows > 0) {
-        var e = this.getEditor();
-        var p = this.create(range);
-        var list = e.childNodes;
+    if(range != null) {
         this.length = range.length;
 
-        while(list.length > 100) {
-            var node = list[0];
-            var count = parseInt(node.getAttribute("rows"));
-            e.removeChild(node);
-            this.rows -= count;
-        }
+        if(range.rows > 0) {
+            var e = this.getEditor();
+            var p = this.create(range);
+            var list = e.childNodes;
 
-        while(this.rows > this.maxRows) {
-            if(list.length > 1) {
+            while(list.length > 100) {
                 var node = list[0];
                 var count = parseInt(node.getAttribute("rows"));
                 e.removeChild(node);
                 this.rows -= count;
             }
-            else {
-                break;
+
+            while(this.rows > this.maxRows) {
+                if(list.length > 1) {
+                    var node = list[0];
+                    var count = parseInt(node.getAttribute("rows"));
+                    e.removeChild(node);
+                    this.rows -= count;
+                }
+                else {
+                    break;
+                }
+            }
+            e.appendChild(p);
+
+            if(this.scroll == true) {
+                var scrollHeight = e.scrollHeight;
+
+                if(range.rows <= 5) {
+                    e.scrollTop = scrollHeight;
+                }
+                else {
+                    /**
+                     * 此处的动画效果会出现卡顿的现象
+                     * 这是因为浏览器的单线程模型导致的，这个问题无法避免
+                     * 无论怎么做ajax请求只要发起都会导致在当前的UI线程队列里增加一个函数调用
+                     * 这将阻塞动画效果连续执行，从而出现卡顿
+                     */
+                    jQuery(e).stop();
+                    jQuery(e).animate({"scrollTop": scrollHeight}, range.rows * 5);
+                }
             }
         }
-        e.appendChild(p);
-
-        if(this.scroll == true) {
-            var scrollHeight = e.scrollHeight;
-
-            if(range.rows <= 5) {
-                e.scrollTop = scrollHeight;
-            }
-            else {
-                /**
-                 * 此处的动画效果会出现卡顿的现象
-                 * 这是因为浏览器的单线程模型导致的，这个问题无法避免
-                 * 无论怎么做ajax请求只要发起都会导致在当前的UI线程队列里增加一个函数调用
-                 * 这将阻塞动画效果连续执行，从而出现卡顿
-                 */
-                jQuery(e).stop();
-                jQuery(e).animate({"scrollTop": scrollHeight}, range.rows * 5);
-            }
+        else {
+            Tail.setEnd(range.end);
         }
     }
 
     if(this.timer != null) {
         clearTimeout(this.timer);
+        this.timer = null;
     }
 
     var timeout = this.getTimeout();
@@ -261,6 +268,19 @@ Tail.getStart = function() {
     }
     else {
         return 0;
+    }
+};
+
+/**
+ * 设置结束位置
+ */
+Tail.setEnd = function(end) {
+    var e = this.getEditor();
+    var list = e.childNodes;
+
+    if(list.length > 0) {
+        var node = list[length.length - 1];
+        node.setAttribute("end", end);
     }
 };
 
@@ -370,6 +390,10 @@ Tail.init = function() {
         window.location.reload();
     });
 
+    jQuery("#tail-find-btn").click(function() {
+        jQuery("#find-panel").show();
+    });
+
     jQuery("#tail-auto-scroll").click(function() {
         Tail.setScroll(this.checked);
     });
@@ -410,4 +434,5 @@ Tail.init = function() {
             return false;
         }
     });
+    Tail.start();
 };

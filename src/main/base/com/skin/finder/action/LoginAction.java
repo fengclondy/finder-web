@@ -21,7 +21,6 @@ import com.skin.j2ee.annotation.UrlPattern;
 import com.skin.j2ee.manager.SimpleUserManager;
 import com.skin.j2ee.sso.Client;
 import com.skin.j2ee.sso.session.UserSession;
-import com.skin.j2ee.util.CookieUtil;
 import com.skin.j2ee.util.JsonUtil;
 import com.skin.security.Password;
 
@@ -78,9 +77,7 @@ public class LoginAction extends BaseAction {
             userSession.setLastAccessTime(createTime);
 
             int expiry = 7 * 24 * 60 * 60;
-            String md5Key = Client.getMd5Key();
-            String certificate = Client.getCertificate(userSession, md5Key);
-            CookieUtil.setCookie(this.response, "passport", certificate, null, "/", expiry, false);
+            Client.registe(this.request, this.response, userSession, null, "/", expiry, false);
             JsonUtil.success(this.request, this.response, "ok");
         }
         else {

@@ -189,7 +189,7 @@ div.less-status-bar span{float: left; margin-left: 0px; padding-left: 0px; heigh
 div.less-status-bar span input.checkbox{margin-top: -1px; margin-right: 4px; border: none; background: none; vertical-align: middle;}
 div.less-status-bar span input.text{height: 16px; padding-left: 4px; border: 1px solid #666666; background-color: #333333; outline: none; line-height: 18px; font-family: "Courier New"; font-size: 12px; color: #c0c0c0;}
 div.less-status-bar span.pad4{padding-left: 4px;}
-div.less-status-bar span.ctrl{width: 220px;}
+div.less-status-bar span.ctrl{width: 274px;}
 div.less-status-bar span.file{width: 246px; border-right: 2px solid #000000;}
 div.less-status-bar span.info{width: 166px; border-right: 2px solid #000000;}
 div.less-status-bar span.charset{width: 160px; padding-left: 1px; border-right: 2px solid #000000;}

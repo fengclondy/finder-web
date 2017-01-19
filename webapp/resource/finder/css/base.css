@@ -465,6 +465,23 @@ table.highlight tr.clicked{
     background-color: #ffffdd;
 }
 
+/* table */
+table.table tr td{border: 1px solid #efefef;}
+table.table tr.head td{
+    font-weight: normal;
+    white-space: nowrap;
+    background-color: #eaf8ff;
+    color: #5b5b5b;
+}
+
+table.table tr.head td em{font-style: normal;}
+table.table tr.head td em.title{float: left; height: 20px; line-height: 20px;}
+table.table tr.head td em.order{float: left; width: 20px; height: 20px;}
+table.table tr.head td em.asc{background: url(../images/narrow.gif) repeat-y scroll 0px 0px transparent;}
+table.table tr.head td em.desc{background: url(../images/narrow.gif) repeat-y scroll 0px -20px transparent;}
+table.table tr td{padding-left: 4px; line-height: 20px;}
+
+/* list */
 table.list tr td{border: 1px solid #efefef;}
 table.list tr.head td{
     font-weight: normal;

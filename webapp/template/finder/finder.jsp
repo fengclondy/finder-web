@@ -19,8 +19,8 @@
 <script type="text/javascript" src="${contextPath}/resource/finder/plugins.js"></script>
 </head>
 <!-- ${request.getServerName()} -->
-<!-- http://${loacalIp}/finder/index.html?workspace=${URLUtil.encode(workspace)} -->
-<!-- http://${loacalIp}/finder/display.html?workspace=${URLUtil.encode(workspace)}&path=${URLUtil.encode(path)} -->
+<!-- http://${localIp}/finder/index.html?workspace=${URLUtil.encode(workspace)} -->
+<!-- http://${localIp}/finder/display.html?workspace=${URLUtil.encode(workspace)}&path=${URLUtil.encode(path)} -->
 <body loacalIp="${loacalIp}" contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${(path != '' ? path : '/')}">
 <div class="finder" style="min-width: 900px;">
     <div class="menu-bar" contextmenu="false">
