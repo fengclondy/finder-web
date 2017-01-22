@@ -13,6 +13,7 @@ package com.skin.finder.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BaseServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    protected ServletContext servletContext;
 
     /**
      * default
@@ -39,6 +41,7 @@ public class BaseServlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
+        this.servletContext = servletConfig.getServletContext();
     }
 
     /**
@@ -52,12 +55,51 @@ public class BaseServlet extends HttpServlet {
     }
 
     /**
+     * @return the servletContext
+     */
+    @Override
+    public ServletContext getServletContext() {
+        return this.servletContext;
+    }
+
+    /**
+     * @param servletContext the servletContext to set
+     */
+    protected void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @param path
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void forward(HttpServletRequest request, HttpServletResponse response, String path) throws ServletException, IOException {
+        request.getRequestDispatcher(path).forward(request, response);
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @param status
+     * @param message
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void error(HttpServletRequest request, HttpServletResponse response, int status, String message) throws ServletException, IOException {
+        request.setAttribute("javax_servlet_error", message);
+        response.sendError(status);
+    }
+
+    /**
      * @param request
      * @param name
      * @param defaultValue
      * @return boolean
      */
-    public boolean getBoolean(HttpServletRequest request, String name, boolean defaultValue) {
+    protected boolean getBoolean(HttpServletRequest request, String name, boolean defaultValue) {
         String value = request.getParameter(name);
 
         if(value != null) {
@@ -72,13 +114,15 @@ public class BaseServlet extends HttpServlet {
      * @param defaultValue
      * @return int
      */
-    public int getInteger(HttpServletRequest request, String name, int defaultValue) {
+    protected int getInteger(HttpServletRequest request, String name, int defaultValue) {
         String value = request.getParameter(name);
 
-        try {
-            return Integer.parseInt(value);
-        }
-        catch(NumberFormatException e) {
+        if(value != null) {
+            try {
+                return Integer.valueOf(Integer.parseInt(value));
+            }
+            catch(NumberFormatException e) {
+            }
         }
         return defaultValue;
     }
@@ -88,7 +132,7 @@ public class BaseServlet extends HttpServlet {
      * @param name
      * @return String
      */
-    public String getTrimString(HttpServletRequest request, String name) {
+    protected String getTrimString(HttpServletRequest request, String name) {
         String value = request.getParameter(name);
         return (value != null ? value.trim() : "");
     }
@@ -99,7 +143,7 @@ public class BaseServlet extends HttpServlet {
      * @param defaultValue
      * @return long
      */
-    public long getLong(HttpServletRequest request, String name, long defaultValue) {
+    protected long getLong(HttpServletRequest request, String name, long defaultValue) {
         String value = request.getParameter(name);
 
         try {
@@ -114,7 +158,7 @@ public class BaseServlet extends HttpServlet {
      * @param source
      * @return String
      */
-    public String escape(String source) {
+    protected String escape(String source) {
         if(source == null) {
             return "";
         }

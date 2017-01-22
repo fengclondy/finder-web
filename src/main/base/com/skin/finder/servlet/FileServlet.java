@@ -18,7 +18,6 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,7 +38,6 @@ import com.skin.util.IO;
  * @version 1.0
  */
 public class FileServlet extends BaseServlet {
-    protected ServletContext servletContext;
     private static final Logger logger = LoggerFactory.getLogger(FileServlet.class);
     private static final long serialVersionUID = 1L;
 

@@ -1,5 +1,5 @@
 /*
- * $RCSfile: LessAction.java,v $$
+ * $RCSfile: FinderUtil.java,v $$
  * $Revision: 1.1 $
  * $Date: 2016-10-02 $
  *
@@ -23,7 +23,7 @@ import com.skin.finder.FinderManager;
 import com.skin.finder.config.Workspace;
 
 /**
- * <p>Title: LessAction</p>
+ * <p>Title: FinderUtil</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2006</p>
  * @author xuesong.net
@@ -142,5 +142,46 @@ public class FinderUtil {
         else {
             return filePath;
         }
+    }
+
+    /**
+     * @param dir
+     * @param name
+     * @return File
+     * @throws IOException 
+     */
+    public static File getFile(File dir, String name) throws IOException {
+        String prefix = null;
+        String extension = null;
+        int k = name.lastIndexOf('.');
+
+        if(k > -1) {
+            prefix = name.substring(0, k);
+            extension = name.substring(k);
+        }
+        else {
+            prefix = name;
+            extension = "";
+        }
+
+        int i = 1;
+        int count = 0;
+        File file = new File(dir, name);
+
+        if(!file.exists()) {
+            file.createNewFile();
+            return file;
+        }
+
+        while((count < 1000000)) {
+            file = new File(dir, prefix + "(" + i + ")" + extension);
+            i++;
+
+            if(!file.exists()) {
+                file.createNewFile();
+                return file;
+            }
+        }
+        return null;
     }
 }

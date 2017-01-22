@@ -29,6 +29,7 @@ import com.skin.finder.FileRange;
 import com.skin.finder.FileType;
 import com.skin.finder.FinderManager;
 import com.skin.finder.config.Workspace;
+import com.skin.finder.util.FinderUtil;
 import com.skin.j2ee.upload.FileItem;
 import com.skin.j2ee.upload.MultipartHttpRequest;
 import com.skin.j2ee.util.JsonUtil;
@@ -69,6 +70,12 @@ public class FinderServlet extends FileServlet {
         map.put("jar",    "jar");
         map.put("ear",    "ear");
         map.put("war",    "war");
+    }
+
+    /**
+     * default
+     */
+    public FinderServlet() {
     }
 
     /**
@@ -188,7 +195,7 @@ public class FinderServlet extends FileServlet {
     public void getFolderXml(HttpServletRequest request, HttpServletResponse response, String listUrl, String xmlUrl) throws ServletException, IOException {
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         String xml = finderManager.getFolderXml(workspace, path, listUrl, xmlUrl);
 
@@ -205,7 +212,7 @@ public class FinderServlet extends FileServlet {
     public void getFileList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         String realPath = finderManager.getRealPath(path);
 
@@ -241,7 +248,7 @@ public class FinderServlet extends FileServlet {
     public void display(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         String realPath = finderManager.getRealPath(path);
 
@@ -345,7 +352,7 @@ public class FinderServlet extends FileServlet {
     public void play(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         String realPath = finderManager.getRealPath(path);
 
@@ -389,9 +396,9 @@ public class FinderServlet extends FileServlet {
      * @throws IOException
      */
     public void execute(HttpServletRequest request, HttpServletResponse response, boolean download) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String workspace = request.getParameter("workspace");
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         String realPath = finderManager.getRealPath(path);
 
@@ -421,9 +428,9 @@ public class FinderServlet extends FileServlet {
      * @throws IOException
      */
     public void suggest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String workspace = request.getParameter("workspace");
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         Object json = finderManager.suggest(workspace, path);
         JsonUtil.success(request, response, json);
@@ -437,10 +444,10 @@ public class FinderServlet extends FileServlet {
      * @throws IOException
      */
     public void rename(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
         String newName = request.getParameter("newName");
-        String home = this.getWorkspace(workspace);
+        String workspace = request.getParameter("workspace");
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         int count = finderManager.rename(path, newName);
         JsonUtil.success(request, response, (count > 0));
@@ -454,10 +461,10 @@ public class FinderServlet extends FileServlet {
      * @throws IOException
      */
     public void mkdir(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
-        String path = request.getParameter("path");
         String name = request.getParameter("name");
-        String home = this.getWorkspace(workspace);
+        String path = request.getParameter("path");
+        String workspace = request.getParameter("workspace");
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         boolean success = finderManager.mkdir(path, name);
         JsonUtil.success(request, response, success);
@@ -471,9 +478,9 @@ public class FinderServlet extends FileServlet {
      * @throws IOException
      */
     public void upload(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String home = this.getWorkspace(workspace);
+        String workspace = request.getParameter("workspace");
+        String home = FinderUtil.getWorkspace(request, workspace);
 
         int maxFileSize = 20 * 1024 * 1024;
         int maxBodySize = 24 * 1024 * 1024;
@@ -651,9 +658,9 @@ public class FinderServlet extends FileServlet {
      */
     public void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int count = 0;
-        String workspace = request.getParameter("workspace");
         String[] path = request.getParameterValues("path");
-        String home = this.getWorkspace(workspace);
+        String workspace = request.getParameter("workspace");
+        String home = FinderUtil.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
 
         for(int i = 0; i < path.length; i++) {
@@ -676,9 +683,8 @@ public class FinderServlet extends FileServlet {
         String targetWorkspace = request.getParameter("workspace");
         String targetPath = request.getParameter("path");
         String[] fileList = request.getParameterValues("file");
-
-        String sourceHome = this.getWorkspace(sourceWorkspace);
-        String targetHome = this.getWorkspace(targetWorkspace);
+        String sourceHome = FinderUtil.getWorkspace(request, sourceWorkspace);
+        String targetHome = FinderUtil.getWorkspace(request, targetWorkspace);
 
         FinderManager sourceManager = new FinderManager(sourceHome);
         FinderManager targetManager = new FinderManager(targetHome);
@@ -695,7 +701,7 @@ public class FinderServlet extends FileServlet {
                     continue;
                 }
                 else {
-                    f2 = this.getFile(f2.getParentFile(), f2.getName());
+                    f2 = FinderUtil.getFile(f2.getParentFile(), f2.getName());
                 }
             }
 
@@ -707,32 +713,6 @@ public class FinderServlet extends FileServlet {
         }
         JsonUtil.success(request, response, true);
         return;
-    }
-
-    /**
-     * @param name
-     * @return String
-     */
-    public String getWorkspace(String name) {
-        if(name == null) {
-            throw new NullPointerException("workspace must be not null !");
-        }
-
-        Workspace workspace = Workspace.getInstance();
-        String work = workspace.getValue(name.trim());
-
-        if(work == null) {
-            throw new NullPointerException("workspace must be not null !");
-        }
-
-        if(work.startsWith("file:")) {
-            return new File(work.substring(5)).getAbsolutePath();
-        }
-
-        if(work.startsWith("contextPath:")) {
-            return this.getServletContext().getRealPath(work.substring(12));
-        }
-        throw new NullPointerException("work directory error: " + work);
     }
 
     /**
@@ -814,89 +794,5 @@ public class FinderServlet extends FileServlet {
             IO.close(raf);
         }
         return null;
-    }
-
-    /**
-     * @param dir
-     * @param name
-     * @return File
-     * @throws IOException 
-     */
-    protected File getFile(File dir, String name) throws IOException {
-        String prefix = null;
-        String extension = null;
-        int k = name.lastIndexOf('.');
-
-        if(k > -1) {
-            prefix = name.substring(0, k);
-            extension = name.substring(k);
-        }
-        else {
-            prefix = name;
-            extension = "";
-        }
-
-        int i = 1;
-        int count = 0;
-        File file = new File(dir, name);
-
-        if(!file.exists()) {
-            file.createNewFile();
-            return file;
-        }
-
-        while((count < 1000000)) {
-            file = new File(dir, prefix + "(" + i + ")" + extension);
-            i++;
-
-            if(!file.exists()) {
-                file.createNewFile();
-                return file;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param request
-     * @param name
-     * @param defaultValue
-     * @return Integer
-     */
-    protected Integer getInteger(HttpServletRequest request, String name, Integer defaultValue) {
-        String value = request.getParameter(name);
-
-        if(value != null) {
-            try {
-                return Integer.valueOf(Integer.parseInt(value));
-            }
-            catch(NumberFormatException e) {
-            }
-        }
-        return defaultValue;
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @param path
-     * @throws ServletException
-     * @throws IOException
-     */
-    public void forward(HttpServletRequest request, HttpServletResponse response, String path) throws ServletException, IOException {
-        request.getRequestDispatcher(path).forward(request, response);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @param status
-     * @param message
-     * @throws ServletException
-     * @throws IOException
-     */
-    public void error(HttpServletRequest request, HttpServletResponse response, int status, String message) throws ServletException, IOException {
-        request.setAttribute("javax_servlet_error", message);
-        response.sendError(status);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * $RCSfile: LessAction.java,v $$
+ * $RCSfile: FinderUtil.java,v $$
  * $Revision: 1.1 $
  * $Date: 2013-10-15 $
  *
@@ -22,7 +22,7 @@ import com.skin.j2ee.action.BaseAction;
 import com.skin.j2ee.annotation.UrlPattern;
 
 /**
- * <p>Title: LessAction</p>
+ * <p>Title: FinderUtil</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2006</p>
  * @author xuesong.net
