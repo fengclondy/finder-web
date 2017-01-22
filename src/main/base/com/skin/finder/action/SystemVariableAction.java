@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import com.skin.datasource.ConnectionManager;
 import com.skin.finder.manager.SystemVariableManager;
 import com.skin.finder.model.SystemVariable;
 import com.skin.j2ee.action.BaseAction;
@@ -36,10 +37,15 @@ public class SystemVariableAction extends BaseAction {
     public void list() throws ServletException, IOException {
         int pageNum = this.getInteger("pageNum", 1);
         int pageSize = this.getInteger("pageSize", 20);
+        int variableCount = 0;
+        List<SystemVariable> systemVariableList = null;
 
-        SystemVariableManager systemVariableManager = new SystemVariableManager();
-        int variableCount = systemVariableManager.getVariableCount();
-        List<SystemVariable> systemVariableList = systemVariableManager.getVariableList(pageNum, pageSize);
+        if(ConnectionManager.available()) {
+            SystemVariableManager systemVariableManager = new SystemVariableManager();
+            variableCount = systemVariableManager.getVariableCount();
+            systemVariableList = systemVariableManager.getVariableList(pageNum, pageSize);
+        }
+
         this.setAttribute("pageNum", pageNum);
         this.setAttribute("pageSize", pageSize);
         this.setAttribute("variableCount", variableCount);
@@ -53,6 +59,11 @@ public class SystemVariableAction extends BaseAction {
      */
     @com.skin.j2ee.annotation.UrlPattern("/system/config/save.html")
     public void save() throws ServletException, IOException {
+        if(!ConnectionManager.available()) {
+            JsonUtil.error(this.request, this.response, 500, "没有数据库连接！");
+            return;
+        }
+        
         String variableName = this.getString("variableName", "");
         String variableValue = this.getString("variableValue", "");
         String variableDesc = this.getString("variableDesc", "");
@@ -82,8 +93,12 @@ public class SystemVariableAction extends BaseAction {
      */
     @com.skin.j2ee.annotation.UrlPattern("/system/config/delete.html")
     public void delete() throws ServletException, IOException {
-        String variableName = this.getString("variableName", "");
+        if(!ConnectionManager.available()) {
+            JsonUtil.error(this.request, this.response, 500, "没有数据库连接！");
+            return;
+        }
 
+        String variableName = this.getString("variableName", "");
         SystemVariableManager systemVariableManager = new SystemVariableManager();
         SystemVariable systemVariable = systemVariableManager.getById(variableName);
 

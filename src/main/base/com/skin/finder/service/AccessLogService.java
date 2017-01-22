@@ -38,7 +38,7 @@ public class AccessLogService {
      */
     public AccessLog getById(long logId) {
         Connection connection = null;
-        
+
         try {
             connection = ConnectionManager.getConnection();
             AccessLogDao dao = new AccessLogDao(connection);
@@ -58,7 +58,7 @@ public class AccessLogService {
      */
     public int create(AccessLog accessLog) {
         Connection connection = null;
-        
+
         try {
             connection = ConnectionManager.getConnection();
             AccessLogDao dao = new AccessLogDao(connection);
@@ -85,7 +85,7 @@ public class AccessLogService {
      */
     public int getCount() {
         Connection connection = null;
-        
+
         try {
             connection = ConnectionManager.getConnection();
             AccessLogDao dao = new AccessLogDao(connection);

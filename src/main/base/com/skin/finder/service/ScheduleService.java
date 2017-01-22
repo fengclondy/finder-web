@@ -151,6 +151,10 @@ public class ScheduleService {
      * @return List<Schedule>
      */
     public List<Schedule> getListByStatus(int status) {
+        if(!ConnectionManager.available()) {
+            return null;
+        }
+
         Connection connection = null;
 
         try {

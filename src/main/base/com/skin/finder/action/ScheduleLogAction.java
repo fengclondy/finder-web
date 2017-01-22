@@ -12,13 +12,10 @@
 package com.skin.finder.action;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.skin.datasource.ConnectionManager;
 import com.skin.finder.manager.ScheduleLogManager;
 import com.skin.finder.model.ScheduleLog;
 import com.skin.j2ee.action.BaseAction;
@@ -32,8 +29,6 @@ import com.skin.j2ee.util.ScrollPage;
  * @version 1.0
  */
 public class ScheduleLogAction extends BaseAction {
-    private static final Logger logger = LoggerFactory.getLogger(ScheduleLogAction.class);
-
     /**
      * @throws ServletException
      * @throws IOException
@@ -43,18 +38,14 @@ public class ScheduleLogAction extends BaseAction {
         long scheduleId = this.getLong("scheduleId", 0L);
         ScrollPage<ScheduleLog> page = this.getScrollPage(ScheduleLog.class);
 
-        try {
+        if(ConnectionManager.available()) {
             new ScheduleLogManager().getListByScheduleId(scheduleId, page);
-            List<ScheduleLog> scheduleLogList = page.getItems();
+        }
 
-            this.setAttribute("scheduleLogList", scheduleLogList);
-            this.setAttribute("pageNum", page.getPageNum());
-            this.setAttribute("pageSize", page.getPageSize());
-            this.setAttribute("logCount", page.getCount());
-        }
-        catch(Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+        this.setAttribute("pageNum", page.getPageNum());
+        this.setAttribute("pageSize", page.getPageSize());
+        this.setAttribute("logCount", page.getCount());
+        this.setAttribute("scheduleLogList", page.getItems());
         this.forward("/template/system/schedule/scheduleLogList.jsp");
     }
 }

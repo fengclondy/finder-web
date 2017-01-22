@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skin.datasource.ConnectionManager;
 import com.skin.finder.manager.ScheduleManager;
 import com.skin.finder.model.Schedule;
 import com.skin.finder.schedule.ScheduleBuilder;
@@ -45,8 +46,12 @@ public class ScheduleAction extends BaseAction {
     @com.skin.j2ee.annotation.UrlPattern("/system/schedule/list.html")
     public void list() throws ServletException, IOException {
         ScrollPage<Schedule> page = this.getScrollPage(Schedule.class);
-        ScheduleManager scheduleManager = new ScheduleManager();
-        scheduleManager.getList(page);
+
+        if(ConnectionManager.available()) {
+            ScheduleManager scheduleManager = new ScheduleManager();
+            scheduleManager.getList(page);
+        }
+
         this.setAttribute("scheduleList", page.getItems());
         this.setAttribute("pageNum", page.getPageNum());
         this.setAttribute("pageSize", page.getPageSize());
@@ -92,6 +97,11 @@ public class ScheduleAction extends BaseAction {
         String action = this.getString("action");
         String properties = this.getString("properties");
 
+        if(!ConnectionManager.available()) {
+            JsonUtil.error(this.request, this.response, 500, "没有数据库连接！");
+            return;
+        }
+
         try {
             int scheduleType = 1;
             Date sysTime = new Date();
@@ -129,6 +139,11 @@ public class ScheduleAction extends BaseAction {
     public void update() throws ServletException, IOException {
         long scheduleId = this.getLong("scheduleId", 0L);
 
+        if(!ConnectionManager.available()) {
+            JsonUtil.error(this.request, this.response, 500, "没有数据库连接！");
+            return;
+        }
+
         if(scheduleId > 0L) {
             Schedule schedule = new ScheduleManager().getById(scheduleId);
             this.setAttribute("schedule", schedule);
@@ -148,6 +163,12 @@ public class ScheduleAction extends BaseAction {
         String expression = this.getString("expression");
         String action = this.getString("action");
         String properties = this.getString("properties");
+
+        if(!ConnectionManager.available()) {
+            JsonUtil.error(this.request, this.response, 500, "没有数据库连接！");
+            return;
+        }
+        
         ScheduleManager scheduleManager = new ScheduleManager();
         Schedule schedule = scheduleManager.getById(scheduleId);
 
@@ -193,6 +214,11 @@ public class ScheduleAction extends BaseAction {
         long scheduleId = this.getLong("scheduleId", 0L);
         int status = this.getInteger("status", 0);
 
+        if(!ConnectionManager.available()) {
+            JsonUtil.error(this.request, this.response, 500, "没有数据库连接！");
+            return;
+        }
+
         if(scheduleId > 0) {
             if(status != 0) {
                 status = 1;
@@ -217,6 +243,11 @@ public class ScheduleAction extends BaseAction {
     @com.skin.j2ee.annotation.UrlPattern("/system/schedule/delete.html")
     public void delete() throws ServletException, IOException {
         long scheduleId = this.getLong("scheduleId", 0L);
+
+        if(!ConnectionManager.available()) {
+            JsonUtil.error(this.request, this.response, 500, "没有数据库连接！");
+            return;
+        }
 
         if(scheduleId > 0) {
             new ScheduleManager().delete(scheduleId);

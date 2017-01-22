@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.skin.datasource.ConnectionManager;
 import com.skin.finder.manager.AccessLogManager;
 import com.skin.finder.model.AccessLog;
 import com.skin.j2ee.action.BaseAction;
@@ -41,10 +42,15 @@ public class AccessLogAction extends BaseAction {
      */
     @com.skin.j2ee.annotation.UrlPattern("/analytics/log.html")
     public void log() throws ServletException, IOException {
+        this.response.setContentType("image/jpeg; charset=UTF-8");
+
+        if(!ConnectionManager.available()) {
+            return;
+        }
+
         AccessLogManager accessLogManager = new AccessLogManager();
         AccessLog accessLog = this.getAccessLog(this.request, this.response);
         accessLogManager.create(accessLog);
-        this.response.setContentType("image/jpeg; charset=UTF-8");
     }
 
     /**

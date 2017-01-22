@@ -51,24 +51,9 @@ public class SystemInfoAction extends BaseAction {
      */
     @com.skin.j2ee.annotation.UrlPattern("/system/index.html")
     public void index() throws ServletException, IOException {
-        Connection connection = null;
-        DatabaseInfo databaseInfo = null;
-
-        try {
-            connection = ConnectionManager.getConnection();
-            databaseInfo = DatabaseInfo.getInstance(connection);
-        }
-        catch(Throwable t) {
-            if(logger.isWarnEnabled()) {
-                logger.warn(t.getMessage(), t);
-            }
-        }
-        finally {
-            ConnectionManager.close(connection);
-        }
-
-        ServletInfo servletInfo = new ServletInfo(this.getServletContext());
         SystemInfo systemInfo = new SystemInfo();
+        DatabaseInfo databaseInfo = this.getDatabaseInfo();
+        ServletInfo servletInfo = new ServletInfo(this.getServletContext());
         Version version = VersionFactory.getInstance();
 
         this.setAttribute("servletInfo", servletInfo);
@@ -76,5 +61,28 @@ public class SystemInfoAction extends BaseAction {
         this.setAttribute("systemInfo", systemInfo);
         this.setAttribute("version", version);
         this.forward("/template/system/systemInfo.jsp");
+    }
+
+    /**
+     * @return DatabaseInfo
+     */
+    private DatabaseInfo getDatabaseInfo() {
+        if(!ConnectionManager.available()) {
+            return null;
+        }
+
+        Connection connection = null;
+
+        try {
+            connection = ConnectionManager.getConnection();
+            return DatabaseInfo.getInstance(connection);
+        }
+        catch(Throwable t) {
+            logger.error(t.getMessage(), t);
+        }
+        finally {
+            ConnectionManager.close(connection);
+        }
+        return null;
     }
 }

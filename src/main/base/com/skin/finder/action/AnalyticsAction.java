@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import com.skin.datasource.ConnectionManager;
 import com.skin.finder.manager.AccessLogManager;
 import com.skin.finder.model.AccessLog;
 import com.skin.j2ee.action.BaseAction;
@@ -32,12 +33,17 @@ public class AnalyticsAction extends BaseAction {
      */
     @com.skin.j2ee.annotation.UrlPattern("/system/accesslog/index.html")
     public void log() throws ServletException, IOException {
-        int pageNum = this.getInteger("pageNum", 1);
+        int logCount = 0;
         int pageSize = 50;
+        int pageNum = this.getInteger("pageNum", 1);
+        List<AccessLog> accessLogList = null;
 
-        AccessLogManager accessLogManager = new AccessLogManager();
-        int logCount = accessLogManager.getCount();
-        List<AccessLog> accessLogList = accessLogManager.list(pageNum, pageSize);
+        if(ConnectionManager.available()) {
+            AccessLogManager accessLogManager = new AccessLogManager();
+            logCount = accessLogManager.getCount();
+            accessLogList = accessLogManager.list(pageNum, pageSize);
+        }
+
         this.setCache(0);
         this.setAttribute("pageNum", pageNum);
         this.setAttribute("pageSize", pageSize);
