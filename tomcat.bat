@@ -1,12 +1,16 @@
 @ECHO OFF
-del "d:\opt\resin\log\finder.log"
+@ECHO delete log files.
+del "d:\opt\resin\log\*.log"
 del "webapp\WEB-INF\classes\version.xml"
 del "webapp\WEB-INF\upgrade\*.zip"
 
 rd /s /q "webapp\WEB-INF\ayada"
+@IF exist "D:\MyApp\setenv.bat" call D:\MyApp\setenv.bat
 
-@IF exist "E:\WorkSpace\finder" copy "conf\server-local.xml" "D:\Tomcat-7.0.37\conf\server.xml"
-@IF exist "d:\workspace2\finder" copy "conf\server.xml" "D:\Tomcat-7.0.37\conf\server.xml"
+@ECHO   JAVA_HOME: %JAVA_HOME%
+@ECHO TOMCAT_HOME: %TOMCAT_HOME%
 
-cd /d "D:\Tomcat-7.0.37\bin"
+copy "conf\server8.xml" "%TOMCAT_HOME%\conf\server.xml"
+
+cd /d "%TOMCAT_HOME%\bin"
 startup.bat

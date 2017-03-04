@@ -53,7 +53,7 @@
         </init-param>
         <init-param>
             <param-name>templateFactoryClass</param-name>
-            <param-value>com.skin.ayada.template.JspTemplateFactory</param-value>
+            <param-value>com.skin.ayada.runtime.JspTemplateFactory</param-value>
         </init-param>
         <init-param>
             <param-name>ignoreJspTag</param-name>

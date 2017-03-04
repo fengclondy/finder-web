@@ -22,6 +22,9 @@
 <!-- http://${localIp}/finder/index.html?workspace=${URLUtil.encode(workspace)} -->
 <!-- http://${localIp}/finder/display.html?workspace=${URLUtil.encode(workspace)}&path=${URLUtil.encode(path)} -->
 <body loacalIp="${loacalIp}" contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${(path != '' ? path : '/')}">
+<c:if test="true">
+    <!-- h1>true</h1 -->
+</c:if>
 <div class="finder" style="min-width: 900px;">
     <div class="menu-bar" contextmenu="false">
         <div style="float: left; width: 80px;">
