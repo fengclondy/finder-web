@@ -32,7 +32,7 @@ public class CurrentUser {
      */
     public static long getSessionId(HttpServletRequest request) {
         UserSession userSession = Client.getSession(request);
-        return (userSession != null ? userSession.getSessionId() : null);
+        return (userSession != null ? userSession.getSessionId() : 0L);
     }
 
     /**

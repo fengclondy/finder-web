@@ -279,7 +279,7 @@ Tail.setEnd = function(end) {
     var list = e.childNodes;
 
     if(list.length > 0) {
-        var node = list[length.length - 1];
+        var node = list[list.length - 1];
         node.setAttribute("end", end);
     }
 };

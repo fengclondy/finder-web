@@ -91,25 +91,27 @@ a.button span.view{background-position: 0px -27px;}
 a.button span.home{background-position: 2px -71px;}
 a.button span.help{background-position: -27px -71px;}
 
-div.less-menu-bar{margin: 0px; padding: 2px 0px 2px 0px; height: 20px; border: 1px solid #999999; background-color: #bbccdd; font-size: 12px;}
+div.less-menu-bar{margin: 0px; padding: 2px 0px 2px 0px; height: 20px; border: 1px solid #999999; background-color: #bbccdd; font-size: 13px;}
 div.less-menu-bar input.text{height: 18px; padding-left: 2px; border: 1px solid #809db9; line-height: 18px;}
 div.less-menu-bar input.button{margin: 0px 4px; padding-left: 2px; height: 20px; border: 1px solid #999999; line-height: 20px;}
 
 div.less-container{
     margin: 0px;
+    padding: 10px 0px 20px 0px;
     width: 100%;
     border: 0px solid #888888;
     background-color: #000000;
     outline: none;
     overflow: scroll;
     line-height: 16px;
-    font-size: 12px;
+    font-size: 13px;
     font-family: Lucida Console;
     color: #009900;
     resize: none;
 }
 
 div.less-container p, .less-container pre{
+    padding-left: 4px;
     border-bottom: 0px solid #111111;
     font-family: inherit;
     outline: none;
@@ -185,18 +187,16 @@ div.less-progress-bar .progress .slider .mask{
 
 /* less-status-bar */
 div.less-status-bar{margin-top: 0px; padding-top: 6px; height: 22px; border: 0px solid #666666; background-color: #000000; font-size: 12px; color: #c0c0c0;}
-div.less-status-bar span{float: left; margin-left: 0px; padding-left: 0px; height: 18px; line-height: 18px; background-color: #333333; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 12px; color: #c0c0c0; display: inline-block;}
+div.less-status-bar span{float: left; margin-left: 0px; padding-left: 0px; height: 18px; background-color: #333333; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 12px; color: #c0c0c0; display: inline-block;}
 div.less-status-bar span input.checkbox{margin-top: -1px; margin-right: 4px; border: none; background: none; vertical-align: middle;}
-div.less-status-bar span input.text{height: 16px; padding-left: 4px; border: 1px solid #666666; background-color: #333333; outline: none; line-height: 18px; font-family: "Courier New"; font-size: 12px; color: #c0c0c0;}
+div.less-status-bar span input.text{height: 16px; padding-left: 4px; border: 1px solid #666666; background-color: #333333; outline: none; line-height: 16px; font-family: "Courier New"; font-size: 12px; color: #c0c0c0;}
 div.less-status-bar span.pad4{padding-left: 4px;}
 div.less-status-bar span.ctrl{width: 274px;}
 div.less-status-bar span.file{width: 246px; border-right: 2px solid #000000;}
 div.less-status-bar span.info{width: 166px; border-right: 2px solid #000000;}
 div.less-status-bar span.charset{width: 160px; padding-left: 1px; border-right: 2px solid #000000;}
-div.less-status-bar span.charset select{width: 160px; height: 18px; border: 1px solid #666666; background-color: #333333; outline: none; font-size: 12px; color: #c0c0c0;}
+div.less-status-bar span.charset select{width: 160px; height: 18px; border: 1px solid #666666; background-color: #333333; outline: none; font-family: "Courier New"; font-size: 12px; color: #c0c0c0;}
 div.less-status-bar span.status{width: 200px; padding-left: 0px;}
-
-div.less-status-bar input.text{height: 16px; padding-left: 2px; border: none; outline: none; line-height: 16px;}
 div.less-status-bar input.button{margin: 0px; padding: 0px 8px 0px 8px; height: 18px; line-height: 18px; border: 1px solid #666666; background-color: #333333; color: #c0c0c0;}
 
 div.find-panel{position: fixed; display: block; bottom: 58px; left: 100px; width: 600px; height: 120px; padding: 30px; background-color: #ffffff;}

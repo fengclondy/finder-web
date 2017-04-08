@@ -21,7 +21,7 @@ jQuery(function() {
     var container = Grep.getContainer();
 
     jQuery(window).bind("resize", function(){
-        jQuery(container).height(jQuery(window).height() - 38);
+        jQuery(container).height(jQuery(window).height() - 68);
     });
     jQuery(window).trigger("resize");
 });

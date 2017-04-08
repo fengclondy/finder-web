@@ -4,7 +4,7 @@ rd /s /q "webapp\WEB-INF\ayada"
 
 @IF exist "C:\apache-ant-1.8.0" @SET ANT_HOME=C:\apache-ant-1.8.0
 @IF exist "D:\apache-ant-1.8.0" @SET ANT_HOME=D:\apache-ant-1.8.0
-@IF exist "%ANT_HOME%\bin\setenv.bat" call %ANT_HOME%\bin\setenv.bat
+@IF exist "D:\MyApp\bin\setenv.bat" call D:\MyApp\bin\setenv.bat
 
 @ECHO JAVA_HOME: %JAVA_HOME%
 @ECHO  ANT_HOME: %ANT_HOME%

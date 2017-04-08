@@ -40,7 +40,7 @@ public class BaseServlet extends HttpServlet {
      * @param servletConfig
      */
     @Override
-    public void init(ServletConfig servletConfig) throws ServletException {
+    public void init(ServletConfig servletConfig) {
         this.servletContext = servletConfig.getServletContext();
     }
 

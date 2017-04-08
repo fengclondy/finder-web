@@ -294,6 +294,10 @@ public class FinderServlet extends FileServlet {
             type = type.toLowerCase();
         }
 
+        if(theme == null || theme.length() < 1) {
+            theme = "Default";
+        }
+
         if(map.get(type) != null) {
             this.execute(request, response, false);
             return;

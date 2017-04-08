@@ -21,7 +21,7 @@ jQuery(function() {
     var container = Tail.getContainer();
 
     jQuery(window).bind("resize", function(){
-        jQuery(container).height(jQuery(window).height() - 26);
+        jQuery(container).height(jQuery(window).height() - 56);
     });
     jQuery(window).trigger("resize");
 });

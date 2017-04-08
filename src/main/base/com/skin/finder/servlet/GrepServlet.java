@@ -177,7 +177,7 @@ public class GrepServlet extends BaseServlet {
         while((bytes = this.readLine(raf, buffer, tmp)) != null) {
             String line = new String(bytes, 0, bytes.length, charset);
 
-            if(regexp) {
+            if(pattern != null) {
                 match = pattern.matcher(line).find();
             }
             else {
