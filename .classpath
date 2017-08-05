@@ -1,24 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/resource"/>
-	<classpathentry kind="src" path="src/main/base"/>
-	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/test/resource"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-dbcp-1.4.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-pool-1.4.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/ehcache-2.7.0.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/javassist-3.11.0.GA.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/logback-classic-0.9.24.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/logback-core-0.9.24.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/mysql-connector-java-5.1.7.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/ognl-3.0.6.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/quartz-2.1.6.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/slf4j-api-1.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/mail-1.4.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/finder-sdk-1.0.0.1.jar" sourcepath="/finder-sdk"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/ayada-1.0.1.2.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/fastjson-1.2.12.jar"/>
-	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/logback-classic-0.9.24.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/logback-core-0.9.24.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
 </classpath>

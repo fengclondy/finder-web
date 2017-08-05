@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace version="1.0">
-    <parameter name="finder.workspace.log">file:/opt/resin/log</parameter>
-    <parameter name="finder.workspace.root">contextPath:/</parameter>
+    <parameter name="finder.log">file:D:/opt</parameter>
+    <parameter name="finder.root">contextPath:/</parameter>
+    <parameter name="finder.mp3">file:E:/mp3</parameter>
 </workspace>

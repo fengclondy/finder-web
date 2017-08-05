@@ -1,26 +1,27 @@
 <?xml version="1.0"?>
 
 <!-- Build file for application -->
-<project name="finder" default="buildwar" basedir=".">
+<project name="finder-web" default="buildwar" basedir=".">
     <!--  set global properties for this build -->
     <target name="init">
         <tstamp/>
-        <property name="appName" value="finder"/>
-        <property name="packageName" value="finder"/>
-        <property name="version" value="1.0.0.1"/>
+        <property name="appName" value="finder-web"/>
+        <property name="packageName" value="dev"/>
+        <property name="version" value="2.0.0"/>
 
         <!-- src directories -->
-        <property name="src.java" value="${basedir}/src"/>
+        <property name="src.java" value="${basedir}/src/main/java"/>
+        <property name="src.resource" value="${basedir}/src/main/resource"/>
         <property name="src.lib" value="${basedir}/lib"/>
         <property name="src.doc" value="${basedir}/doc"/>
         <property name="src.webapp" value="${basedir}/webapp"/>
 
         <!-- build directories -->
         <property name="build.base" value="${basedir}/build"/>
-        <property name="build.classes" value="${build.base}/classes"/>
+        <property name="build.classes" value="${build.base}/release/classes"/>
         <property name="build.doc" value="${build.base}/docs"/>
         <property name="build.doc.javadoc" value="${build.doc}/javadoc"/>
-        <property name="build.release" value="${basedir}/release"/>
+        <property name="build.release" value="${build.base}/release"/>
 
         <!-- jarFileName -->
         <property name="jarFileName" value="${appName}-${version}.jar"/>
@@ -51,7 +52,7 @@
             destdir="${build.classes}"
             includes="*/**"
             fork="true"
-            memorymaximumsize="128M"
+            memorymaximumsize="512M"
             debug="${debug}"
             deprecation="${deprecation}"
             optimize="${optimize}"
@@ -60,23 +61,25 @@
             verbose="no">
             <compilerarg line="-Xlint:unchecked"/>
 
-            <src path="${src.java}/main/base"/>
+            <src path="${src.java}"/>
 
             <classpath>
                 <fileset dir="${src.lib}">
                     <include name="**/*.jar"/>
                     <include name="**/*.zip"/>
                 </fileset>
-                <fileset dir="${basedir}/webapp/WEB-INF/lib">
+                <fileset dir="${basedir}/lib">
                     <include name="**/*.jar"/>
                     <include name="**/*.zip"/>
-                    <exclude name="**/finder-${version}.jar"/>
                 </fileset>
             </classpath>
         </javac>
 
         <copy todir="${build.classes}" includeEmptyDirs="no">
-            <fileset dir="${src.java}/main/resource"/>
+            <fileset dir="${src.resource}">
+                <include name="/resource/**"/>
+                <exclude name="**/*.psd"/>
+            </fileset>
         </copy>
     </target>
 
@@ -84,56 +87,45 @@
     <!-- Compiles the source directory and creates a .jar file               -->
     <!-- =================================================================== -->
     <target name="buildjar" depends="compile">
-        <delete file="${build.base}/${appName}-res-${version}.jar"/>
-        <delete file="${build.base}/${appName}-web-${version}.jar"/>
+        <delete file="${build.release}/${appName}-${version}.jar"/>
 
-        <jar destfile="${build.base}/${appName}-web-${version}.jar">
+        <jar destfile="${build.release}/${appName}-${version}.jar">
             <fileset dir="${build.classes}">
-                <include name="**/com/skin/finder/"/>
+                <include name="/com/skin/finder/**"/>
+                <include name="/resource/**"/>
             </fileset>
             <manifest>
                 <attribute name="Built-By" value="xuesong.net"/>
             </manifest>
         </jar>
+        <echo>Jar: ${build.release}/${jarFileName}</echo>
 
-        <jar destfile="${build.base}/${appName}-res-${version}.jar">
-            <fileset dir="${src.webapp}">
-                <include name="/template/"/>
-                <include name="/resource/"/>
+        <copy todir="${basedir}/webapp/WEB-INF/classes" includeEmptyDirs="no">
+            <fileset dir="${src.resource}">
+                <exclude name="/resource/**"/>
             </fileset>
-            <manifest>
-                <attribute name="Built-By" value="xuesong.net"/>
-            </manifest>
-        </jar>
-
-        <echo>Jar: ${build.base}/${jarFileName}</echo>
+        </copy>
+        <copy file="${build.release}/${appName}-${version}.jar" todir="${basedir}/release"/>
+        <copy file="${build.release}/${appName}-${version}.jar" todir="${basedir}/webapp/WEB-INF/lib"/>
     </target>
 
     <!-- =================================================================== -->
     <!-- Compiles the source directory and creates a .war file               -->
     <!-- =================================================================== -->
     <target name="buildwar" depends="buildjar">
-        <delete file="${build.base}/${appName}.war"/>
-        <delete dir="${src.webapp}/WEB-INF/ayada"/>
-
-        <war destfile="${build.base}/${appName}.war"
-             webxml="${src.webapp}/WEB-INF/web.xml"
-             basedir="${src.webapp}">
-
-            <exclude name="autoLogin.jsp"/>
-            <exclude name="webmaster.jsp"/>
-            <exclude name="**/*.bak"/>
-            <exclude name="installer/**"/>
-            <exclude name="WEB-INF/classes/**"/>
-            <classes dir="${build.classes}"/>
-        </war>
-
-        <delete file="${build.release}/${appName}-web-${version}.jar"/>
         <delete file="${build.release}/${appName}.war"/>
 
-        <copy file="${build.base}/${appName}-res-${version}.jar" todir="${build.release}"/>
-        <copy file="${build.base}/${appName}-web-${version}.jar" todir="${build.release}"/>
-        <copy file="${build.base}/${appName}.war" todir="${build.release}"/>
+        <war destfile="${build.release}/${appName}.war"
+             webxml="${src.webapp}/WEB-INF/web.xml"
+             basedir="${src.webapp}">
+            <exclude name="test.jsp"/>
+            <exclude name="finder.jsp"/>
+            <exclude name="template/**"/>
+        </war>
+
+        <delete file="${basedir}/release/${appName}.war"/>
+
+        <copy file="${build.release}/${appName}.war" todir="${basedir}/release"/>
         <echo>War: ${build.release}/${appName}.war</echo>
     </target>
 

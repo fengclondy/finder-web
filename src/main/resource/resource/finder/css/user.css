@@ -1,0 +1,8 @@
+html,body{margin: 0px; padding: 0px; background-color: #f3f3f3;}
+div.wrap{margin: 0px auto 0px auto; width: 400px;}
+div.login-container{margin-top: 200px;}
+div.login-panel{padding: 30px; border: 1px solid #cacaca; border-radius: 10px; background-color: #ffffff;}
+div.login-panel div.row{padding: 6px 0px;}
+div.login-panel div.row input.text{width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #cacaca; border-radius: 7px; outline: none; font-size: 14px; color: #3b3b3b;}
+div.login-panel div.row input.button{width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #2dbe60; border-radius: 7px; background-color: #2dbe60; outline: none; font-size: 14px; color: #ffffff;}
+div.login-panel div.row input.button{border: 1px solid #28a955; background-color: #28a955;}

@@ -1,0 +1,123 @@
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td{margin: 0px; padding: 0px;}
+html,body,img{border: none; overflow: hidden;}
+a,img{margin: 0px; padding: 0px;}
+body{font-size: 13px;}
+img{border: 0px solid #ffffff; vertical-align: middle;}
+
+.h30{height: 30px;}
+.h60{height: 60px;}
+
+.bb{font-weight: bold;}
+.show{display: block;}
+.hide{display: none;}
+
+#menu-bar{height: 30px; padding-left: 10px; padding-right: 10px; background-color: #cceaff;}
+#menu-bar ul{float: right; height: 30px; list-style: none;}
+#menu-bar ul li{float: left; height: 30px; padding-left: 20px; padding-right: 20px; line-height: 30px; font-size: 14px; cursor: default;}
+#menu-bar ul li:hover{background-color: #2366a8; color: #ffffff;}
+
+div.left-panel{float: left; width: 240px; display: block;}
+iframe.left-frame{margin: 0px 0px -3px 0px; width: 100%; height: 100%; border: 0px solid #5183dc; background-color: #ffffff; z-index: 100; overflow: hidden;}
+div.main-panel{margin-left: 240px;}
+iframe.main-frame{margin: 0px 0px -3px 0px; width: 100%; height: 100%; border: 0px solid #5183dc; background-color: #ffffff; z-index: 100; overflow: hidden;}
+div.status-bar{height: 22px; line-height: 24px; background-color: #efefef; border-top: 1px solid #c0c0c0; border-bottom: 0px solid #c0c0c0;}
+
+/* #9cb8e1 */
+div.contextmenu{top: 100px; left: 100px; display: none; position: absolute;}
+
+div.contextmenu ul.menu{
+    margin: 0px;
+    padding: 0px;
+    width: 244px;
+    border: 1px solid #bababa;
+    background: url(?action=res&path=/finder/images/menu-item.gif) repeat-y scroll 0px 0px transparent;
+    list-style: none;
+    overflow: hidden;
+}
+
+div.contextmenu ul.menu li.item{
+    margin: 2px;
+    width: 240px;
+    height: 26px;
+    line-height: 26px;
+    border: 0px solid #aecff7;
+    background-color: transparent;
+    font-size: 12px;
+    font-weight: normal;
+    text-align: left;
+    letter-spacing: 1px;
+    color: #333333;
+}
+
+div.contextmenu ul.menu li.separator {
+    margin: 1px 0px 1px 2px;
+    padding: 0px;
+    width: 240px;
+    height: 0px;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #ffffff;
+}
+
+div.contextmenu ul.menu li.item:hover{background: url(?action=res&path=/finder/images/item-over.gif) repeat-y scroll 0px 0px transparent;}
+div.contextmenu ul.menu li.item span.icon{
+    float: left;
+    padding-left: 8px;
+    width: 32px;
+    height: 26px;
+    line-height: 26px;
+    text-align: left;
+    display: inline-block;
+}
+div.contextmenu ul.menu li.item span.icon img{border: none; vertical-align: middle;}
+div.contextmenu ul.menu li.item a.command{
+    padding: 0px;
+    height: 26px;
+    line-height: 26px;
+    cursor: default;
+}
+
+div.contextmenu ul.menu li.item a.command:link{text-decoration: none;}
+div.contextmenu ul.menu li.item a.command:visited{text-decoration: none;}
+div.contextmenu ul.menu li.item a.command:hover{text-decoration: none;}
+div.contextmenu ul.menu li.item a.disabled{text-decoration: none;}
+div.contextmenu ul.menu li.item a.disabled:hover{text-decoration: none;}
+
+.menu-button{}
+.menu-button:hover div.contextmenu{display: block;}
+
+div.loading{clear: both; padding-left: 20px;}
+div.loading img{border: none; vertical-align: middle;}
+
+div.welcome{
+    width: 600px; margin: 10px auto 0px auto; font-size: 14px; color: #666666;
+}
+
+div.welcome h1{margin-bottom: 10px; line-height: 60px; border-bottom: 2px solid #ff6a00; font-family: 黑体; color: #ff4400;}
+div.welcome h3{line-height: 30px; color: #ff4400;}
+div.welcome p{line-height: 2.0em;}
+a.button{height: 40px; padding: 0px 10px 0px 10px; line-height: 40px; background-color: #ff4400; font-family: 黑体; font-size: 18px; text-decoration: none; text-align: center; color: #ffffff; display: inline-block;}
+
+div.widget-task-bar{
+    float: left;
+    -moz-user-select:none;
+    -webkit-user-select:none;
+    user-select:none;
+}
+div.widget-task-bar ul{list-style: none;}
+div.widget-task-bar li{
+    float: left;
+    margin: 2px;
+    padding: 0px 4px 0px 4px;
+    display: inline-block;
+    width: 120px;
+    height: 18px;
+    border: 1px solid #666666;
+    border-radius: 3px;
+    background-color: #000000;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 20px;
+    color: #ffffff;
+    cursor: default;
+}

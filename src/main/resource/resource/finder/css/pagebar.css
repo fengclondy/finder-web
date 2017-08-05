@@ -1,0 +1,64 @@
+div.pagebar{margin: 10px 0px; overflow: hidden;}
+div.pagebar div.x12{float: left; margin: 10px 0px;}
+
+div.scrollpage{float: left; margin: 10px 0px; height: 32px; padding: 0px 0px 0px 0px; clear: both;}
+div.scrollpage a{
+    float: left;
+    margin: 0px 4px 0px 0px;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ededed;
+    background-color: #ffffff;
+    line-height: 32px;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    color: #3c3c3c;
+    display: block;
+    cursor: default;
+}
+
+div.scrollpage a.page{cursor: pointer;}
+
+div.scrollpage span.ellipsis{
+    float: left;
+    margin: 0px 4px 0px 0px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+}
+
+div.scrollpage a.active{border-color: #8ad6fc; background-color: #8ad6fc; font-weight: bold; color: #ffffff;}
+div.scrollpage a.disabled{color: #666666; cursor: default;}
+div.scrollpage a.page:hover{border-color: #ff4400; background-color: #ff4400; color: #ffffff;}
+
+div.scrollpage a span{display: inline-block; width: 6px; height: 9px;}
+div.scrollpage a span.prev{background: transparent url(?action=res&path=/finder/images/pagebar.gif) no-repeat scroll 0px 0px;}
+div.scrollpage a span.next{background: transparent url(?action=res&path=/finder/images/pagebar.gif) no-repeat scroll -20px 0px;}
+
+div.scrollpage a.page:hover span.prev{background-position: 0px -31px}
+div.scrollpage a.page:hover span.next{background-position: -20px -31px}
+
+div.scrollpage span.pagenum{
+    float: left;
+    margin: 5px 4px 4px 0px;
+    padding: 4px 4px 4px 4px;
+    height: 30px;
+    line-height: 24px;
+    border: 1px solid #dfe8f6;
+    background-color: #ffffff;
+    text-decoration: none;
+    vertical-align: middle;
+    color: #333333;
+    display: block;
+}
+
+div.scrollpage span.pagenum input.pagenum{
+    margin: 0px 0px;
+    padding: 0px 0px;
+    width: 30px;
+    height: 20px;
+    border: 1px solid #dfe8f6;
+    outline: none;
+}

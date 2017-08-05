@@ -1,4 +1,48 @@
-<a href="index.jsp">index.jsp</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Webcat</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <script type="text/javascript">
-window.top.location.href = "index.jsp";
+<!--
+window.onload = function() {
+    var url = null;
+    var requestURI = window.location.pathname;
+
+    /**
+     * 不使用缓存的页面
+     */
+    if(window.location.href.indexOf("?r=") < 0) {
+        window.location.href = requestURI + "?r=" + new Date().getTime();
+        return;
+    }
+
+    /**
+     * URL: ("", "/", "${contextPath}")
+     */
+    if(requestURI == "") {
+        url = requestURI + "/finder";
+    }
+    else if(requestURI.length > 0 && requestURI.charAt(requestURI.length - 1) == "/") {
+        url = requestURI + "finder";
+    }
+    else {
+        url = requestURI.replace("/index.html", "/finder");
+    }
+
+    try {
+        document.body.innerHTML = "<div>正在加载...</div><div>如果页面没有响应，请 <a style=\"color: #ff0000;\" href=\"" + url + "\">点击这里</a> 进入。</div>";
+    }
+    catch(e) {
+    }
+    window.top.location.href = url;
+};
+//-->
 </script>
+</head>
+<body>
+</body>
+</html>

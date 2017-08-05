@@ -1,31 +1,51 @@
-<%@ page contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<%@ page contentType="text/html; charset=utf-8"%>
+<%
+    String path = (String)(request.getAttribute("path"));
+    String theme = (String)(request.getAttribute("theme"));
+    String type = (String)(request.getAttribute("type"));
+    String encoding = (String)(request.getAttribute("encoding"));
+    Long start = (Long)(request.getAttribute("start"));
+
+    if(path == null || (path = path.trim()).length() <= 1) {
+        path = "/";
+    }
+
+    if(theme == null || (theme = theme.trim()).length() < 1) {
+        theme = "Default";
+    }
+
+    if(type == null || (type = type.trim()).length() < 1) {
+        type = "";
+    }
+
+    if(encoding == null || (encoding = encoding.trim()).length() < 1) {
+        encoding = "utf-8";
+    }
+
+    if(start == null) {
+        start = Long.valueOf(0);
+    }
+    request.setAttribute("path", path);
+%>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Cache-Control" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
 <title>${path}</title>
-<link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/finder.css"/>
-<c:choose>
-    <c:when test="${util.isEmpty(theme)}"><c:set var="theme" value="RDark"/></c:when>
-    <c:otherwise></c:otherwise>
-</c:choose>
-<link type="text/css" rel="stylesheet" href="${contextPath}/resource/sh/style/shCore${theme}.css"/>
-<link type="text/css" rel="stylesheet" href="${contextPath}/resource/sh/style/shTheme${theme}.css"/>
-<script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/ajax.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/widget.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/finder.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/sh/shCore.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/sh/shAutoloader.js"></script>
+<link rel="stylesheet" type="text/css" href="${requestURI}?action=res&path=/finder/css/finder.css"/>
+<link rel="stylesheet" type="text/css" href="${requestURI}?action=res&path=/sh/style/shCore${theme}.css"/>
+<link rel="stylesheet" type="text/css" href="${requestURI}?action=res&path=/sh/style/shTheme${theme}.css"/>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/ajax.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/widget.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/finder.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/sh/shCore.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/sh/shAutoloader.js"></script>
 </head>
-<!-- range: ${offset} - ${offset + length} -->
-<body contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${(path != '' ? path : '/')}" page="display">
+<body style="overflow: hidden;" contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" page="display">
 <div class="finder">
     <div class="menu-bar">
         <div style="float: left; width: 80px;">
@@ -33,97 +53,129 @@
             <a class="button" href="javascript:void(0)" title="刷新"><span class="refresh"></span></a>
         </div>
         <div style="float: left; height: 28px; position: relative;">
-            <div style="float: left;"><input id="address" type="text" class="address" autocomplete="off" file="true" value="${(path != '' ? path : '/')}"/></div>
+            <div style="float: left;"><input id="address" type="text" class="address" autocomplete="off" file="true" value="${path}"/></div>
             <div id="finder-suggest" class="list suggest"></div>
 
             <span class="label">theme:</span>
             <select id="uiThemeOption">
-                <option value="Default" <c:if test="${util.isEmpty(theme)}">selected="true"</c:if>>default</option>
-                <c:forEach items="Django, Eclipse, Emacs, FadeToGrey, MDUltra, Midnight, RDark" var="current" varStatus="status">
-                    <option value="${current}" <c:if test="${util.equals(theme, current)}">selected="true"</c:if>>${current}</option>
-                </c:forEach>
+                <%
+                    String[] themes = new String[]{"Default", "Django", "Eclipse", "Emacs", "FadeToGrey", "MDUltra", "Midnight", "RDark"};
+
+                    for(String current : themes) {
+                %>
+                    <option value="<%=current%>" <% if(theme.equals(current)) {%>selected="true"<%}%>><%=current%></option>
+                <%
+                    }
+                %>
             </select>
 
             <span class="label">type:</span>
             <select id="uiTypeOption">
-                <option value="" <c:if test="${util.isEmpty(type)}">selected="true"</c:if>>default</option>
-                <c:forEach items="as, sh, bsh, bash, log, shell, cpp, cs, css, dpi, diff, erl, erlang, groovy, java, js, pl, php, txt, text, py, ruby, sass, scala, sql, vb, vbs, xml, xhtml, xslt, html, htm, asp, jsp, jspf, asp, php" var="current" varStatus="status">
-                    <option value="${current}" <c:if test="${util.equals(type, current)}">selected="true"</c:if>>${current}</option>
-                </c:forEach>
+                <%
+                    String[] types = new String[]{"", "as", "sh", "bsh", "bash", "log", "shell", "cpp", "cs", "css", "dpi", "diff", "erl", "erlang", "groovy", "java", "js", "pl", "php", "txt", "text", "py", "ruby", "sass", "scala", "sql", "vb", "vbs", "xml", "xhtml", "xslt", "html", "htm", "asp", "jsp", "jspf", "asp", "php"};
+
+                    for(String current : types) {
+                %>
+                    <option value="<%=current%>" <% if(type.equals(current)) {%>selected="true"<%}%>><%=current%></option>
+                <%
+                    }
+                %>
             </select>
 
             <span class="label">encoding:</span>
             <select id="uiEncodingOption">
-                <option value="" <c:if test="${util.isEmpty(encoding)}">selected="true"</c:if>>default</option>
-                <option value="UTF-8" <c:if test="${util.equals(encoding, 'UTF-8')}">selected="true"</c:if>>UTF-8</option>
-                <option value="GBK" <c:if test="${util.equals(encoding, 'GBK')}">selected="true"</c:if>>GBK</option>
-                <option value="GB2312" <c:if test="${util.equals(encoding, 'GB2312')}">selected="true"</c:if>>GB2312</option>
-                <option value="ISO-8859-1" <c:if test="${util.equals(encoding, 'ISO-8859-1')}">selected="true"</c:if>>ISO-8859-1</option>
+                <%
+                    String[] encodings = new String[]{"utf-8", "gbk", "gb2312", "iso-8859-1"};
+
+                    for(String current : encodings) {
+                %>
+                    <option value="<%=current%>" <% if(type.equals(current)) {%>selected="true"<%}%>><%=current%></option>
+                <%
+                    }
+                %>
             </select>
         </div>
         <div style="float: right; width: 40px;">
-            <a class="button" href="/finder/help.html" title="帮助"><span class="help"></span></a>
+            <a class="button" href="${requestURI}?action=finder.help" title="帮助"><span class="help"></span></a>
         </div>
     </div>
-    <c:if test="${start > 0}">
+    <%
+        if(start > 0L) {
+    %>
     <div style="padding-left: 4px; height: 28px; line-height: 28px; background-color: #efefef; font-size: 12px;">
-        文件较大，只显示部分数据。要查看全部数据请使用 <a href="${contextPath}/finder/less.html?workspace=${workspace}&path=${path}" style="color: #ff0000;">less</a> 打开。
+        文件较大，只显示部分数据。要查看全部数据请使用 <a href="${requestURI}?action=finder.less&workspace=${workspace}&path=${path}" style="color: #ff0000;">less</a> 打开。
         [${start} - ${end}/${length}]
     </div>
-    </c:if>
-    <div>
-        <c:choose>
-            <c:when test="${util.equals(type, '??')}"><pre class="brush: bash;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'as')}"><pre class="brush: actionscript3;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'bsh')}"><pre class="brush: bash;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'log')}"><pre class="brush: bash;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'cpp')}"><pre class="brush: cpp;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'cs')}"><pre class="brush: cs;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'css')}"><pre class="brush: css;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'dhi')}"><pre class="brush: dpi;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'diff')}"><pre class="brush: diff;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'erl')}"><pre class="brush: erl;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'erlang')}"><pre class="brush: erlang;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'groovy')}"><pre class="brush: groovy;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'java')}"><pre class="brush: java;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'js')}"><pre class="brush: javascript;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'pl')}"><pre class="brush: perl;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'php')}"><pre class="brush: php;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'plain')}"><pre class="brush: plain;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'sh')}"><pre class="brush: bash;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'py')}"><pre class="brush: python;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'ruby')}"><pre class="brush: ruby;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'sass')}"><pre class="brush: sass;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'scala')}"><pre class="brush: scala;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'sql')}"><pre class="brush: sql;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'vb') || util.equals(type, 'vbs')}"><pre class="brush: vbscript;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'xml')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'xhtml')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'xslt')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'html')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'htm')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'jsp')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'jspf')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'asp')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:when test="${util.equals(type, 'php')}"><pre class="brush: xml;"><c:out value="${content}"/></pre></c:when>
-            <c:otherwise><pre class="brush: plain;"><c:out value="${content}"/></pre></c:otherwise>
-        </c:choose>
-    </div>
+    <%
+        }
+    %>
+    <div id="content" file-type="${type}" style="display: none;"><pre class="brush: bash;">${content}</pre></div>
 </div>
 <script type="text/javascript">
 <!--
 jQuery(function() {
-    jQuery(window).bind("resize", function() {
-    });
+    var map = {
+        "??": "brush: bash;",
+        "as": "brush: actionscript3;",
+        "bsh": "brush: bash;",
+        "log": "brush: bash;",
+        "cpp": "brush: cpp;",
+        "cs": "brush: cs;",
+        "css": "brush: css;",
+        "dhi": "brush: dpi;",
+        "diff": "brush: diff;",
+        "erl": "brush: erl;",
+        "erlang": "brush: erlang;",
+        "groovy": "brush: groovy;",
+        "java": "brush: java;",
+        "js": "brush: javascript;",
+        "pl": "brush: perl;",
+        "php": "brush: php;",
+        "plain": "brush: plain;",
+        "sh": "brush: bash;",
+        "py": "brush: python;",
+        "ruby": "brush: ruby;",
+        "sass": "brush: sass;",
+        "scala": "brush: scala;",
+        "sql": "brush: sql;",
+        "vb": "brush: vbscript;",
+        "vbs": "brush: vbscript;",
+        "xml": "brush: xml;",
+        "xhtml": "brush: xml;",
+        "xslt": "brush: xml;",
+        "html": "brush: xml;",
+        "htm": "brush: xml;",
+        "jsp": "brush: xml;",
+        "jspf": "brush: xml;",
+        "asp": "brush: xml;",
+        "php": "brush: xml;"
+    };
+
+    var type = jQuery("#content").attr("file-type");
+
+    if(type == "??") {
+        jQuery("#content pre").attr("class", "brush: bash;");
+    }
+    else {
+        var brush = map[type];
+
+        if(type != null) {
+            jQuery("#content pre").attr("class", brush);
+        }
+        else {
+            jQuery("#content pre").attr("class", "brush: plain;");
+        }
+    }
 });
 
 jQuery(function() {
     function path() {
-        var args = arguments;
         var result = [];
+        var args = arguments;
+        var requestURI = window.location.pathname;
 
         for(var i = 0; i < args.length; i++) {
-            result.push(args[i].replace("@", "${contextPath}/resource/sh/"));
+            result.push(args[i].replace("@", requestURI + "?action=res&path=/sh/"));
         }
         return result;
     };
@@ -154,9 +206,21 @@ jQuery(function() {
         "vb vbnet               @shBrushVb.js",
         "xml xhtml xslt html    @shBrushXml.js"
     );
-
     SyntaxHighlighter.autoloader.apply(null, args);
     SyntaxHighlighter.all();
+});
+
+jQuery(function() {
+    jQuery(window).resize(function(){
+        var c = jQuery("#content div.syntaxhighlighter");
+        c.css("overflow", "auto");
+        c.height(jQuery(window).height() - 38);
+    });
+
+    setTimeout(function() {
+        jQuery(window).resize();
+        jQuery("#content").show();
+    }, 500);
 });
 //-->
 </script>

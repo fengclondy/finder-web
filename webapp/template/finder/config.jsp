@@ -1,20 +1,16 @@
-<%@ page contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Cache-Control" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
 <title>Preferences</title>
-<link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/css/config.css"/>
-<script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/charset.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/colorpicker.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/config.js"></script>
+<link rel="stylesheet" type="text/css" href="${requestURI}?action=res&path=/finder/css/form.css"/>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/charset.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/colorpicker.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/config.js"></script>
 <script type="text/javascript">
 <!--
 jQuery(function() {
@@ -36,7 +32,7 @@ jQuery(function() {
 });
 
 jQuery(function() {
-    jQuery("input.finder-color-picker").click(function(event) {
+    jQuery("input.color-picker").click(function(event) {
         var position = jQuery(this).position();
         var x = position.left;
         var y = position.top + jQuery(this).height();
@@ -44,7 +40,7 @@ jQuery(function() {
 
         ColorDialog.open(x, y, function(color) {
             self.css("backgroundColor", color);
-            self.parent().find("input.finder-color-text").val(color);
+            self.parent().find("input.color-text").val(color);
             ColorDialog.close();
         });
     });
@@ -57,7 +53,7 @@ jQuery(function() {
         jQuery("select[name=theme]").val("RDark");
         jQuery("select[name=charset]").val("utf-8");
         jQuery("select[name=fontFamily]").val("Lucida Console");
-        jQuery("input[name=fontColor]").val("#009900");
+        jQuery("input[name=fontColor]").val("#999999");
         jQuery("input[name=backgroundColor]").val("#000000");
     });
 
@@ -94,12 +90,12 @@ jQuery(function() {
         </div>
     </div>
     <div style="margin-left: 220px;">
-        <div id="finder-panel" class="finder-form">
+        <div id="finder-panel" class="form">
             <div class="menu-panel"><h4>全局设置</h4></div>
-            <div class="finder-row">
-                <div class="finder-label">主题：</div>
-                <div class="finder-c300">
-                    <div class="finder-field">
+            <div class="form-row">
+                <div class="form-label">主题：</div>
+                <div class="form-c300">
+                    <div class="form-field">
                         <select name="theme">
                             <option value="Django">Django</option>
                             <option value="Eclipse">Eclipse</option>
@@ -111,23 +107,23 @@ jQuery(function() {
                         </select>
                     </div>
                 </div>
-                <div class="finder-m300">
-                    <div class="finder-comment">主题。</div>
+                <div class="form-m300">
+                    <div class="form-comment">主题。</div>
                 </div>
             </div>
-            <div class="finder-row">
-                <div class="finder-label">字符集：</div>
-                <div class="finder-c300">
-                    <div class="finder-field"><select name="charset"></select></div>
+            <div class="form-row">
+                <div class="form-label">字符集：</div>
+                <div class="form-c300">
+                    <div class="form-field"><select name="charset"></select></div>
                 </div>
-                <div class="finder-m300">
-                    <div class="finder-comment">字符集。</div>
+                <div class="form-m300">
+                    <div class="form-comment">字符集。</div>
                 </div>
             </div>
-            <div class="finder-row">
-                <div class="finder-label">字体：</div>
-                <div class="finder-c300">
-                    <div class="finder-field">
+            <div class="form-row">
+                <div class="form-label">字体：</div>
+                <div class="form-c300">
+                    <div class="form-field">
                         <select name="fontFamily">
                             <option value="Andale Mono">Andale Mono</option>
                             <option value="Anonymous">Anonymous</option>
@@ -150,32 +146,32 @@ jQuery(function() {
                         </select>
                     </div>
                 </div>
-                <div class="finder-m300">
+                <div class="form-m300">
                     <div id="fontExample">我是字体示例 abcd ABCD 123</div>
                 </div>
             </div>
-            <div class="finder-row">
-                <div class="finder-label">字体颜色：</div>
-                <div class="finder-c300">
-                    <div class="finder-field">
-                        <input name="fontColor" type="text" class="finder-color-text" value=""/>
-                        <input name="fontColorPicker" type="text" class="finder-color-picker" readonly="true" value=""/>
+            <div class="form-row">
+                <div class="form-label">字体颜色：</div>
+                <div class="form-c300">
+                    <div class="form-field">
+                        <input name="fontColor" type="text" class="color-text" value=""/>
+                        <input name="fontColorPicker" type="text" class="color-picker" readonly="true" value=""/>
                     </div>
                 </div>
-                <div class="finder-m300">
-                    <div class="finder-comment">字体颜色。</div>
+                <div class="form-m300">
+                    <div class="form-comment">字体颜色。</div>
                 </div>
             </div>
-            <div class="finder-row">
-                <div class="finder-label">背景颜色：</div>
-                <div class="finder-c300">
-                    <div class="finder-field">
-                        <input name="backgroundColor" type="text" class="finder-color-text" value=""/>
-                        <input name="backgroundColorPicker" type="text" class="finder-color-picker" readonly="true" value=""/>
+            <div class="form-row">
+                <div class="form-label">背景颜色：</div>
+                <div class="form-c300">
+                    <div class="form-field">
+                        <input name="backgroundColor" type="text" class="color-text" value=""/>
+                        <input name="backgroundColorPicker" type="text" class="color-picker" readonly="true" value=""/>
                     </div>
                 </div>
-                <div class="finder-m300">
-                    <div class="finder-comment">背景颜色。</div>
+                <div class="form-m300">
+                    <div class="form-comment">背景颜色。</div>
                 </div>
             </div>
             <div class="button">

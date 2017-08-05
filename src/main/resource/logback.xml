@@ -23,8 +23,4 @@
     <logger name="com.skin" level="DEBUG" additivity="false">
         <appender-ref ref="rootout"/>
     </logger>
-
-    <logger name="com.skin.ayada" level="INFO" additivity="false">
-        <appender-ref ref="rootout"/>
-    </logger>
 </configuration>

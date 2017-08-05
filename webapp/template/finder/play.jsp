@@ -2,18 +2,18 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Cache-Control" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
 <title>Finder - ${path}</title>
-<link rel="stylesheet" type="text/css" href="${contextPath}/resource/finder/plugins/media/css/media.css">
-<script type="text/javascript" src="${contextPath}/resource/finder/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/widget.js"></script>
-<script type="text/javascript" src="${contextPath}/resource/finder/plugins/media/index.js"></script>
+<link rel="stylesheet" type="text/css" href="${requestURI}?action=res&path=/finder/plugins/media/css/media.css"/>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/widget.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/plugins/media/index.js"></script>
 <script type="text/javascript">
 <!--
 jQuery(function() {
@@ -139,6 +139,5 @@ jQuery(function() {
         <div class="play-list"><ul></ul></div>
     </div>
 </div>
-<!-- ${template.home}/${template.path} -->
 </body>
 </html>
