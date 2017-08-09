@@ -10,11 +10,19 @@ Finder是一个web方式的文件管理器。Finder最主要的功能是超大�
 * 图片文件在线浏览。
 * 音频文件和视频文件直接播放。
 * web方式的log文件查看，支持任意大小的文本文件，支持类似于linux系统的tail和less方式查看，并支持任意定位文件位置，无论文件大小，查看体验都近似于本地文件。
+* 支持集群部署，允许你通过finder对多台机器上的日志文件进行实时监控。
 * 你也可以将它部署在你的NAS上通过浏览器管理你服务器上文件。
 * Finder支持群组(QQ)：341624652
 
+
 运行截图
 =================
+**集群支持**
+支持集群部署，允许你部署多台机器，通过其中任意一台机器即可管理集群内的所有机器上的文件，并可监控集群内任意一台机器上的日志文件。
+支持国际化，下图是英文版的截图。2.2.0版本新增更多配置项，允许你配置文件列表显示的操作按钮，允许你配置工作空间为只读模式。更多配置项请参见finder.conf中的说明。
+![集群支持](https://git.oschina.net/uploads/images/2017/0809/222427_0c1e9504_615195.jpeg "cluster.jpg")
+
+
  **grep示例**  
 输入关键字进行查找，支持正则。
 ![grep示例](http://git.oschina.net/uploads/images/2017/0107/165229_72067217_615195.jpeg "grep示例")
@@ -41,8 +49,8 @@ finder支持播放视频和音频，需支持h5的浏览器。音频和视频文
 
 集成到其他系统
 =================
-finder非常容易集成到你现有的系统中，只有一个jar文件, 依赖slf4j-xxx.jar，所以只需将finder提供的jar包放到你的应用里面上即可. 
-以下集中方式都需要先将workspace.xml拷贝到你应用的WEB-INF/classes/META-INF/conf目录
+finder非常容易集成到你现有的系统中，只有一个jar文件, 依赖slf4j-xxx.jar，所以只需将finder提供的jar包放到你的应用里面即可. 
+以下集成方式都需要先将workspace.xml拷贝到你应用的WEB-INF/classes/META-INF/conf目录
 1. 第一种集成方式, 需要重启  
 1.1 将release/finder-web.2.0.0.jar拷贝到你的应用的WEB-INF/lib目录.  
 1.2 修改你应用的web.xml, 参考webapp/WEB-INF/web.xml, 将FinderServlet注册到你的web应用中.  
