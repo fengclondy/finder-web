@@ -25,6 +25,7 @@ Tail.getContextPath = function() {
 
 Tail.getTailURL = function(position, rows) {
     var params = [];
+    params[params.length] = "host=" + encodeURIComponent(this.host);
     params[params.length] = "workspace=" + encodeURIComponent(this.workspace);
     params[params.length] = "path=" + encodeURIComponent(this.path);
     params[params.length] = "position=" + position;
@@ -378,6 +379,7 @@ Tail.create = function(range) {
 Tail.init = function() {
     var container = this.getContainer();
 
+    this.host = document.body.getAttribute("host");
     this.workspace = document.body.getAttribute("workspace");
     this.path = document.body.getAttribute("path");
     this.charset = Finder.getConfig("global.charset", "utf-8");

@@ -1,7 +1,6 @@
 /*
- * $RCSfile: LogoutServlet.java,v $$
+ * $RCSfile: LogoutServlet.java,v $
  * $Revision: 1.1 $
- * $Date: 2016-10-02 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *

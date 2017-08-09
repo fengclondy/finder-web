@@ -25,9 +25,12 @@ jQuery(function() {
 
 jQuery(function() {
     var playList = new PlayList();
+    var host = document.body.getAttribute("host");
     var workspace = document.body.getAttribute("workspace");
     var path = document.body.getAttribute("path");
-    var prefix = "${contextPath}/finder/download.html?workspace=" + encodeURIComponent(workspace);
+    var requestURI = window.location.pathname;
+
+    var prefix = requestURI + "?action=finder.download&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace);
     playList.add({"title": "test", "url": prefix + "&path=" + encodeURIComponent(path)});
 
     var videoPlayer = new VideoPlayer({"container": "finder-videodialog"});
@@ -90,13 +93,10 @@ jQuery(function() {
         }
     });
 });
-
 //-->
 </script>
 </head>
-<!-- http://${loacalIp}/finder/index.html?workspace=${URLUtil.encode(workspace)} -->
-<!-- http://${loacalIp}/finder/display.html?workspace=${URLUtil.encode(workspace)}&path=${URLUtil.encode(path)} -->
-<body loacalIp="${loacalIp}" contextPath="${contextPath}" workspace="${workspace}" path="${(path != '' ? path : '/')}">
+<body loacalIp="${loacalIp}" contextPath="${contextPath}" host="${host}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}">
 <div id="finder-videodialog" class="media-dialog" contextmenu="false" style="z-index: 1010; margin-top: 0px; margin-left: 0px; display: block;">
     <div class="video-player" style="overflow: hidden;">
         <div style="position: relative;">

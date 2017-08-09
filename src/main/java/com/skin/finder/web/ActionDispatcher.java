@@ -77,7 +77,7 @@ public class ActionDispatcher {
      */
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String requestURI = request.getRequestURI();
-        String action = request.getParameter("action");
+        String action = this.getAction(request);
         request.setAttribute(SERVLETCONTEXT, this.getServletContext());
         request.setAttribute("requestURI", requestURI);
         request.setAttribute("contextPath", this.getContextPath(request));
@@ -155,6 +155,32 @@ public class ActionDispatcher {
             return "";
         }
         return contextPath;
+    }
+
+    /**
+     * @param request
+     * @return String
+     */
+    private String getAction(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+
+        if(queryString == null) {
+            return null;
+        }
+ 
+        int i = queryString.indexOf("action=");
+
+        if(i < 0) {
+            return null;
+        }
+
+        i += 7;
+        int j = queryString.indexOf('&', i);
+
+        if(j < 0) {
+            return queryString.substring(i);
+        }
+        return queryString.substring(i, j);
     }
 
     /**

@@ -45,7 +45,7 @@
 <script type="text/javascript" src="${requestURI}?action=res&path=/sh/shCore.js"></script>
 <script type="text/javascript" src="${requestURI}?action=res&path=/sh/shAutoloader.js"></script>
 </head>
-<body style="overflow: hidden;" contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" page="display">
+<body style="overflow: hidden;" contextPath="${contextPath}" host="${host}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}" page="display">
 <div class="finder">
     <div class="menu-bar">
         <div style="float: left; width: 80px;">

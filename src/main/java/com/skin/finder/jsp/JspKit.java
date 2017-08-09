@@ -406,13 +406,29 @@ public class JspKit {
      * @return String
      */
     protected static String getJavaTemplate() {
-        InputStream inputStream = JspKit.class.getResourceAsStream("class.jsp");
+        InputStream inputStream = JspKit.class.getResourceAsStream("servlet.jsp");
 
         if(inputStream != null) {
             try {
                 return IO.toString(inputStream, "utf-8");
             }
             catch (IOException e) {
+            }
+            finally {
+                IO.close(inputStream);
+            }
+        }
+
+        inputStream = JspKit.class.getResourceAsStream("class.jsp");
+
+        if(inputStream != null) {
+            try {
+                return IO.toString(inputStream, "utf-8");
+            }
+            catch (IOException e) {
+            }
+            finally {
+                IO.close(inputStream);
             }
         }
         return null;

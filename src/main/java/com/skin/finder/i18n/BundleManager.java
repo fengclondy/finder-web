@@ -101,19 +101,28 @@ public class BundleManager {
 
         LocalizationContext localizationContext = this.getCachedBundle(buffer.toString().toLowerCase(), locale);
 
-        if(localizationContext == null) {
-            buffer.setLength(length);
-
-            if(country != null && country.length() > 0) {
-                buffer.append("_");
-                buffer.append(country);
-            }
-            localizationContext = this.getCachedBundle(buffer.toString().toLowerCase(), locale);
+        if(localizationContext != null) {
+            localizationContext.setLang(buffer.toString().toLowerCase());
+            return localizationContext;
         }
 
-        if(localizationContext == null) {
-            buffer.setLength(length);
-            localizationContext = this.getCachedBundle(buffer.toString().toLowerCase(), locale);
+        buffer.setLength(length);
+
+        if(country != null && country.length() > 0) {
+            buffer.append("_");
+            buffer.append(country);
+        }
+        localizationContext = this.getCachedBundle(buffer.toString().toLowerCase(), locale);
+
+        if(localizationContext != null) {
+            localizationContext.setLang(buffer.toString().toLowerCase());
+            return localizationContext;
+        }
+
+        localizationContext = this.getCachedBundle(buffer.toString().toLowerCase(), locale);
+
+        if(localizationContext != null) {
+            localizationContext.setLang(buffer.toString().toLowerCase());
         }
         return localizationContext;
     }
@@ -208,6 +217,7 @@ public class BundleManager {
             return new PropertyResourceBundle(inputStream);
         }
         catch(Exception e) {
+            logger.error(e.getMessage(), e);
         }
         finally {
             if(inputStream != null) {

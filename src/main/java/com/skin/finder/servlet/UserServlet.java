@@ -1,7 +1,6 @@
 /*
  * $RCSfile: UserServlet.java,v $
  * $Revision: 1.1 $
- * $Date: 2016-10-02 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -16,10 +15,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.skin.finder.cluster.Agent;
+import com.skin.finder.config.ConfigFactory;
 import com.skin.finder.servlet.template.ErrorTemplate;
 import com.skin.finder.servlet.template.UserAddTemplate;
 import com.skin.finder.user.SimpleUserManager;
-import com.skin.finder.util.JsonUtil;
+import com.skin.finder.util.Ajax;
 import com.skin.finder.util.Password;
 import com.skin.finder.util.RandomUtil;
 import com.skin.finder.web.UrlPattern;
@@ -58,6 +59,15 @@ public class UserServlet extends BaseServlet {
      */
     @UrlPattern("user.save")
     public void save(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        /**
+         * 只有master提供用户服务
+         */
+        String master = ConfigFactory.getMaster();
+
+        if(Agent.dispatch(request, response, master)) {
+            return;
+        }
+
         if(!this.check(request, response)) {
             return;
         }
@@ -66,12 +76,12 @@ public class UserServlet extends BaseServlet {
         String password = this.getTrimString(request, "password");
 
         if(userName.length() < 1 || password.length() < 1) {
-            JsonUtil.error(request, response, 501, "用户名或者密码不能为空！");
+            Ajax.error(request, response, 501, "用户名或者密码不能为空！");
             return;
         }
 
         if(!this.validate(userName)) {
-            JsonUtil.error(request, response, 501, "用户名只能包含英文字母或者数字且不少于4个字符！");
+            Ajax.error(request, response, 501, "用户名只能包含英文字母或者数字且不少于4个字符！");
             return;
         }
 
@@ -80,7 +90,7 @@ public class UserServlet extends BaseServlet {
 
         SimpleUserManager userManager = SimpleUserManager.getInstance(this.servletContext);
         userManager.update(userName, userPass, userSalt);
-        JsonUtil.success(request, response, "true");
+        Ajax.success(request, response, "true");
         return;
     }
 

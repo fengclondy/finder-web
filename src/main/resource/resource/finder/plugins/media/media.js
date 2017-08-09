@@ -46,10 +46,11 @@
 
     FileType.registe("mp3", function(file, options) {
         var index = 0;
+        var host = Finder.getHost();
         var workspace = Finder.getWorkspace();
         var path = Finder.getPath();
         var fileList = Finder.getFileList();
-        var prefix = Finder.getRequestURI() + "?action=finder.download&workspace=" + encodeURIComponent(workspace);
+        var prefix = Finder.getRequestURI() + "?action=finder.download&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace);
         var cover = Finder.getRequestURI() + "?action=res&path=/finder/images/hua.jpg";
         var playList = Finder.getPlayList();
 
@@ -100,10 +101,11 @@
 
     FileType.registe("mp4, mov, rmvb, mkv", function(file, options) {
         var index = 0;
+        var host = Finder.getHost();
         var workspace = Finder.getWorkspace();
         var path = Finder.getPath();
         var fileList = Finder.getFileList();
-        var prefix = Finder.getRequestURI() + "?action=finder.download&workspace=" + encodeURIComponent(workspace);
+        var prefix = Finder.getRequestURI() + "?action=finder.download&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace);
         var cover = Finder.getRequestURI() + "?action=res&path=/finder/images/hua.jpg";
         var playList = Finder.getPlayList();
 
@@ -119,7 +121,7 @@
             }
         }
 
-        openWindow(Finder.getRequestURI() + "?action=finder.play&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path + "/" + file.fileName), "_blank", 800, 600);
+        openWindow(Finder.getRequestURI() + "?action=finder.play&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path + "/" + file.fileName), "_blank", 800, 600);
 
         /*
         var videoPlayer = Finder.getVideoPlayer();

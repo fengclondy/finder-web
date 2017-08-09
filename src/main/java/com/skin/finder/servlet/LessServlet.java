@@ -1,7 +1,6 @@
 /*
  * $RCSfile: LessServlet.java,v $
  * $Revision: 1.1 $
- * $Date: 2010-04-28 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -24,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import com.skin.finder.FileRange;
 import com.skin.finder.Finder;
 import com.skin.finder.Less;
+import com.skin.finder.cluster.Agent;
+import com.skin.finder.config.ConfigFactory;
 import com.skin.finder.servlet.template.LessTemplate;
 import com.skin.finder.servlet.template.TailTemplate;
 import com.skin.finder.util.IO;
@@ -56,6 +57,10 @@ public class LessServlet extends BaseServlet {
      */
     @UrlPattern("finder.less")
     public void less(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         if(LessServlet.prepare(request, response)) {
             LessTemplate.execute(request, response);
         }
@@ -69,6 +74,10 @@ public class LessServlet extends BaseServlet {
      */
     @UrlPattern("finder.tail")
     public void tail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         if(LessServlet.prepare(request, response)) {
             TailTemplate.execute(request, response);
         }
@@ -82,6 +91,10 @@ public class LessServlet extends BaseServlet {
      */
     @UrlPattern("less.getRange")
     public void getRange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         long t1 = System.nanoTime();
 
         File file = Finder.getFile(request);
@@ -99,6 +112,10 @@ public class LessServlet extends BaseServlet {
      */
     @UrlPattern("less.getTail")
     public void getTail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         File file = Finder.getFile(request);
         getTail(request, response, file);
     }
@@ -118,7 +135,7 @@ public class LessServlet extends BaseServlet {
         String realPath = Finder.getRealPath(work, path);
 
         if(realPath == null) {
-            FinderServlet.error(request, response, 404, work + "/" + path + " not exists.");
+            ErrorServlet.error(request, response, 404, work + "/" + path + " not exists.");
             return false;
         }
 
@@ -129,13 +146,14 @@ public class LessServlet extends BaseServlet {
         File file = new File(realPath);
 
         if(!file.exists() || !file.isFile()) {
-            FinderServlet.error(request, response, 404, realPath + " not exists.");
+            ErrorServlet.error(request, response, 404, realPath + " not exists.");
             return false;
         }
 
         String parent = Path.getRelativePath(work, file.getParent());
         String relativePath = Path.getRelativePath(work, realPath);
 
+        request.setAttribute("host", ConfigFactory.getHostName());
         request.setAttribute("workspace", workspace);
         request.setAttribute("work", work);
         request.setAttribute("path", relativePath);

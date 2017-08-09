@@ -1,7 +1,6 @@
 /*
  * $RCSfile: GrepServlet.java,v $
  * $Revision: 1.1 $
- * $Date: 2010-04-28 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -22,6 +21,7 @@ import com.skin.finder.FileRange;
 import com.skin.finder.Finder;
 import com.skin.finder.Grep;
 import com.skin.finder.Less;
+import com.skin.finder.cluster.Agent;
 import com.skin.finder.servlet.template.GrepTemplate;
 import com.skin.finder.util.IO;
 import com.skin.finder.web.UrlPattern;
@@ -45,6 +45,10 @@ public class GrepServlet extends BaseServlet {
      */
     @UrlPattern("finder.grep")
     public void grep(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         if(LessServlet.prepare(request, response)) {
             GrepTemplate.execute(request, response);
         }
@@ -58,6 +62,10 @@ public class GrepServlet extends BaseServlet {
      */
     @UrlPattern("grep.find")
     public void find(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         File file = Finder.getFile(request);
         String keyword = this.getTrimString(request, "keyword");
         boolean regexp = this.getBoolean(request, "regexp", false);

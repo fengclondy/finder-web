@@ -1,7 +1,6 @@
 /*
  * $RCSfile: Config.java,v $
  * $Revision: 1.1 $
- * $Date: 2013-10-15 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *

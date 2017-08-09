@@ -76,7 +76,7 @@ public class SimpleUserManager {
      * @param userName
      * @param password
      * @param userSalt
-     * @throws IOException 
+     * @throws IOException
      */
     public void update(String userName, String password, String userSalt) throws IOException {
         long userId = Math.abs(userName.hashCode());
@@ -114,8 +114,6 @@ public class SimpleUserManager {
      * @return Map<String, String>
      */
     private static Map<String, String> load(InputStream inputStream, String charset) {
-        Map<String, String> map = new HashMap<String, String>();
-
         if(inputStream != null) {
             try {
                 return load(new InputStreamReader(inputStream, charset));
@@ -124,7 +122,7 @@ public class SimpleUserManager {
                 logger.warn(e.getMessage(), e);
             }
         }
-        return map;
+        return new HashMap<String, String>();
     }
 
     /**

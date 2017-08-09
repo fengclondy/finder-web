@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cluster>
+    <!--
+        NOTE: Beta版本暂不支持host文件集群间同步. 请确保该文件在集群中的每台机器上都有一份.
+            如果修改了该文件需要重新启动集群中的每一台机器.
+            正式版本会支持自动同步, 并支持动态修改, 无需重启系统.
+
+        1. host定义
+        name - required 主机名称, 全局唯一
+        url  - required finder对外的入口地址
+
+        2. workspace定义
+        name     - required 页面上显示的工作空间名称
+        work     - required 工作空间的文件系统地址
+        readonly - optional 是否只读, 默认true, 优先级高于权限系统
+    -->
+    <host name="www.myfinder.com" url="http://www.myfinder.com/finder">
+        <workspace name="server1.log" work="file:D:/opt" readonly="true"/>
+        <workspace name="server1.mp3" work="file:E:/mp3" readonly="true"/>
+        <workspace name="server1.doc" work="file:E:/doc" readonly="true"/>
+    </host>
+</cluster>
+

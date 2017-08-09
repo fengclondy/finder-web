@@ -1,7 +1,6 @@
 /*
- * $RCSfile: LessAction.java,v $$
+ * $RCSfile: LoginServlet.java,v $$
  * $Revision: 1.1 $
- * $Date: 2016-10-02 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -18,17 +17,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.skin.finder.cluster.Agent;
+import com.skin.finder.config.ConfigFactory;
 import com.skin.finder.servlet.template.LoginTemplate;
 import com.skin.finder.user.SimpleUserManager;
 import com.skin.finder.user.UserSession;
-import com.skin.finder.util.JsonUtil;
+import com.skin.finder.util.Ajax;
 import com.skin.finder.util.Password;
 import com.skin.finder.web.UrlPattern;
 import com.skin.finder.web.servlet.BaseServlet;
 import com.skin.finder.web.util.Client;
 
 /**
- * <p>Title: LessAction</p>
+ * <p>Title: LoginServlet</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2006</p>
  * @author xuesong.net
@@ -51,8 +52,18 @@ public class LoginServlet extends BaseServlet {
     @UrlPattern("finder.login")
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        /**
+         * 只有master提供登录服务
+         */
+        String master = ConfigFactory.getMaster();
+
+        if(Agent.dispatch(request, response, master)) {
+            return;
+        }
+
         String userName = this.getTrimString(request, "userName");
         String password = this.getTrimString(request, "password");
+        response.setHeader("Cluster-Node", request.getLocalAddr() + ":" + request.getLocalPort());
 
         if(userName.length() < 1 || password.length() < 1) {
             LoginTemplate.execute(request, response);
@@ -63,7 +74,7 @@ public class LoginServlet extends BaseServlet {
         Map<String, String> user = userManager.getByName(userName);
 
         if(user == null) {
-            JsonUtil.error(request, response, 501, "用户不存在！");
+            Ajax.error(request, response, 501, "用户不存在！");
             return;
         }
 
@@ -86,10 +97,10 @@ public class LoginServlet extends BaseServlet {
 
             int expiry = 7 * 24 * 60 * 60;
             Client.registe(request, response, userSession, null, "/", expiry, false);
-            JsonUtil.success(request, response, "true");
+            Ajax.success(request, response, "true");
         }
         else {
-            JsonUtil.error(request, response, 501, "密码错误！");
+            Ajax.error(request, response, 501, "密码错误！");
             return;
         }
     }

@@ -1576,14 +1576,14 @@
         var self = this;
         var buffer = [];
         buffer[buffer.length] = "<div class=\"title\">";
-        buffer[buffer.length] = "    <h4 class=\"alert\">提示</h4>";
+        buffer[buffer.length] = "    <h4 class=\"alert\">Alert</h4>";
         buffer[buffer.length] = "    <span class=\"close\" dragable=\"false\"></span>";
         buffer[buffer.length] = "</div>";
         buffer[buffer.length] = "<div class=\"body20\">";
         buffer[buffer.length] = "    <div class=\"text\"></div>";
         buffer[buffer.length] = "</div>";
         buffer[buffer.length] = "<div class=\"button right\">";
-        buffer[buffer.length] = "    <button type=\"button\" class=\"button ensure\" href=\"javascript:void(0)\">确 定</button>";
+        buffer[buffer.length] = "    <button type=\"button\" class=\"button ensure\" href=\"javascript:void(0)\">Ok</button>";
         buffer[buffer.length] = "</div>";
         this.setContent(buffer.join(""));
 
@@ -1633,6 +1633,16 @@
         Dragable.registe(container.find("div.title").get(0), container.get(0));
     };
 
+    MessageDialog.prototype.setTitle = function(title) {
+        var container = jQuery(this.getContainer());
+        container.find("div.title h4.alert").html(title);
+    };
+
+    MessageDialog.prototype.setEnsureText = function(text) {
+        var container = jQuery(this.getContainer());
+        container.find("div.button button.ensure").value = text;
+    };
+
     MessageDialog.prototype.open = function(message) {
         var container = jQuery(this.getContainer());
         container.find("div.text").html(message);
@@ -1656,15 +1666,15 @@
         var self = this;
         var buffer = [];
         buffer[buffer.length] = "<div class=\"title\">";
-        buffer[buffer.length] = "    <h4 class=\"alert\">确认</h4>";
+        buffer[buffer.length] = "    <h4 class=\"alert\">Confirm</h4>";
         buffer[buffer.length] = "    <span class=\"close\" dragable=\"false\"></span>";
         buffer[buffer.length] = "</div>";
         buffer[buffer.length] = "<div class=\"body20\">";
         buffer[buffer.length] = "    <div class=\"text\"></div>";
         buffer[buffer.length] = "</div>";
         buffer[buffer.length] = "<div class=\"button right\">";
-        buffer[buffer.length] = "    <button type=\"button\" class=\"button ensure\" href=\"javascript:void(0)\">确 定</button>";
-        buffer[buffer.length] = "    <button type=\"button\" class=\"button cancel\" href=\"javascript:void(0)\">取 消</button>";
+        buffer[buffer.length] = "    <button type=\"button\" class=\"button ensure\" href=\"javascript:void(0)\">Ok</button>";
+        buffer[buffer.length] = "    <button type=\"button\" class=\"button cancel\" href=\"javascript:void(0)\">Cancel</button>";
         buffer[buffer.length] = "</div>";
         this.setContent(buffer.join(""));
 
@@ -1723,6 +1733,21 @@
             return false;
         });
         Dragable.registe(container.find("div.title").get(0), container.get(0));
+    };
+
+    ConfirmDialog.prototype.setTitle = function(title) {
+        var container = jQuery(this.getContainer());
+        container.find("div.title h4.alert").html(title);
+    };
+
+    ConfirmDialog.prototype.setEnsureText = function(text) {
+        var container = jQuery(this.getContainer());
+        container.find("div.button button.ensure").value = text;
+    };
+
+    ConfirmDialog.prototype.setCancelText = function(text) {
+        var container = jQuery(this.getContainer());
+        container.find("div.button button.cancel").value = text;
     };
 
     ConfirmDialog.prototype.open = function(message) {
@@ -2026,14 +2051,26 @@
      */
     var DialogUtil = {};
 
+    DialogUtil.messageTitle = "Alter";
+    DialogUtil.confirmTitle = "Ensure";
+
+    DialogUtil.ensureButtonText = "Ok";
+    DialogUtil.cancelButtonText = "Ensure";
+
     DialogUtil.alert = function(message, callback) {
         var messageDialog = new MessageDialog();
+        messageDialog.setTitle(this.messageTitle);
+        messageDialog.setEnsureText(this.ensureButtonText);
         messageDialog.ensure = callback;
         messageDialog.open(message);
     };
 
     DialogUtil.confirm = function(message, callback) {
         var confirmDialog = new ConfirmDialog();
+        confirmDialog.setTitle(this.messageTitle);
+        confirmDialog.setEnsureText(this.ensureButtonText);
+        confirmDialog.setCancelText(this.cancelButtonText);
+
         confirmDialog.ensure = callback;
         confirmDialog.cancel = callback;
         confirmDialog.open(message);

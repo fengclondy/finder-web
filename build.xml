@@ -6,8 +6,8 @@
     <target name="init">
         <tstamp/>
         <property name="appName" value="finder-web"/>
-        <property name="packageName" value="dev"/>
-        <property name="version" value="2.0.0"/>
+        <property name="packageName" value="com.skin.finder"/>
+        <property name="version" value="2.2.0"/>
 
         <!-- src directories -->
         <property name="src.java" value="${basedir}/src/main/java"/>

@@ -15,6 +15,37 @@ StringUtil.endsWith = function(source, search) {
 };
 
 /**
+ * @param text
+ * @param value
+ * @return boolean
+ */
+StringUtil.contains = function(text, value) {
+    if(text == null || value == null) {
+        return false;
+    }
+
+    var array = text;
+
+    if(typeof(text) == "string") {
+        if(text == "*") {
+            return true;
+        }
+        array = text.split(",");
+    }
+
+    for(var i = 0; i < array.length; i++) {
+        if(array[i] != null) {
+            array[i] = StringUtil.trim(array[i]);
+
+            if(array[i] == value) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+/**
  * @param source
  * @param search
  * @param replacement
@@ -75,25 +106,69 @@ HtmlUtil.encode = function(source, crlf) {
     return source.replace(new RegExp("[<>\"\\u00ae\\u00a9]", "g"), HtmlUtil.replace).replace(new RegExp("\\r?\\n", "g"), crlf);
 };
 
-var ByteUtil = {};
+var I18N = {};
 
-ByteUtil.smart = function(bytes) {
-    if(isNaN(bytes)) {
-        return "NaN";
+/**
+ * 资源文件覆盖该变量
+ */
+I18N.bundle = {};
+I18N.format = function(pattern) {
+    var c;
+    var buffer = [];
+    var args = arguments;
+
+    /**
+     * var pattern = "这是一个示例\\{\\}, 这是一个示例{1}, 这是一个示例{2}";
+     */
+    for(var i = 0, length = pattern.length; i < length; i++) {
+        c = pattern.charAt(i);
+
+        if(c == "\\" && i < length - 1) {
+            i = i + 1;
+            c = pattern.charAt(i);
+
+            if(c == "{" || c == "}") {
+                buffer[buffer.length] = c;
+                continue;
+            }
+            else {
+                buffer[buffer.length] = "\\";
+                buffer[buffer.length] = c;
+                continue;
+            }
+        }
+        else if(c == "{") {
+            var k = pattern.indexOf("}", i + 1);
+
+            if(k > -1) {
+                var index = parseInt(pattern.substring(i + 1, k));
+
+                if(!isNaN(index) && index > 0 && index < args.length) {
+                    buffer[buffer.length] = (args[index] || "");
+                }
+                i = k;
+            }
+            else {
+                buffer[buffer.length] = pattern.substring(i + 1);
+                break;
+            }
+        }
+        else {
+            buffer[buffer.length] = c;
+        }
+    }
+    return buffer.join("");
+};
+
+I18N.getLang = function(/* String */ key /* Object ... args */) {
+    var value = this.bundle[key];
+
+    if(value == null || value == undefined) {
+        return key;
     }
 
-    if(bytes < 1024) {
-        return bytes + " B";
-    }
-
-    if(bytes < 1048576) {
-        return Math.floor(bytes / 1024) + "KB";
-    }
-
-    if(bytes < 1073741824) {
-        return (bytes / 1048576).toFixed(2) + "MB";
-    }
-    return (bytes / 1073741824).toFixed(2) + "GB";
+    var args = [value].concat([].slice.call(arguments, 1));
+    return this.format.apply(this, args);
 };
 
 var DispatchAction = {};
@@ -225,8 +300,10 @@ FileType.execute = function(file, options) {
      */
     var url = null;
     var params = [];
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var path = Finder.getPath();
+    params[params.length] = "host=" + encodeURIComponent(host);
     params[params.length] = "workspace=" + encodeURIComponent(workspace);
     params[params.length] = "path=" + encodeURIComponent(path + "/" + file.fileName);
 
@@ -487,6 +564,24 @@ Finder.getCookie = function(name) {
     return value;
 };
 
+Finder.getLocalVariable = function(name) {
+    if(typeof(window.localStorage) != "undefined") {
+        return window.localStorage[name];
+    }
+    else {
+        return Finder.getCookie(name);
+    }
+};
+
+Finder.setLocalVariable = function(name, value) {
+    if(typeof(window.localStorage) != "undefined") {
+        window.localStorage[name] = value;
+    }
+    else {
+        Finder.setCookie({"name": name, "value": value, "expires": 7 * 24 * 60 * 60});
+    }
+};
+
 Finder.setAttribute = function(name, value) {
     var e = document.getElementById("pageContext");
 
@@ -541,6 +636,13 @@ Finder.getContextPath = function() {
 
 Finder.getRequestURI = function() {
     return window.location.pathname;
+};
+
+Finder.getHost = function() {
+    if(this.host == null || this.host == undefined) {
+        this.host = document.body.getAttribute("host");
+    }
+    return this.host;
 };
 
 Finder.getWorkspace = function() {
@@ -706,10 +808,12 @@ Finder.download = function(file, options) {
 };
 
 Finder.tail = function(file, options) {
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var path = Finder.getPath() + "/" + file.fileName;
 
     var params = [];
+    params[params.length] = "host=" + encodeURIComponent(host);
     params[params.length] = "workspace=" + encodeURIComponent(workspace);
     params[params.length] = "path=" + encodeURIComponent(path);
 
@@ -723,10 +827,12 @@ Finder.tail = function(file, options) {
 };
 
 Finder.less = function(file, options) {
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var path = Finder.getPath() + "/" + file.fileName;
 
     var params = [];
+    params[params.length] = "host=" + encodeURIComponent(host);
     params[params.length] = "workspace=" + encodeURIComponent(workspace);
     params[params.length] = "path=" + encodeURIComponent(path);
 
@@ -740,10 +846,12 @@ Finder.less = function(file, options) {
 };
 
 Finder.grep = function(file, options) {
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var path = Finder.getPath() + "/" + file.fileName;
 
     var params = [];
+    params[params.length] = "host=" + encodeURIComponent(host);
     params[params.length] = "workspace=" + encodeURIComponent(workspace);
     params[params.length] = "path=" + encodeURIComponent(path);
 
@@ -758,16 +866,19 @@ Finder.grep = function(file, options) {
 
 Finder.mkdir = function(options) {
     var params = [];
-    params.workspace = Finder.getWorkspace();
-    params.path = Finder.getPath();
-    params.name = "新建文件夹";
+    params[params.length] = "host=" + encodeURIComponent(Finder.getHost());
+    params[params.length] = "workspace=" + encodeURIComponent(Finder.getWorkspace());
+    params[params.length] = "path=" + encodeURIComponent(Finder.getPath());
+    params[params.length] = "name=" + encodeURIComponent("新建文件夹");
 
-    Ajax.request({
-        "method": "post",
-        "url": this.getRequestURI() + "?action=finder.mkdir",
-        "data": params,
-        "success": function(xhr) {
-            var response = Ajax.getResponse(xhr.responseText, "json");
+    jQuery.ajax({
+        "type": "post",
+        "url": this.getRequestURI() + "?action=finder.mkdir&" + params.join("&"),
+        "dataType": "json",
+        "error": function() {
+            DialogUtil.alert(I18N.getLang("finder.message.system.error"));
+        },
+        "success": function(response) {
             var callback = options.callback;
 
             if(callback != null) {
@@ -782,6 +893,7 @@ Finder.remove = function(files, options) {
         return;
     }
 
+    var host = this.getHost();
     var workspace = this.getWorkspace();
     var path = this.getPath();
 
@@ -789,10 +901,10 @@ Finder.remove = function(files, options) {
         var message = null;
 
         if(files.length == 1) {
-            message = "确实要删除\"" + (path + "/" + files[0].fileName) + "\"吗？";
+            message = I18N.getLang("finder.message.file.delete.confirm1", path + "/" + files[0].fileName);
         }
         else {
-            message = "确实要删除这 " + files.length + " 项吗？";
+            message = I18N.getLang("finder.message.file.delete.confirm2", files.length);
         }
 
         DialogUtil.confirm(message, function(ok) {
@@ -805,19 +917,21 @@ Finder.remove = function(files, options) {
     }
 
     var params = {};
-    params.workspace = workspace;
     params.path = [];
 
     for(var i = 0; i < files.length; i++) {
-        params.path[params.path.length] = path + "/" + files[i].fileName;
+        params.path[ params.path.length] = (path + "/" + files[i].fileName);
     }
 
-    Ajax.request({
-        "method": "post",
-        "url": this.getRequestURI() + "?action=finder.delete",
-        "data": params,
-        "success": function(xhr) {
-            var response = Ajax.getResponse(xhr.responseText, "json");
+    jQuery.ajax({
+        "type": "post",
+        "url": this.getRequestURI() + "?action=finder.delete&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace),
+        "dataType": "json",
+        "data": jQuery.param(params, true),
+        "error": function() {
+            DialogUtil.alert(I18N.getLang("finder.message.system.error"));
+        },
+        "success": function(response) {
             var callback = options.callback;
 
             if(callback != null) {
@@ -830,18 +944,23 @@ Finder.remove = function(files, options) {
 
 Finder.rename = function(file, options) {
     var params = [];
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var path = Finder.getPath() + "/" + file.fileName;
 
+    params[params.length] = "host=" + encodeURIComponent(host);
     params[params.length] = "workspace=" + encodeURIComponent(workspace);
     params[params.length] = "path=" + encodeURIComponent(path);
     params[params.length] = "newName=" + encodeURIComponent(file.newName);
 
-    Ajax.request({
-        "method": "get",
+    jQuery.ajax({
+        "type": "post",
         "url": this.getRequestURI() + "?action=finder.rename&" + params.join("&"),
-        "success": function(xhr) {
-            var response = Ajax.getResponse(xhr.responseText, "json");
+        "dataType": "json",
+        "error": function() {
+            DialogUtil.alert(I18N.getLang("finder.message.system.error"));
+        },
+        "success": function(response) {
             var callback = options.callback;
 
             if(callback != null) {
@@ -852,21 +971,22 @@ Finder.rename = function(file, options) {
 };
 
 Finder.back = function() {
+    var host = this.getHost();
     var workspace = this.getWorkspace();
     var parent = this.getParentPath();
 
     if(parent == null || parent.length < 1) {
         parent = "/";
     }
-    window.location.href = this.getRequestURI() + "?action=finder.display&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(parent);
+    window.location.href = this.getRequestURI() + "?action=finder.display&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(parent);
 };
 
-Finder.forward = function(workspace, path) {
+Finder.forward = function(host, workspace, path) {
     if(path != null) {
-        window.location.href = this.getRequestURI() + "?action=finder.display&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path);
+        window.location.href = this.getRequestURI() + "?action=finder.display&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path);
     }
     else {
-        window.location.href = this.getRequestURI() + "?action=finder.display&workspace=" + encodeURIComponent(workspace);
+        window.location.href = this.getRequestURI() + "?action=finder.display&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace);
     }
 };
 
@@ -1106,17 +1226,17 @@ Finder.scroll = function(offset, multiple) {
 };
 
 Finder.reload = function(callback) {
+    var host = this.getHost();
     var workspace = this.getWorkspace();
     var path = this.getPath();
 
-    Ajax.request({
-        "method": "get",
-        "url": this.getRequestURI() + "?action=finder.getFileList&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path),
-        "error": function(xhr) {
+    jQuery.ajax({
+        "type": "get",
+        "url": this.getRequestURI() + "?action=finder.getFileList&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path),
+        "dataType": "json",
+        "error": function() {
         },
-        "success": function(xhr) {
-            var response = Ajax.getResponse(xhr.responseText, "json");
-
+        "success": function(response) {
             if(response == null || response.status != 200 || response.value == null) {
                 if(callback != null) {
                     callback();
@@ -1165,6 +1285,21 @@ Finder.list = function() {
     var work = this.getWork();
     var path = this.getPath();
     var fileList = Finder.getFileList();
+    var allows = Finder.getAttribute("display-operate-button", "");
+    var buttons = {
+        "tail":     "",
+        "less":     "",
+        "grep":     "",
+        "open":     "",
+        "download": "",
+        "delete":   ""
+    };
+
+    for(var name in buttons) {
+        if(StringUtil.contains(allows, name)) {
+            buttons[name] = "<a action=\"finder-" + name + "\" href=\"javascript:void(0)\">" + I18N.getLang("finder.list.button." + name) +"</a>";
+        }
+    }
 
     for(var i = 0; i < fileList.length; i++) {
         var file = fileList[i];
@@ -1177,25 +1312,25 @@ Finder.list = function() {
             buffer[buffer.length] = "   <span class=\"fileType\">文件夹</span>";
             buffer[buffer.length] = "   <span class=\"lastModified\">" + this.format(file.lastModified) + "</span>";
             buffer[buffer.length] = "   <span class=\"operate\">";
-            buffer[buffer.length] = "       <a action=\"finder-open\" href=\"javascript:void(0)\">open</a>";
-            buffer[buffer.length] = "       <a action=\"finder-remove\" href=\"javascript:void(0)\">delete</a>";
+            buffer[buffer.length] = buttons["open"];
+            buffer[buffer.length] = buttons["delete"];
             buffer[buffer.length] = "   </span>";
             buffer[buffer.length] = "</li>";
         }
         else {
             buffer[buffer.length] = "<li class=\"item\" fileIcon=\"" + file.fileIcon + "\" fileName=\"" + HtmlUtil.encode(file.fileName) + "\" fileSize=\"" + file.fileSize + "\" lastModified=\"" + file.lastModified + "\">";
-            buffer[buffer.length] = "   <span class=\"icon\"><img src=\"" + this.getRequestURI() + "?action=res&path=/finder/type/" + file.fileIcon + ".gif\"/></span>";
+            buffer[buffer.length] = "   <span class=\"icon\"><img src=\"" + this.getRequestURI() + "?action=res&path=/finder/icon/" + file.fileIcon + ".png\"/></span>";
             buffer[buffer.length] = "   <span class=\"fileName\"><a class=\"file\" href=\"javascript:void(0)\" bind-event=\"dblclick\" title=\"" + Finder.getTooltip(work, path, file) + "\">" + HtmlUtil.encode(file.fileName) + "</a></span>";
-            buffer[buffer.length] = "   <span class=\"fileSize\">" + ByteUtil.smart(file.fileSize) + "</span>";
+            buffer[buffer.length] = "   <span class=\"fileSize\">" + ByteUtil.getByteSize(file.fileSize) + "</span>";
             buffer[buffer.length] = "   <span class=\"fileType\">" + FileType.getType(file.fileName) + "文件</span>";
             buffer[buffer.length] = "   <span class=\"lastModified\">" + Finder.format(file.lastModified) + "</span>";
             buffer[buffer.length] = "   <span class=\"operate\">";
-            buffer[buffer.length] = "       <a action=\"finder-tail\" href=\"javascript:void(0)\">tail</a>";
-            buffer[buffer.length] = "       <a action=\"finder-less\" href=\"javascript:void(0)\">less</a>";
-            buffer[buffer.length] = "       <a action=\"finder-grep\" href=\"javascript:void(0)\">grep</a>";
-            buffer[buffer.length] = "       <a action=\"finder-open\" href=\"javascript:void(0)\">open</a>";
-            buffer[buffer.length] = "       <a action=\"finder-download\" href=\"javascript:void(0)\">download</a>";
-            buffer[buffer.length] = "       <a action=\"finder-remove\" href=\"javascript:void(0)\">delete</a>";
+            buffer[buffer.length] = buttons["tail"];
+            buffer[buffer.length] = buttons["less"];
+            buffer[buffer.length] = buttons["grep"];
+            buffer[buffer.length] = buttons["open"];
+            buffer[buffer.length] = buttons["download"];
+            buffer[buffer.length] = buttons["delete"];
             buffer[buffer.length] = "   </span>";
             buffer[buffer.length] = "</li>";
         }
@@ -1217,6 +1352,7 @@ Finder.outline = function() {
     }
 
     var fileList = Finder.getFileList();
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var work = Finder.getWork();
     var path = Finder.getPath();
@@ -1242,7 +1378,7 @@ Finder.outline = function() {
             var type = FileType.getType(file.fileName).toLowerCase();
 
             if(map[type] != null) {
-                b[b.length] = "<img onload=\"Finder.resize(this)\" src=\"" + this.getRequestURI() + "?action=finder.display&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path + "/" + file.fileName) + "\"/>";
+                b[b.length] = "<img onload=\"Finder.resize(this)\" src=\"" + this.getRequestURI() + "?action=finder.display&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path + "/" + file.fileName) + "\"/>";
             }
             else {
                 b[b.length] = "<img class=\"icon\" src=\"" + this.getRequestURI() + "?action=res&path=/finder/icon/" + file.fileIcon + ".png\"/>";
@@ -1331,10 +1467,10 @@ Finder.click = function(event, name) {
     if(action == "finder-download") {
         Finder.download(file, options);
     }
-    else if(action == "finder-remove") {
+    else if(action == "finder-delete") {
         options.callback = function(result) {
             if(result == null || result.status != 200) {
-                alert("文件不存在或者已经被删除！");
+                DialogUtil.alert(I18N.getLang(result.message));
                 return;
             }
 
@@ -1343,7 +1479,7 @@ Finder.click = function(event, name) {
                 parent.parentNode.removeChild(parent);
             }
             else {
-                alert("删除文件失败！请稍后再试！");
+                DialogUtil.alert(I18N.getLang("finder.message.file.delete.failed"));
             }
         };
         Finder.remove([file], options);
@@ -1397,7 +1533,7 @@ Finder.edit = function(src) {
                     else {
                         src.removeChild(input);
                         src.innerHTML = fileName;
-                        alert("重命名失败！");
+                        DialogUtil.alert(I18N.getLang("finder.message.file.rename.failed"));
                         return;
                     }
                 }});
@@ -1432,6 +1568,7 @@ Finder.cut = function() {
     if(list.length > 0) {
         var object = {};
         var fileList = [];
+        object.host = Finder.getHost();
         object.workspace = Finder.getWorkspace();
         object.path = Finder.getPath();
         object.fileList = fileList;
@@ -1459,6 +1596,7 @@ Finder.copy = function() {
     if(list.length > 0) {
         var object = {};
         var fileList = [];
+        object.host = Finder.getHost();
         object.workspace = Finder.getWorkspace();
         object.path = Finder.getPath();
         object.fileList = fileList;
@@ -1493,6 +1631,7 @@ Finder.getClipboardFiles = function(event) {
 };
 
 Finder.paste = function() {
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var path = Finder.getPath();
     var object = FinderClipboard.getObject();
@@ -1501,13 +1640,17 @@ Finder.paste = function() {
         return;
     }
 
+    if(host != object.host) {
+        DialogUtil.alert(I18N.getLang("finder.message.file.cut.failed100"));
+        return;
+    }
+
     var url = null;
     var params = {};
+    params.sourceHost = object.host;
     params.sourceWorkspace = object.workspace;
     params.sourcePath = object.path;
     params.file = object.fileList;
-    params.workspace = workspace;
-    params.path = path;
 
     if(object.operate == "cut") {
         url = Finder.getRequestURI() + "?action=finder.cut";
@@ -1519,15 +1662,23 @@ Finder.paste = function() {
         return;
     }
 
-    Ajax.request({
-        "method": "post",
+    url = url + "&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path);
+
+    jQuery.ajax({
+        "type": "post",
         "url": url,
-        "data": params,
+        "data": jQuery.param(params, true),
+        "dataType": "json",
         "error": function() {
             FinderClipboard.clear();
-            DialogUtil.alert("系统错误，请稍后再试！");
+            DialogUtil.alert(I18N.getLang("finder.message.system.error"));
         },
-        "success": function(xhr) {
+        "success": function(response) {
+            if(response.status != 200) {
+                DialogUtil.alert(I18N.getLang(response.message));
+                return;
+            }
+
             Finder.reload();
             FinderClipboard.clear();
         }
@@ -1539,9 +1690,10 @@ Finder.upload = function(files) {
         return;
     }
 
+    var host = Finder.getHost();
     var workspace = Finder.getWorkspace();
     var path = Finder.getPath();
-    var uploadUrl = Finder.getRequestURI() + "?action=finder.upload&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path);
+    var uploadUrl = Finder.getRequestURI() + "?action=finder.upload&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path);
 
     var index = 0;
     var uploadBytes = 0;
@@ -1618,7 +1770,7 @@ Finder.upload = function(files) {
     };
 
     multipartUpload.error = function(xhr) {
-        alert("上传失败！");
+        DialogUtil.alert(I18N.getLang("finder.message.file.upload.failed"));
 
         setTimeout(function() {
             Finder.reload();
@@ -1750,7 +1902,7 @@ Finder.keyup = function(event) {
             return false;
         }
         case KeyCode.ENTER: {
-            Finder.forward(Finder.getWorkspace(), path);
+            Finder.forward(Finder.getHost(), Finder.getWorkspace(), path);
             return false;
         }
         case KeyCode.UP: {
@@ -1762,7 +1914,7 @@ Finder.keyup = function(event) {
             return false;
         }
     }
-    Finder.suggest(Finder.getWorkspace(), path);
+    Finder.suggest(Finder.getHost(), Finder.getWorkspace(), path);
     EventUtil.stop(e);
     return false;
 };
@@ -1822,22 +1974,24 @@ Finder.getSuggest = function(workspace, path) {
     var i = path.lastIndexOf("/");
     var key = path.substring(0, i + 1);
     var prefix = path.substring(i + 1).toLowerCase();
-    var json = Finder.cache[key];
+    var fileList = Finder.cache[key];
 
-    if(json != null) {
-        var list = [];
+    if(fileList != null) {
+        var result = [];
 
-        for(var i = 0; i < json.length; i++) {
-            if(StringUtil.startsWith(json[i].toLowerCase(), prefix)) {
-                list[list.length] = json[i];
+        for(var i = 0; i < fileList.length; i++) {
+            var file = fileList[i];
+
+            if(StringUtil.startsWith(file.fileName.toLowerCase(), prefix)) {
+                result[result.length] = file;
             }
         }
-        return list;
+        return result;
     }
     return null;
 };
 
-Finder.suggest = function(workspace, path) {
+Finder.suggest = function(host, workspace, path) {
     path = StringUtil.trim(path);
     path = StringUtil.replace(path, "\\", "/");
     path = StringUtil.replace(path, "//", "/");
@@ -1857,12 +2011,11 @@ Finder.suggest = function(workspace, path) {
         return;
     }
 
-    Ajax.request({
-        "method": "get",
-        "url": this.getRequestURI() + "?action=finder.suggest&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path),
-        "success": function(xhr) {
-            var response = Ajax.getResponse(xhr.responseText, "json");
-
+    jQuery.ajax({
+        "type": "get",
+        "url": this.getRequestURI() + "?action=finder.suggest&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path),
+        "dataType": "json",
+        "success": function(response) {
             if(response != null && response.status == 200) {
                 Finder.cache[path] = response.value;
                 FinderSuggestDialog.open(response.value);
@@ -1889,7 +2042,7 @@ Finder.getContextMenu = function() {
                     Finder.open(Finder.getFile(list[0]), {"target": "_blank"});
                 }
                 else {
-                    alert("请选择要下载的文件！");
+                    DialogUtil.alert(I18N.getLang("finder.message.file.download.unselect"));
                 }
             },
             upload: function(event) {
@@ -1913,8 +2066,9 @@ Finder.getContextMenu = function() {
                 jQuery(input).unbind();
                 jQuery(input).change(function() {
                     var files = this.files;
+                    var message = I18N.getLang("finder.message.file.upload.confirm1");
 
-                    DialogUtil.confirm("该操作将会覆盖已存在的文件，确认继续吗？", function(ok) {
+                    DialogUtil.confirm(message, function(ok) {
                         if(ok) {
                             Finder.upload(files);
                         }
@@ -1929,7 +2083,7 @@ Finder.getContextMenu = function() {
                     Finder.download(Finder.getFile(list[0]));
                 }
                 else {
-                    alert("请选择要下载的文件！");
+                    DialogUtil.alert(I18N.getLang("finder.message.file.download.unselect"));
                 }
             },
             cut: function(event) {
@@ -1951,7 +2105,7 @@ Finder.getContextMenu = function() {
 
                 Finder.remove(files, {"callback": function(response) {
                     if(response == null || response.status != 200) {
-                        alert("文件不存在或者已经被删除！");
+                        DialogUtil.alert(I18N.getLang("finder.message.file.notexists"));
                         return;
                     }
 
@@ -1961,7 +2115,7 @@ Finder.getContextMenu = function() {
                         }
                     }
                     else {
-                        alert("删除文件失败！请稍后再试！");
+                        DialogUtil.alert(I18N.getLang("finder.message.file.delete.failed"));
                     }
                 }});
                 return false;
@@ -1977,7 +2131,7 @@ Finder.getContextMenu = function() {
             mkdir: function(event) {
                 Finder.mkdir({"callback": function(result) {
                     if(result == null || result.status != 200 || result.value != true) {
-                        alert("新建文件夹失败！");
+                        DialogUtil.alert(I18N.getLang("finder.message.file.mkdir.failed"));
                         return;
                     }
                     Finder.reload();
@@ -2124,7 +2278,7 @@ PropertyDialog.prototype.create = function() {
                 jQuery(item).find("a.file").html(newName);
             }
             else {
-                alert("重命名失败！");
+                DialogUtil.alert(I18N.getLang("finder.message.file.rename.failed"));
                 return;
             }
             jQuery("#finder-properties").hide();
@@ -2161,7 +2315,7 @@ PropertyDialog.prototype.display = function(file) {
     }
 
     if(!isNaN(file.fileSize)) {
-        size = ByteUtil.smart(file.fileSize) + " (" + file.fileSize + " 字节)";
+        size = ByteUtil.getByteSize(file.fileSize) + " (" + file.fileSize + " 字节)";
     }
     else {
         size = "未知";
@@ -2291,13 +2445,11 @@ FinderSuggestDialog.handler = function(value, action) {
     }
 
     if(action == true) {
-        Finder.forward(Finder.getWorkspace(), e.value);
+        Finder.forward(Finder.getHost(), Finder.getWorkspace(), e.value);
     }
 };
 
-FinderSuggestDialog.click = function(event) {
-    var e = (event || window.event);
-    var src = (e.srcElement || e.target);
+FinderSuggestDialog.click = function(src) {
     var list = this.list();
     var length = list.length;
 
@@ -2307,44 +2459,69 @@ FinderSuggestDialog.click = function(event) {
         }
     }
 
-    src.parentNode.className = "selected";
+    src.className = "selected";
 
     if(this.handler != null) {
-        this.handler.apply(null, [src.parentNode.getAttribute("option-value"), true]);
+        this.handler.apply(null, [src.getAttribute("option-value"), true]);
     }
 };
 
-FinderSuggestDialog.open = function(json) {
+FinderSuggestDialog.open = function(fileList) {
     var e = document.getElementById(this.id);
 
-    if(e != null) {
-        var b = [];
-        b[b.length] = "<ul>";
+    if(e == null) {
+        return;
+    }
 
-        if(json == null || json.length == null || json.length < 1) {
-            b[b.length] = "<li option-value=\"\" index=\"0\" class=\"empty\"><a href=\"javascript:void(0)\" style=\"color: #c0c0c0;\">无结果</a></li>";
-        }
-        else {
-            for(var i = 0; i < json.length; i++) {
-                b[b.length] = "<li option-value=\"" + HtmlUtil.encode(json[i]) + "\" index=\"0\"><a href=\"javascript:void(0)\" onclick=\"FinderSuggestDialog.click(event)\">" + HtmlUtil.encode(json[i]) + "</a></li>";
+    var b = [];
+    b[b.length] = "<ul>";
+    b[b.length] = "<li option-value=\"\" index=\"0\" onclick=\"FinderSuggestDialog.click(this)\">";
+    b[b.length] = "   <span class=\"icon\"><img src=\"" + Finder.getRequestURI() + "?action=res&path=/finder/images/folder.gif\"/></span>";
+    b[b.length] = "   <span class=\"fileName\"><a class=\"file\" href=\"javascript:void(0)\">...</a></span>";
+    b[b.length] = "   <span class=\"fileSize\">&nbsp;</span>";
+    b[b.length] = "</li>";
+
+    if(fileList != null && fileList.length != null && fileList.length > 0) {
+        for(var i = 0; i < fileList.length; i++) {
+            var file = fileList[i];
+
+            if(file.isFile != true) {
+                b[b.length] = "<li option-value=\"" + HtmlUtil.encode(file.fileName) + "\" index=\"0\" onclick=\"FinderSuggestDialog.click(this)\">";
+                b[b.length] = "   <span class=\"icon\"><img src=\"" + Finder.getRequestURI() + "?action=res&path=/finder/images/folder.gif\"/></span>";
+                b[b.length] = "   <span class=\"fileName\"><a class=\"file\" href=\"javascript:void(0)\">" + HtmlUtil.encode(file.fileName) + "</a></span>";
+                b[b.length] = "   <span class=\"fileSize\">&nbsp;</span>";
+                b[b.length] = "</li>";
             }
         }
 
-        b[b.length] = "</ul>";
-        e.innerHTML = b.join("");
+        for(var i = 0; i < fileList.length; i++) {
+            var file = fileList[i];
 
-        if(json.length < 1) {
-            e.style.height = "24px";
+            if(file.isFile == true) {
+                b[b.length] = "<li option-value=\"" + HtmlUtil.encode(file.fileName) + "\" index=\"0\" onclick=\"FinderSuggestDialog.click(this)\">";
+                b[b.length] = "   <span class=\"icon\"><img style=\"\" src=\"" + Finder.getRequestURI() + "?action=res&path=/finder/icon/" + file.fileIcon + ".png\"/></span>";
+                b[b.length] = "   <span class=\"fileName\"><a class=\"file\" href=\"javascript:void(0)\">" + HtmlUtil.encode(file.fileName) + "</a></span>";
+                b[b.length] = "   <span class=\"fileSize\">" + ByteUtil.getByteSize(file.fileSize) + "</span>";
+                b[b.length] = "</li>";
+            }
         }
-        else if(json.length < 20) {
-            e.style.height = (json.length * 20) + "px";
-        }
-        else {
-            e.style.height = "480px";
-        }
-        e.setAttribute("status", "0");
-        e.style.display = "block";
     }
+
+    b[b.length] = "</ul></div>";
+    e.innerHTML = b.join("");
+
+    if(fileList.length < 1) {
+        e.style.height = "20px";
+    }
+    else if(fileList.length < 20) {
+        e.style.height = ((fileList.length + 1) * 20) + "px";
+    }
+    else {
+        e.style.height = "480px";
+    }
+
+    e.setAttribute("status", "0");
+    e.style.display = "block";
 };
 
 FinderSuggestDialog.close = function() {
@@ -2422,17 +2599,17 @@ var FinderClipboard = {};
 
 FinderClipboard.set = function(value) {
     if(encodeURIComponent(value).length > 20 * 1024 * 1024) {
-        throw {"name": "LargeDataException", "message": "too mush data"};
+        throw {"name": "LargeDataException", "message": "The data is too large."};
     }
-    Finder.setCookie({"name": "finder_clipboard", "value": value, "path": "/"});
+    Finder.setLocalVariable("finder_clipboard", value);
 };
 
 FinderClipboard.get = function() {
-    return Finder.getCookie("finder_clipboard");
+    return Finder.getLocalVariable("finder_clipboard");
 };
 
 FinderClipboard.getObject = function() {
-    var value = Finder.getCookie("finder_clipboard");
+    var value = Finder.getLocalVariable("finder_clipboard");
 
     if(value != null && value.length > 0) {
         try {
@@ -2633,12 +2810,13 @@ jQuery(function() {
     }
 
     jQuery("#uiTypeOption").change(function() {
+        var host = Finder.getHost();
         var workspace = Finder.getWorkspace();
         var path = StringUtil.trim(jQuery("body").attr("path"));
         var type = StringUtil.trim(jQuery("#uiTypeOption").val());
         var theme = StringUtil.trim(jQuery("#uiThemeOption").val());
         var encoding = StringUtil.trim(jQuery("#uiEncodingOption").val());
-        window.location.href = Finder.getRequestURI() + "?action=finder.display&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path) + "&type=" + encodeURIComponent(type) + "&theme=" + encodeURIComponent(theme) + "&encoding=" + encodeURIComponent(encoding);
+        window.location.href = Finder.getRequestURI() + "?action=finder.display&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace) + "&path=" + encodeURIComponent(path) + "&type=" + encodeURIComponent(type) + "&theme=" + encodeURIComponent(theme) + "&encoding=" + encodeURIComponent(encoding);
     });
 
     jQuery("#uiThemeOption").change(function() {
@@ -2748,7 +2926,7 @@ jQuery(function() {
     var leftFrame = window.top.leftFrame;
 
     if(leftFrame != null && leftFrame.expand != null) {
-        leftFrame.expand("/" + Finder.getWorkspace() + Finder.getPath());
+        leftFrame.expand("/" + Finder.getHost() + "/" + Finder.getWorkspace() + Finder.getPath());
     }
 });
 
@@ -3025,10 +3203,11 @@ jQuery(function() {
 
         var index = 0;
         var urls = [];
+        var host = Finder.getHost();
         var workspace = Finder.getWorkspace();
         var path = Finder.getPath();
         var fileList = Finder.getFileList();
-        var prefix = Finder.getRequestURI() + "?action=finder.display&workspace=" + encodeURIComponent(workspace);
+        var prefix = Finder.getRequestURI() + "?action=finder.display&host=" + encodeURIComponent(host) + "&workspace=" + encodeURIComponent(workspace);
 
         for(var i = 0; i < fileList.length; i++) {
             var fileName = fileList[i].fileName;
@@ -3079,7 +3258,7 @@ jQuery(function() {
 
         var files = dataTransfer.files;
 
-        DialogUtil.confirm("该操作将会覆盖已存在的文件，确认继续吗？", function(ok) {
+        DialogUtil.confirm(I18N.getLang("finder.message.file.upload.confirm1"), function(ok) {
             if(ok) {
                 Finder.upload(files);
             }
@@ -3089,7 +3268,7 @@ jQuery(function() {
 
     jQuery(window).bind("beforeunload", function(event) {
         if(Finder.uploadCount > 0) {
-            return "文件正在上传中，您当前的操作将会中断上传！";
+            return I18N.getLang("finder.message.file.upload.confirm2");
         }
         /**
          * Do not return any value other than undefined: null, true, false
@@ -3234,7 +3413,10 @@ jQuery(function() {
  * 加载文件
  */
 jQuery(function() {
-    jQuery("#loading").html("<div class=\"loading\"><img src=\"?action=res&path=/finder/images/loading.gif\"/></div>");
+    DialogUtil.messageTitle = I18N.getLang("finder.dialog.message.title");
+    DialogUtil.confirmTitle = I18N.getLang("finder.dialog.confirm.title");
+    DialogUtil.ensureButtonText = I18N.getLang("finder.dialog.confirm.ensure");
+    DialogUtil.cancelButtonText = I18N.getLang("finder.dialog.confirm.cancel");
 
     Finder.reload(function() {
         jQuery("#loading").hide().html("");

@@ -99,58 +99,49 @@ public class PropertyResourceBundle extends ResourceBundle {
      * @param inputStream
      * @param charset
      * @return Properties
+     * @throws IOException
      */
-    public static Properties getProperties(InputStream inputStream, String charset) {
+    public static Properties getProperties(InputStream inputStream, String charset) throws IOException {
         if(inputStream == null) {
             logger.warn("inputStream is null.");
             return new Properties();
         }
-
-        try {
-            return getProperties(new InputStreamReader(inputStream, charset));
-        }
-        catch(Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        return new Properties();
+        return getProperties(new InputStreamReader(inputStream, charset));
     }
 
     /**
      * @param reader
      * @return Map<String, String>
+     * @throws IOException
      */
-    public static Properties getProperties(Reader reader) {
+    public static Properties getProperties(Reader reader) throws IOException {
         Properties properties = new Properties();
 
         if(reader != null) {
-            try {
-                String line = null;
-                BufferedReader buffer = new BufferedReader(reader);
+            String line = null;
+            BufferedReader buffer = new BufferedReader(reader);
 
-                while((line = buffer.readLine()) != null) {
-                    line = line.trim();
+            while((line = buffer.readLine()) != null) {
+                line = line.trim();
 
-                    if(line.length() < 1) {
-                        continue;
-                    }
+                if(line.length() < 1) {
+                    continue;
+                }
 
-                    if(line.startsWith("#")) {
-                        continue;
-                    }
+                if(line.startsWith("#")) {
+                    continue;
+                }
 
-                    int i = line.indexOf("=");
+                int i = line.indexOf("=");
 
-                    if(i > -1) {
-                        String name = line.substring(0, i).trim();
-                        String value = line.substring(i + 1).trim();
+                if(i > -1) {
+                    String name = line.substring(0, i).trim();
+                    String value = line.substring(i + 1).trim();
 
-                        if(name.length() > 0 && value.length() > 0) {
-                            properties.setProperty(name, value);
-                        }
+                    if(name.length() > 0 && value.length() > 0) {
+                        properties.setProperty(name, value);
                     }
                 }
-            }
-            catch(IOException e) {
             }
         }
         return properties;

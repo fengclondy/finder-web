@@ -259,11 +259,19 @@ public class Less {
         long start = position;
         long length = raf.length();
 
+        /**
+         * read与next的实现有些不同
+         * 1. next总是从当前位置的下一行开始读取, read从当前位置开始读取
+         * 2. next返回的是[start, end], 闭区间, 包含start和end位置的数据
+         *    read返回的是[start, end), 左闭右开, 包含start但不包含end
+         *    这是为了客户端的代码一致
+         * tail功能有可能上次读取到的是非换行符结束的位置, 为了下次接着上次的读取, 所以按照客户端传过来position读取
+         * 服务端返回给客户端的结束位置是下次客户端请求的开始位置
+         */
         if((start + 1) >= length) {
-            start = Math.max(length - 1, 0);
             FileRange range = new FileRange();
-            range.setStart(start);
-            range.setEnd(start);
+            range.setStart(length);
+            range.setEnd(length);
             range.setCount(0L);
             range.setLength(length);
             range.setRows(0);
@@ -313,7 +321,7 @@ public class Less {
 
         FileRange range = new FileRange();
         range.setStart(start);
-        range.setEnd(start + bytes.length - 1);
+        range.setEnd(start + bytes.length);
         range.setCount(bytes.length);
         range.setLength(length);
         range.setRows(count);

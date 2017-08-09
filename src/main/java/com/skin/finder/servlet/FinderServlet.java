@@ -1,7 +1,6 @@
 /*
  * $RCSfile: FinderServlet.java,v $
  * $Revision: 1.1 $
- * $Date: 2010-04-28 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -33,24 +32,21 @@ import com.skin.finder.FileType;
 import com.skin.finder.Finder;
 import com.skin.finder.FinderManager;
 import com.skin.finder.WorkspaceManager;
-import com.skin.finder.servlet.template.BlankTemplate;
-import com.skin.finder.servlet.template.ConfigTemplate;
+import com.skin.finder.cluster.Agent;
+import com.skin.finder.config.ConfigFactory;
 import com.skin.finder.servlet.template.DisplayTemplate;
-import com.skin.finder.servlet.template.ErrorTemplate;
 import com.skin.finder.servlet.template.FinderTemplate;
-import com.skin.finder.servlet.template.HelloTemplate;
-import com.skin.finder.servlet.template.HelpTemplate;
-import com.skin.finder.servlet.template.IndexTemplate;
 import com.skin.finder.servlet.template.PlayTemplate;
-import com.skin.finder.servlet.template.TreeTemplate;
 import com.skin.finder.upload.MultipartHttpRequest;
 import com.skin.finder.upload.Part;
+import com.skin.finder.util.Ajax;
 import com.skin.finder.util.IO;
 import com.skin.finder.util.IP;
-import com.skin.finder.util.JsonUtil;
 import com.skin.finder.util.Path;
+import com.skin.finder.util.StringUtil;
 import com.skin.finder.web.Response;
 import com.skin.finder.web.UrlPattern;
+import com.skin.finder.web.servlet.FileServlet;
 
 /**
  * <p>Title: FinderServlet</p>
@@ -102,7 +98,6 @@ public class FinderServlet extends FileServlet {
      */
     @Override
     public void init(ServletConfig servletConfig) {
-        
     }
 
     /**
@@ -113,116 +108,7 @@ public class FinderServlet extends FileServlet {
      */
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        error(request, response, 404, "Not Found !");
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern({"", "index", "finder.index"})
-    public void index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        IndexTemplate.execute(request, response);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern("finder.hello")
-    public void hello(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HelloTemplate.execute(request, response);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern("finder.config")
-    public void config(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ConfigTemplate.execute(request, response);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern("finder.blank")
-    public void blank(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BlankTemplate.execute(request, response);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern("finder.help")
-    public void help(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HelpTemplate.execute(request, response);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern("finder.tree")
-    public void tree(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
-        List<String> workspaceList = WorkspaceManager.getWorkspaces();
-
-        request.setAttribute("workspace", workspace);
-        request.setAttribute("workspaceList", workspaceList);
-        TreeTemplate.execute(request, response);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern("finder.getWorkspaceXml")
-    public void getWorkspaceXml(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String requestURI = request.getRequestURI();
-        String listUrl = requestURI + "?action=finder.display&amp;";
-        String xmlUrl = requestURI + "?action=finder.getFolderXml&amp;";
-        List<String> list = WorkspaceManager.getWorkspaces();
-        String xml = FinderManager.getWorkspaceXml(list, listUrl, xmlUrl);
-        Response.setCache(response, 0);
-        Response.write(request, response, "text/xml; charset=UTF-8", xml);
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    @UrlPattern("finder.getFolderXml")
-    public void getFolderXml(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String workspace = request.getParameter("workspace");
-        String path = request.getParameter("path");
-        String work = Finder.getWorkspace(request, workspace);
-
-        String requestURI = request.getRequestURI();
-        String listUrl = requestURI + "?action=finder.display&amp;";
-        String xmlUrl = requestURI + "?action=finder.getFolderXml&amp;";
-        FinderManager finderManager = new FinderManager(work);
-        String xml = finderManager.getFolderXml(workspace, path, listUrl, xmlUrl);
-        Response.setCache(response, 0);
-        Response.write(request, response, "text/xml; charset=UTF-8", xml);
+        ErrorServlet.error(request, response, 404, "Not Found !");
     }
 
     /**
@@ -233,6 +119,10 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.getFile")
     public void getFile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
         String work = Finder.getWorkspace(request, workspace);
@@ -247,11 +137,11 @@ public class FinderServlet extends FileServlet {
 
         if(file.exists()) {
             FileItem fileItem = FinderManager.getFileItem(file);
-            JsonUtil.success(request, response, FileItemList.getJSONString(fileItem));
+            Ajax.success(request, response, FileItemList.getJSONString(fileItem));
             return;
         }
         else {
-            JsonUtil.success(request, response, (String)null);
+            Ajax.success(request, response, (String)null);
             return;
         }
     }
@@ -264,6 +154,10 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.getFileList")
     public void getFileList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
         String work = Finder.getWorkspace(request, workspace);
@@ -279,7 +173,7 @@ public class FinderServlet extends FileServlet {
         if(file.isDirectory()) {
             long t1 = System.currentTimeMillis();
             FileItemList fileItemList = finderManager.list(path);
-            JsonUtil.success(request, response, fileItemList.getJSONString());
+            Ajax.success(request, response, fileItemList.getJSONString());
             long t2 = System.currentTimeMillis();
 
             if(logger.isDebugEnabled()) {
@@ -288,7 +182,7 @@ public class FinderServlet extends FileServlet {
             return;
         }
         else {
-            JsonUtil.error(request, response, path + " is not directory !");
+            Ajax.error(request, response, path + " is not directory !");
             return;
         }
     }
@@ -301,6 +195,10 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.display")
     public void display(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
         String home = Finder.getWorkspace(request, workspace);
@@ -322,7 +220,11 @@ public class FinderServlet extends FileServlet {
         String relativePath = Path.getRelativePath(home, realPath);
 
         if(file.isDirectory()) {
+            if(StringUtil.isBlank(relativePath)) {
+                relativePath = "/";
+            }
             request.setAttribute("localIp", IP.LOCAL);
+            request.setAttribute("host", ConfigFactory.getHostName());
             request.setAttribute("workspace", workspace);
             request.setAttribute("work", finderManager.getWork());
             request.setAttribute("path", relativePath);
@@ -385,6 +287,8 @@ public class FinderServlet extends FileServlet {
          * 配置项参数
          * 上传文件大小
          */
+        request.setAttribute("localIp", IP.LOCAL);
+        request.setAttribute("host", ConfigFactory.getHostName());
         request.setAttribute("workspace", workspace);
         request.setAttribute("work", finderManager.getWork());
         request.setAttribute("path", relativePath);
@@ -407,10 +311,15 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.play")
     public void play(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         String workspace = request.getParameter("workspace");
         String path = request.getParameter("path");
-        String work = Finder.getWorkspace(request, workspace);
-        String realPath = Finder.getRealPath(work, path);
+        String home = Finder.getWorkspace(request, workspace);
+        FinderManager finderManager = new FinderManager(home);
+        String realPath = finderManager.getRealPath(path);
 
         if(realPath == null) {
             throw new ServletException("Can't access !");
@@ -418,19 +327,20 @@ public class FinderServlet extends FileServlet {
 
         File file = new File(realPath);
 
-        if(!file.exists()) {
+        if(!file.exists() || file.isDirectory()) {
             Response.write(request, response, "<h1>" + path + " not exists !</h1>");
             return;
         }
 
-        if(file.isDirectory()) {
-            this.display(request, response);
-            return;
-        }
+        String parent = finderManager.getRelativePath(file.getParent());
+        String relativePath = Path.getRelativePath(home, realPath);
 
+        request.setAttribute("localIp", IP.LOCAL);
+        request.setAttribute("host", ConfigFactory.getHostName());
         request.setAttribute("workspace", workspace);
-        request.setAttribute("work", work);
-        request.setAttribute("path", realPath);
+        request.setAttribute("work", finderManager.getWork());
+        request.setAttribute("path", relativePath);
+        request.setAttribute("parent", parent);
         PlayTemplate.execute(request, response);
     }
 
@@ -442,6 +352,9 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.download")
     public void download(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
         this.execute(request, response, true);
     }
 
@@ -453,13 +366,17 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.suggest")
     public void suggest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         String path = request.getParameter("path");
         String workspace = request.getParameter("workspace");
         String home = Finder.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
-        List<String> fileList = finderManager.suggest(workspace, path);
-        String json = JsonUtil.stringify(fileList);
-        JsonUtil.success(request, response, json);
+        List<FileItem> fileItemList = finderManager.suggest(workspace, path);
+        String json = FileItemList.getJSONString(fileItemList);
+        Ajax.success(request, response, json);
         return;
     }
 
@@ -475,9 +392,14 @@ public class FinderServlet extends FileServlet {
         String newName = request.getParameter("newName");
         String workspace = request.getParameter("workspace");
         String home = Finder.getWorkspace(request, workspace);
+
+        if(WorkspaceManager.getReadonly(workspace)) {
+            throw new IOException("The workspace is readonly!");
+        }
+
         FinderManager finderManager = new FinderManager(home);
         int count = finderManager.rename(path, newName);
-        JsonUtil.success(request, response, Boolean.toString(count > 0));
+        Ajax.success(request, response, Boolean.toString(count > 0));
         return;
     }
 
@@ -489,13 +411,23 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.mkdir")
     public void mkdir(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
+        String workspace = request.getParameter("workspace");
+
+        if(WorkspaceManager.getReadonly(workspace)) {
+            Ajax.error(request, response, 501, "The workspace is readonly !");
+            return;
+        }
+
         String name = request.getParameter("name");
         String path = request.getParameter("path");
-        String workspace = request.getParameter("workspace");
         String home = Finder.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
         boolean success = finderManager.mkdir(path, name);
-        JsonUtil.success(request, response, Boolean.toString(success));
+        Ajax.success(request, response, Boolean.toString(success));
         return;
     }
 
@@ -507,8 +439,18 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.upload")
     public void upload(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getParameter("path");
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
         String workspace = request.getParameter("workspace");
+
+        if(WorkspaceManager.getReadonly(workspace)) {
+            Ajax.error(request, response, 501, "Workspace is readonly.");
+            return;
+        }
+
+        String path = request.getParameter("path");
         String work = Finder.getWorkspace(request, workspace);
 
         int maxFileSize = 20 * 1024 * 1024;
@@ -522,7 +464,7 @@ public class FinderServlet extends FileServlet {
             uploadFile = multipartRequest.getFileItem("uploadFile");
 
             if(uploadFile == null || !uploadFile.isFileField()) {
-                JsonUtil.error(request, response, 501, "缺少文件！");
+                Ajax.error(request, response, 504, "Bad Request.");
                 return;
             }
 
@@ -532,19 +474,19 @@ public class FinderServlet extends FileServlet {
             logger.info("fileName: {}", fileName);
 
             if(fileName.endsWith(".link.tail")) {
-                JsonUtil.error(request, response, 501, "没有权限！");
+                Ajax.error(request, response, 501, "Access Denied.");
                 return;
             }
 
             if(realPath == null) {
-                JsonUtil.error(request, response, 501, "没有权限！");
+                Ajax.error(request, response, 501, "Access Denied.");
                 return;
             }
 
             File dir = new File(realPath);
 
             if(!dir.exists() || !dir.isDirectory()) {
-                JsonUtil.error(request, response, 502, "上传失败，目录不存在！");
+                Ajax.error(request, response, 502, "File not exists.");
                 return;
             }
 
@@ -564,16 +506,16 @@ public class FinderServlet extends FileServlet {
             }
 
             if(!exists) {
-                JsonUtil.error(request, response, 502, "创建文件失败！");
+                Ajax.error(request, response, 502, "Create file failed.");
                 return;
             }
 
             finderManager.write(uploadFile.getFile(), target, offset, lastModified);
-            JsonUtil.success(request, response, Boolean.toString(true));
+            Ajax.success(request, response, Boolean.toString(true));
             return;
         }
         catch(Exception e) {
-            JsonUtil.error(request, response, 500, "系统错误，请稍后再试！");
+            Ajax.error(request, response, 500, "System Error.");
             return;
         }
         finally {
@@ -594,6 +536,16 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.cut")
     public void cut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
+        String workspace = request.getParameter("workspace");
+
+        if(WorkspaceManager.getReadonly(workspace)) {
+            Ajax.error(request, response, 501, "Workspace is readonly.");
+            return;
+        }
         this.move(request, response, true);
     }
 
@@ -605,6 +557,16 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.copy")
     public void copy(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
+        String workspace = request.getParameter("workspace");
+
+        if(WorkspaceManager.getReadonly(workspace)) {
+            Ajax.error(request, response, 501, "Workspace is readonly.");
+            return;
+        }
         this.move(request, response, false);
     }
 
@@ -616,16 +578,28 @@ public class FinderServlet extends FileServlet {
      */
     @UrlPattern("finder.delete")
     public void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(Agent.dispatch(request, response)) {
+            return;
+        }
+
+        String workspace = request.getParameter("workspace");
+
+        if(WorkspaceManager.getReadonly(workspace)) {
+            Ajax.error(request, response, 501, "Workspace is readonly.");
+            return;
+        }
+
         int count = 0;
         String[] path = request.getParameterValues("path");
-        String workspace = request.getParameter("workspace");
         String home = Finder.getWorkspace(request, workspace);
         FinderManager finderManager = new FinderManager(home);
 
-        for(int i = 0; i < path.length; i++) {
-            count += finderManager.delete(path[i]);
+        if(path != null && path.length > 0) {
+            for(int i = 0; i < path.length; i++) {
+                count += finderManager.delete(path[i]);
+            }
         }
-        JsonUtil.success(request, response, Integer.toString(count));
+        Ajax.success(request, response, Integer.toString(count));
         return;
     }
 
@@ -679,6 +653,11 @@ public class FinderServlet extends FileServlet {
         String sourceHome = Finder.getWorkspace(request, sourceWorkspace);
         String targetHome = Finder.getWorkspace(request, targetWorkspace);
 
+        if(fileList == null || fileList.length < 1) {
+            Ajax.error(request, response, 404, "Bad Request.");
+            return;
+        }
+
         FinderManager sourceManager = new FinderManager(sourceHome);
         FinderManager targetManager = new FinderManager(targetHome);
 
@@ -704,7 +683,7 @@ public class FinderServlet extends FileServlet {
                 IO.delete(f1);
             }
         }
-        JsonUtil.success(request, response, "true");
+        Ajax.success(request, response, "true");
         return;
     }
 
@@ -777,20 +756,6 @@ public class FinderServlet extends FileServlet {
             return 200;
         }
         return 200;
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @param code
-     * @param message
-     * @throws ServletException 
-     * @throws IOException 
-     */
-    public static void error(HttpServletRequest request, HttpServletResponse response, int code, String message) throws IOException, ServletException {
-        request.setAttribute("code", code);
-        request.setAttribute("message", message);
-        ErrorTemplate.execute(request, response);
     }
 
     /**

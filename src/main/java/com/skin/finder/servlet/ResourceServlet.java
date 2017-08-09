@@ -1,7 +1,6 @@
 /*
  * $RCSfile: ResourceServlet.java,v $
  * $Revision: 1.1 $
- * $Date: 2010-04-28 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -13,10 +12,12 @@ package com.skin.finder.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.TimeZone;
 
 import javax.servlet.ServletException;
@@ -27,10 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skin.finder.ContentEntry;
+import com.skin.finder.config.ConfigFactory;
+import com.skin.finder.i18n.ScriptFactory;
 import com.skin.finder.util.MimeType;
 import com.skin.finder.web.ResourceManager;
 import com.skin.finder.web.UrlPattern;
 import com.skin.finder.web.servlet.BaseServlet;
+import com.skin.finder.web.servlet.FileServlet;
 
 /**
  * <p>Title: ResourceServlet</p>
@@ -127,11 +131,49 @@ public class ResourceServlet extends BaseServlet {
         logger.warn("load resource: {}", file.getAbsolutePath());
 
         try {
-            return new ResourceManager(file.getAbsolutePath(), home);
+            ResourceManager resourceManager = new ResourceManager(file.getAbsolutePath(), home);
+
+            /**
+             * 加载国际化文件
+             */
+            return loadI18N(resourceManager);
         }
         catch(Exception e) {
             logger.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * @param resourceManager
+     */
+    public static ResourceManager loadI18N(ResourceManager resourceManager) {
+        try {
+            URL url = ConfigFactory.getResource("lang");
+
+            if("file".equals(url.getProtocol())) {
+                File dir = new File(url.getFile());
+                logger.debug("build: {}", dir.getAbsolutePath());
+
+                if(dir.isDirectory()) {
+                    File[] list = dir.listFiles();
+                    long lastModified = System.currentTimeMillis();
+
+                    for(File file : list) {
+                        logger.debug("build: {}", file.getAbsolutePath());
+
+                        String name = file.getName();
+                        Properties properties = ConfigFactory.getProperties("lang/" + name, "utf-8");
+                        String script = ScriptFactory.generate(properties);
+                        String path = "/finder/lang/" + name.substring(0, name.length() - 11) + ".js";
+                        resourceManager.put(path, script.getBytes("utf-8"), lastModified);
+                    }
+                }
+            }
+        }
+        catch (IOException e) {
+           logger.error(e.getMessage(), e);
+        }
+        return resourceManager;
     }
 }

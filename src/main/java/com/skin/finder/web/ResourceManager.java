@@ -158,6 +158,25 @@ public class ResourceManager {
     }
 
     /**
+     * @param name
+     * @param bytes
+     * @param lastModified
+     * @throws IOException
+     */
+    public void put(String name, byte[] bytes, long lastModified) throws IOException {
+        String extension = this.getExtension(name);
+        Pattern pattern = Pattern.compile(this.compress);
+        logger.info("cache: {}", name);
+
+        if(pattern.matcher(extension).matches()) {
+            this.cache.put(name, new ContentEntry(name, ContentEntry.ZIP, this.gzip(bytes), lastModified));
+        }
+        else {
+            this.cache.put(name, new ContentEntry(name, ContentEntry.BIN, bytes, lastModified));
+        }
+    }
+
+    /**
      * @param path
      * @return String
      */

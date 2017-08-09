@@ -16,11 +16,11 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="rootout"/>
     </root>
 
-    <logger name="com.skin" level="DEBUG" additivity="false">
+    <logger name="com.skin.finder" level="INFO" additivity="false">
         <appender-ref ref="rootout"/>
     </logger>
 </configuration>

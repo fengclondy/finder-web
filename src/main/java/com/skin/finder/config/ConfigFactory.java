@@ -1,7 +1,6 @@
 /*
  * $RCSfile: ConfigFactory.java,v $
  * $Revision: 1.1 $
- * $Date: 2013-10-15 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -10,17 +9,21 @@
  */
 package com.skin.finder.config;
 
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
+import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.skin.finder.util.IO;
+import com.skin.finder.util.Loader;
 
 /**
  * <p>Title: ConfigFactory</p>
@@ -31,7 +34,30 @@ import org.slf4j.LoggerFactory;
  */
 public class ConfigFactory {
     private static final Logger logger = LoggerFactory.getLogger(ConfigFactory.class);
-    private static final Config config = ConfigFactory.load();
+    private static final String APP_NAME = App.getName();
+    private static final String APP_CONF = App.getString("finder.conf", "META-INF/conf/");
+    private static final Config config = ConfigFactory.load("finder.conf", "utf-8");
+
+    /**
+     * @return String
+     */
+    public static String getMaster() {
+        return ConfigFactory.getString(Constants.CLUSTER_MASTER_NAME);
+    }
+
+    /**
+     * @return String
+     */
+    public static String getHostName() {
+        return ConfigFactory.getString(Constants.CLUSTER_NODE_NAME);
+    }
+
+    /**
+     * @return String
+     */
+    public static String getSecurityKey() {
+        return ConfigFactory.getString(Constants.CLUSTER_SECURITY_KEY);
+    }
 
     /**
      * @param name
@@ -286,88 +312,101 @@ public class ConfigFactory {
     }
 
     /**
+     * @param name
+     * @param charset
      * @return Config
      */
-    public static Config load() {
+    public static Config load(String name, String charset) {
+        Properties properties = getProperties(name, charset);
+        return new Config(properties);
+    }
+
+    /**
+     * @param name
+     * @param charset
+     * @return Properties
+     */
+    public static Properties getProperties(String name, String charset) {
         InputStream inputStream = null;
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         try {
-            inputStream = loader.getResourceAsStream("META-INF/conf/finder.conf");
+            inputStream = ConfigFactory.getInputStream(name);
+
+            if(inputStream != null) {
+                return Loader.getProperties(new InputStreamReader(inputStream, charset));
+            }
         }
         catch(Exception e) {
             logger.error(e.getMessage(), e);
         }
         finally {
-            if(inputStream != null) {
-                try {
-                    inputStream.close();
-                }
-                catch(IOException e) {
-                }
-            }
-        }
-        return new Config(getProperties(inputStream, "utf-8"));
-    }
-
-    /**
-     * @param inputStream
-     * @param charset
-     * @return Properties
-     */
-    public static Properties getProperties(InputStream inputStream, String charset) {
-        if(inputStream == null) {
-            logger.warn("inputStream is null.");
-            return new Properties();
-        }
-
-        try {
-            return getProperties(new InputStreamReader(inputStream, charset));
-        }
-        catch(Exception e) {
-            logger.error(e.getMessage(), e);
+            IO.close(inputStream);
         }
         return new Properties();
     }
 
     /**
-     * @param reader
-     * @return Map<String, String>
+     * @param name
+     * @return InputStream
      */
-    public static Properties getProperties(Reader reader) {
-        Properties properties = new Properties();
+    public static InputStream getInputStream(String name) {
+        String conf = APP_CONF;
 
-        if(reader != null) {
+        if(conf == null || (conf = conf.trim()).length() < 1) {
+            conf = "META-INF/conf/";
+        }
+
+        String location = conf + name;
+        File file = ConfigFactory.getFile(location);
+        logger.info("try load from file: {}", file.getAbsolutePath());
+
+        if(file.exists() && file.isFile()) {
             try {
-                String line = null;
-                BufferedReader buffer = new BufferedReader(reader);
-
-                while((line = buffer.readLine()) != null) {
-                    line = line.trim();
-
-                    if(line.length() < 1) {
-                        continue;
-                    }
-
-                    if(line.startsWith("#")) {
-                        continue;
-                    }
-
-                    int i = line.indexOf("=");
-
-                    if(i > -1) {
-                        String name = line.substring(0, i).trim();
-                        String value = line.substring(i + 1).trim();
-
-                        if(name.length() > 0 && value.length() > 0) {
-                            properties.setProperty(name, value);
-                        }
-                    }
-                }
+                return new FileInputStream(file);
             }
             catch(IOException e) {
+                logger.error(e.getMessage(), e);
             }
         }
-        return properties;
+
+        logger.info("try load from classpath: {}", location);
+        return Loader.getInputStream(location);
+    }
+
+    /**
+     * @param name
+     * @return URL
+     * @throws IOException
+     */
+    public static URL getResource(String name) throws IOException {
+        String conf = APP_CONF;
+
+        if(conf == null || (conf = conf.trim()).length() < 1) {
+            conf = "META-INF/conf/";
+        }
+
+        String location = conf + name;
+        File file = ConfigFactory.getFile(location);
+        logger.info("try load from file: {}", file.getAbsolutePath());
+
+        if(file.exists()) {
+            return file.toURI().toURL();
+        }
+        return Loader.getResource(location);
+    }
+
+    /**
+     * @param resource
+     * @return File
+     */
+    private static File getFile(String resource) {
+        String userHome = System.getProperty("user.home");
+
+        if(resource.startsWith("/") || resource.startsWith("\\")) {
+            return new File(userHome, "skinx/" + APP_NAME + resource);
+        }
+        else {
+            return new File(userHome, "skinx/" + APP_NAME + "/" + resource);
+        }
     }
 }

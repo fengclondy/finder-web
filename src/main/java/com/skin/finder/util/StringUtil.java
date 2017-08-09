@@ -23,6 +23,43 @@ import java.util.Map;
  */
 public class StringUtil {
     /**
+     * default
+     */
+    private StringUtil() {
+    }
+
+    /**
+     * @param text
+     * @return boolean
+     */
+    public static boolean isBlank(String text) {
+        if(text == null) {
+            return true;
+        }
+
+        int length = text.length();
+
+        if(length == 0) {
+            return true;
+        }
+
+        for(int i = 0; i < length; i++) {
+            if(Character.isWhitespace(text.charAt(i)) == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param text
+     * @return boolean
+     */
+    public static boolean notBlank(String text) {
+        return !isBlank(text);
+    }
+
+    /**
      * @param source
      * @param limit
      * @param trim

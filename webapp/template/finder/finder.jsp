@@ -20,18 +20,19 @@
 <script type="text/javascript" src="${requestURI}?action=res&path=/finder/fileupload.js"></script>
 <script type="text/javascript" src="${requestURI}?action=res&path=/finder/finder.js"></script>
 <script type="text/javascript" src="${requestURI}?action=res&path=/finder/plugins.js"></script>
+<script type="text/javascript" src="${requestURI}?action=res&path=/finder/lang/<%=i18n.getLang()%>.js"></script>
 </head>
-<body localIp="${localIp}" contextPath="${contextPath}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}">
+<body localIp="${localIp}" contextPath="${contextPath}" host="${host}" workspace="${workspace}" work="${work}" parent="${parent}" path="${path}">
 <div class="finder" style="min-width: 960px;">
     <div class="menu-bar" contextmenu="false">
         <div style="float: left; width: 80px;">
-            <a id="back" class="button" href="javascript:void(0)" title="后退"><span class="back"></span></a>
-            <a id="refresh" class="button" href="javascript:void(0)" title="刷新"><span class="refresh"></span></a>
+            <a id="back" class="button" href="javascript:void(0)" title="<%=i18n.getString("finder.button.back")%>"><span class="back"></span></a>
+            <a id="refresh" class="button" href="javascript:void(0)" title="<%=i18n.getString("finder.button.refresh")%>"><span class="refresh"></span></a>
         </div>
         <div style="float: left; height: 28px; position: relative;">
             <div style="float: left;"><input id="address" type="text" class="address" autocomplete="off" spellcheck="false" value="${path}"/></div>
-            <div id="finder-suggest" class="list suggest"></div>
-            <a class="button" href="javascript:void(0)" title="缩略图"><span class="view"></span></a>
+            <div id="finder-suggest" class="suggest"></div>
+            <a class="button" href="javascript:void(0)" title="<%=i18n.getString("finder.list.view.thumbnail")%>"><span class="view"></span></a>
             <div id="view-options" class="list view-menu">
                 <ul>
                     <li index="0" option-value="outline"><a href="javascript:void(0)"><%=i18n.getString("finder.list.view.thumbnail")%></a></li>
@@ -40,9 +41,9 @@
             </div>
         </div>
         <div style="float: right; width: 120px;">
-            <a class="button home" href="javascript:void(0)" title="首页"><span class="home"></span></a>
-            <a class="button setting" href="javascript:void(0)" title="设置"><span class="setting"></span></a>
-            <a class="button help" href="javascript:void(0)" title="帮助" target="_blank"><span class="help"></span></a>
+            <a class="button home" href="javascript:void(0)" title="<%=i18n.getString("finder.index.home")%>"><span class="home"></span></a>
+            <a class="button setting" href="javascript:void(0)" title="<%=i18n.getString("finder.index.setting")%>"><span class="setting"></span></a>
+            <a class="button help" href="javascript:void(0)" title="<%=i18n.getString("finder.index.help")%>" target="_blank"><span class="help"></span></a>
         </div>
     </div>
     <div id="file-view" class="detail-view">
@@ -175,7 +176,7 @@
         </div>
     </div>
 </div>
-<div id="loading" class="widget-mask" style="display: block;" contextmenu="false"></div>
-<div id="pageContext" style="display: none;" upload-part-size="<%=ConfigFactory.getString("finder.upload.part-size", "5M")%>"></div>
+<div id="loading" class="widget-mask" style="display: block;" contextmenu="false"><div class="loading"><img src="?action=res&path=/finder/images/loading.gif"/></div></div>
+<div id="pageContext" style="display: none;" upload-part-size="<%=ConfigFactory.getString("finder.upload.part-size", "5M")%>" display-operate-button="<%=ConfigFactory.getString("finder.display.operate-button")%>"></div>
 </body>
 </html>

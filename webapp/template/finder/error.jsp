@@ -9,7 +9,6 @@
 <link rel="stylesheet" type="text/css" href="${requestURI}?action=res&path=/finder/css/finder.css"/>
 </head>
 <body contextPath="${contextPath}">
-<%@ include file="../include/common/header.jsp"%>
 <div class="outline">
     <h1>Error: ${message}</h1>
 </div>

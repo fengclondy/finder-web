@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
  * @version 1.0
  */
 public class LocalizationContext {
+    private String lang;
     private Locale locale;
     private ResourceBundle resourceBundle;
 
@@ -103,17 +104,17 @@ public class LocalizationContext {
     }
 
     /**
-     * @return the bundle
+     * @return the lang
      */
-    public ResourceBundle getResourceBundle() {
-        return this.resourceBundle;
+    public String getLang() {
+        return this.lang;
     }
 
     /**
-     * @param resourceBundle the resourceBundle to set
+     * @param lang the lang to set
      */
-    public void setResourceBundle(ResourceBundle resourceBundle) {
-        this.resourceBundle = resourceBundle;
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     /**
@@ -128,5 +129,19 @@ public class LocalizationContext {
      */
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    /**
+     * @return the bundle
+     */
+    public ResourceBundle getResourceBundle() {
+        return this.resourceBundle;
+    }
+
+    /**
+     * @param resourceBundle the resourceBundle to set
+     */
+    public void setResourceBundle(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 }

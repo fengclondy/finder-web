@@ -1,7 +1,6 @@
 /*
  * $RCSfile: SessionFilter.java,v $
  * $Revision: 1.1 $
- * $Date: 2016-10-02 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -69,7 +68,7 @@ public class SessionFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest)(servletRequest);
         HttpServletResponse response = (HttpServletResponse)(servletResponse);
         String requestURI = request.getRequestURI();
-        String action = request.getParameter("action");
+        String action = this.getAction(request);
         logger.debug("requestURI: {}", requestURI);
 
         if(action == null) {
@@ -127,6 +126,32 @@ public class SessionFilter implements Filter {
             return "";
         }
         return contextPath;
+    }
+
+    /**
+     * @param request
+     * @return String
+     */
+    private String getAction(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+
+        if(queryString == null) {
+            return null;
+        }
+ 
+        int i = queryString.indexOf("action=");
+
+        if(i < 0) {
+            return null;
+        }
+
+        i += 7;
+        int j = queryString.indexOf('&', i);
+
+        if(j < 0) {
+            return queryString.substring(i);
+        }
+        return queryString.substring(i, j);
     }
 
     /**

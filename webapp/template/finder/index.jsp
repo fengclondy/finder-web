@@ -19,13 +19,11 @@
 <script type="text/javascript" src="${requestURI}?action=res&path=/finder/fileupload.js"></script>
 <script type="text/javascript" src="${requestURI}?action=res&path=/finder/index.js"></script>
 </head>
-<body>
+<body localIp="${localIp}">
 <div id="menu-bar">
     <ul>
         <li onclick="window.location.href='${requestURI}';"><%=i18n.format("finder.index.home")%></li>
-        <li onclick="window.location.href='${requestURI}?action=user.admin';"><%=i18n.format("finder.index.user-admin")%></li>
-        <li onclick="window.location.href='${requestURI}?action=user.login';"><%=i18n.format("finder.index.login")%></li>
-        <li onclick="window.location.href='${requestURI}?action=user.logout';"><%=i18n.format("finder.index.logout")%></li>
+        <li onclick="window.location.href='${requestURI}?action=finder.logout';"><%=i18n.format("finder.index.logout")%></li>
     </ul>
 </div>
 <div id="viewPanel">

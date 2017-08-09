@@ -37,7 +37,7 @@ jQuery(function(){
 //-->
 </script>
 </head>
-<body contextPath="${contextPath}" workspace="${workspace}" parent="${parent}" path="${path}" charset="${charset}">
+<body contextPath="${contextPath}" host="${host}" workspace="${workspace}" parent="${parent}" path="${path}" charset="${charset}">
 <!-- 设置-语言-语言和输入设置-去掉勾选 启用拼写检查 -->
 <div id="tail-container" class="less-container" contenteditable="true" spellcheck="false"></div>
 <div class="less-status-bar">

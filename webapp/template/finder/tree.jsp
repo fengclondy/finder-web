@@ -181,7 +181,7 @@ jQuery(function() {
 
 jQuery(function() {
     var requestURI = window.location.pathname;
-    buildTree("htree", requestURI + "?action=finder.getWorkspaceXml", requestURI + "?action=finder.blank");
+    buildTree("htree", requestURI + "?action=finder.getHostXml", requestURI + "?action=finder.blank");
 });
 //]]>
 </script>

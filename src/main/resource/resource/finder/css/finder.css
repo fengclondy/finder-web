@@ -141,7 +141,7 @@ div.detail-view ul li.active a.file{border: 1px dotted #ffffff;}
 
 div.detail-view span{float: left; display: block; text-align: left; cursor: default;}
 div.detail-view span.icon{width: 18px; padding-left: 4px;}
-div.detail-view span.icon img{margin: -2px 0px 0px 0px; padding: 0px; border: 0px solid #ffffff; vertical-align: middle;}
+div.detail-view span.icon img{margin: -2px 0px 0px 0px; padding: 0px; max-width: 16px; max-height: 16px; border: 0px solid #ffffff; vertical-align: middle;}
 div.detail-view span a.file{margin-left: 2px; text-decoration: none; color: #000000;}
 div.detail-view span a.file:hover{color: #ff0000;}
 
@@ -189,8 +189,8 @@ div.outline-view ul li div.filename{
     cursor: default;
 }
 
-/* suggest */
-div.list{padding: 0px; overflow: auto; border: 1px solid #888888; background-color: #ffffff; display: none; position: absolute; z-index: 999;}
+/* list */
+div.list{padding: 0px; overflow: auto; border: 1px solid #888888; border: 1px solid #c0c0c0; box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.15); background-color: #ffffff; display: none; position: absolute; z-index: 999;}
 div.list ul{list-style: none;}
 
 div.list ul li a{
@@ -205,27 +205,31 @@ div.list ul li a{
     cursor: pointer;
 }
 
-div.list ul li a:hover{
-    background-color: #a6caf0;
-}
+div.list ul li a:hover{background-color: #a6caf0;}
+div.list ul li.selected a{background-color: #a6caf0;}
+div.list ul li.selected a:hover{background-color: #a6caf0;}
+div.list ul li.empty a{background-color: #ffffff; cursor: default;}
 
-div.list ul li.selected a{
-    background-color: #a6caf0;
-}
+/* suggest */
+div.suggest{padding: 4px 0px 4px 0px; top: 30px; left: 0px; width: 484px; border: 1px solid #888888; border: 1px solid #c0c0c0; box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.15); background-color: #ffffff; display: none; position: absolute; z-index: 999; overflow: auto;}
+div.suggest ul{list-style: none;}
+div.suggest ul li{clear: both; height: 20px; line-height: 20px; overflow: hidden;}
+div.suggest ul li.hover{background-color: #a6caf0;}
+div.suggest ul li.selected{background-color: #a6caf0;}
+div.suggest ul li:hover{background-color: #c9d9eb;}
+div.suggest ul li.selected:hover{background-color: #a6caf0;}
 
-div.list ul li.selected a:hover{
-    background-color: #a6caf0;
-}
-
-div.list ul li.empty a{
-    background-color: #ffffff;
-    cursor: default;
-}
-
-div.suggest{padding: 4px 0px 4px 0px; top: 30px; left: 0px; width: 484px;}
+div.suggest ul li span{float: left; display: block; text-align: left; cursor: default;}
+div.suggest ul li span.icon{width: 18px; padding-left: 4px;}
+div.suggest ul li span.icon img{margin: -2px 0px 0px 0px; padding: 0px; max-width: 16px; max-height: 16px; border: 0px solid #ffffff; vertical-align: middle;}
+div.suggest ul li span a.file{margin-left: 2px; text-decoration: none; color: #000000;}
+div.suggest ul li span a.file:hover{color: #ff0000;}
+div.suggest ul li span.fileName{padding-right: 20px; width: 300px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+div.suggest ul li span.fileSize{width: 100px; font-size: 12px; color: #ff7f0d;}
+/* color: #288fe7; */
 
 /* view-menu */
-div.view-menu{padding: 4px 0px 4px 0px; top: 26px; left: 492px; width: 80px;}
+div.view-menu{padding: 4px 0px 4px 0px; top: 26px; left: 492px; width: 200px;}
 div.view-menu ul li a{padding-left: 4px;}
 div.view-menu ul li a{padding-left: 20px;}
 div.view-menu ul li.selected a{background: url(?action=res&path=/finder/images/sprite.gif) no-repeat scroll 0px -54px transparent;}

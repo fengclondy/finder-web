@@ -26,6 +26,7 @@ Grep.getContextPath = function() {
 
 Grep.getGrepURL = function(keyword, regexp, position, rows) {
     var params = [];
+    params[params.length] = "host=" + encodeURIComponent(this.host);
     params[params.length] = "workspace=" + encodeURIComponent(this.workspace);
     params[params.length] = "path=" + encodeURIComponent(this.path);
     params[params.length] = "keyword=" + encodeURIComponent(keyword);
@@ -405,6 +406,7 @@ Grep.create = function(type, range) {
 Grep.init = function() {
     var container = this.getContainer();
 
+    this.host = document.body.getAttribute("host");
     this.workspace = document.body.getAttribute("workspace");
     this.path = document.body.getAttribute("path");
     this.charset = Finder.getConfig("global.charset", "utf-8");
@@ -438,6 +440,7 @@ Grep.init = function() {
         var scrollTop = c.scrollTop;
         var scrollHeight = c.scrollHeight;
         var clientHeight = c.clientHeight;
+        var offset = 128 * 16;
 
         if(lastScrollTop < scrollTop) {
             /**

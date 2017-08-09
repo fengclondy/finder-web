@@ -24,6 +24,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skin.finder.cluster.Host;
+import com.skin.finder.cluster.Workspace;
 import com.skin.finder.util.Path;
 
 /**
@@ -99,14 +101,52 @@ public class FinderManager {
      * @param xmlUrl
      * @return String
      */
-    public static String getWorkspaceXml(List<String> list, String listUrl, String xmlUrl) {
+    public static String getHostXml(List<Host> list, String listUrl, String xmlUrl) {
         StringBuilder buffer = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         buffer.append("<tree>\r\n");
 
-        for(String workspace : list) {
-            String name = encode(workspace);
+        for(Host host : list) {
+            String name = encode(host.getName());
             buffer.append("<treeNode");
-            buffer.append(" icon=\"folder.gif\"");
+            buffer.append(" icon=\"host.gif\"");
+            buffer.append(" value=\"");
+            buffer.append(name);
+            buffer.append("\"");
+            buffer.append(" title=\"");
+            buffer.append(name);
+            buffer.append("\"");
+            buffer.append(" href=\"javascript:void(0)\"");
+            buffer.append(" nodeXmlSrc=\"");
+            buffer.append(xmlUrl);
+            buffer.append("host=");
+            buffer.append(name);
+            buffer.append("\"/>");
+        }
+        buffer.append("</tree>");
+        return buffer.toString();
+    }
+
+    /**
+     * @param workspaces
+     * @param listUrl
+     * @param xmlUrl
+     * @return String
+     */
+    public static String getWorkspaceXml(List<Workspace> workspaces, String listUrl, String xmlUrl) {
+        StringBuilder buffer = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        buffer.append("<tree>\r\n");
+
+        for(Workspace workspace : workspaces) {
+            String name = encode(workspace.getName());
+            buffer.append("<treeNode");
+
+            if(workspace.getReadonly()) {
+                buffer.append(" icon=\"iws.gif\"");
+            }
+            else {
+                buffer.append(" icon=\"jws.gif\"");
+            }
+
             buffer.append(" value=\"");
             buffer.append(name);
             buffer.append("\"");
@@ -411,14 +451,14 @@ public class FinderManager {
      * @param path
      * @return Object
      */
-    public List<String> suggest(String workspace, String path) {
+    public List<FileItem> suggest(String workspace, String path) {
         String relativePath = Path.getStrictPath(path);
         String realPath = this.getRealPath(path);
-        List<String> json = new ArrayList<String>();
+        List<FileItem> fileItemList = new ArrayList<FileItem>();
         logger.info("relativePath: {}, realPath: {}", relativePath, realPath);
 
         if(realPath == null) {
-            return json;
+            return fileItemList;
         }
 
         String prefix = null;
@@ -483,10 +523,14 @@ public class FinderManager {
             }
 
             for(int i = 0; i < result.length; i++) {
-                json.add(result[i].getName());
+                FileItem fileItem = FinderManager.getFileItem(result[i]);
+
+                if(fileItem != null) {
+                    fileItemList.add(fileItem);
+                }
             }
         }
-        return json;
+        return fileItemList;
     }
 
     /**

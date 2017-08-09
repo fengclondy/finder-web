@@ -10,25 +10,19 @@
  */
 package com.skin.finder;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+
+import com.skin.finder.cluster.ClusterManager;
+import com.skin.finder.cluster.Host;
+import com.skin.finder.cluster.Workspace;
+import com.skin.finder.config.ConfigFactory;
+import com.skin.finder.config.Constants;
 
 /**
  * <p>Title: WorkspaceManager</p>
@@ -38,8 +32,15 @@ import org.xml.sax.InputSource;
  * @version 1.0
  */
 public class WorkspaceManager {
-    private static final Logger logger = LoggerFactory.getLogger(Workspace.class);
-    private static final Workspace instance = load();
+    private static final Logger logger = LoggerFactory.getLogger(WorkspaceManager.class);
+    private static final Map<String, Workspace> workspaces = load();
+
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        System.out.println(workspaces);
+    }
 
     /**
      * default
@@ -49,118 +50,53 @@ public class WorkspaceManager {
 
     /**
      * @param name
-     * @param work
+     * @return String
      */
-    public static void add(String name, String work) {
-        instance.add(name, work);
+    public static String getWork(String name) {
+        Workspace workspace = workspaces.get(name);
+        return (workspace != null ? workspace.getWork() : null);
     }
 
     /**
      * @param name
-     * @return String
+     * @return boolean
      */
-    public static String getWork(String name) {
-        return instance.getWork(name);
+    public static boolean getReadonly(String name) {
+        Workspace workspace = workspaces.get(name);
+        return (workspace != null ? workspace.getReadonly() : false);
     }
 
     /**
      * @return List<String>
      */
     public static List<String> getWorkspaces() {
-        return instance.getWorkspaces();
+        List<String> list = new ArrayList<String>();
+        list.addAll(workspaces.keySet());
+        return list;
     }
 
     /**
      * @return Workspace
      */
-    private static Workspace load() {
-        ClassLoader classLoader = Workspace.class.getClassLoader();
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        InputStream inputStream = classLoader.getResourceAsStream("META-INF/conf/workspace.xml");
+    private static Map<String, Workspace> load() {
+        Map<String, Workspace> map = new LinkedHashMap<String, Workspace>();
+        String name = ConfigFactory.getString(Constants.CLUSTER_NODE_NAME);
+        Host self = ClusterManager.getHost(name);
 
-        if(inputStream != null) {
-            try {
-                load(inputStream, map);
-            }
-            catch(Exception e) {
-                logger.warn(e.getMessage(), e);
-            }
-            finally {
-                try {
-                    inputStream.close();
-                }
-                catch(IOException e) {
-                }
-            }
+        if(self == null) {
+            logger.warn("Can't init workspace: {}", name);
+            return map;
         }
-        return new Workspace(map);
-    }
 
-    /**
-     * @param inputStream
-     * @param map
-     * @return Map<String, String>
-     * @throws Exception
-     */
-    private static Map<String, String> load(InputStream inputStream, Map<String, String> map) throws Exception {
-        return load(new InputStreamReader(inputStream, "utf-8"), map);
-    }
+        List<Workspace> workspaces = self.getWorkspaces();
+        logger.info("host: {}", self.toString());
+        logger.info("workspaces: {}", workspaces);
 
-    /**
-     * @param reader
-     * @param map
-     * @return Map<String, String>
-     * @throws Exception
-     */
-    private static Map<String, String> load(Reader reader, Map<String, String> map) throws Exception {
-        try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(new InputSource(reader));
-            Element element = document.getDocumentElement();
-            NodeList childNodes = element.getChildNodes();
-
-            for(int i = 0, length = childNodes.getLength(); i < length; i++) {
-                Node node = childNodes.item(i);
-                int nodeType = node.getNodeType();
-
-                if(nodeType == Node.ELEMENT_NODE) {
-                    String nodeName = node.getNodeName();
-
-                    if(nodeName.equals("parameter")) {
-                        String name = getAttribute(node, "name");
-
-                        if(name != null) {
-                            map.put(name, node.getTextContent());
-                        }
-                    }
-                }
+        if(workspaces != null) {
+            for(Workspace workspace : workspaces) {
+                map.put(workspace.getName(), workspace);
             }
-        }
-        catch(Exception e) {
-            throw e;
         }
         return map;
-    }
-
-    /**
-     * @param node
-     * @param name
-     * @return String
-     */
-    private static String getAttribute(Node node, String name) {
-        NamedNodeMap map = node.getAttributes();
-
-        if(map != null) {
-            for(int i = 0, len = map.getLength(); i < len; i++) {
-                Node n = map.item(i);
-
-                if(name.equals(n.getNodeName())) {
-                    return n.getNodeValue();
-                }
-            }
-        }
-        return null;
     }
 }

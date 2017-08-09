@@ -121,6 +121,41 @@ public class FileItemList {
     }
 
     /**
+     * @return String
+     */
+    public static String getJSONString(List<FileItem> fileItemList) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("[");
+
+        if(fileItemList != null && fileItemList.size() > 0) {
+            for(FileItem fileItem : fileItemList) {
+                if(fileItem == null) {
+                    continue;
+                }
+
+                buffer.append("{\"fileName\":\"");
+                buffer.append(StringUtil.escape(fileItem.getFileName()));
+                buffer.append("\",\"fileType\":\"");
+                buffer.append(StringUtil.escape(fileItem.getFileType()));
+                buffer.append("\",\"fileIcon\":\"");
+                buffer.append(StringUtil.escape(fileItem.getFileIcon()));
+                buffer.append("\",\"fileSize\":");
+                buffer.append(fileItem.getFileSize());
+                buffer.append(",\"lastModified\":");
+                buffer.append(fileItem.getLastModified());
+                buffer.append(",\"isFile\":");
+                buffer.append(fileItem.getIsFile());
+                buffer.append(",\"mode\":");
+                buffer.append(fileItem.getMode());
+                buffer.append("},");
+            }
+            buffer.deleteCharAt(buffer.length() - 1);
+        }
+        buffer.append("]");
+        return buffer.toString();
+    }
+
+    /**
      * @param fileItem
      * @return String
      */

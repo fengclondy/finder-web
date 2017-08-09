@@ -1,7 +1,7 @@
 /*
  * $RCSfile: Stream.java,v $
  * $Revision: 1.1 $
- * $Date: 2010-04-28 $
+ * $Date: 2013-11-08 $
  *
  * Copyright (C) 2008 Skin, Inc. All rights reserved.
  *
@@ -20,7 +20,7 @@ import java.net.URL;
 
 /**
  * <p>Title: Stream</p>
- * <p>Description: </p>
+ * <p>Description: 非线程安全的文本流</p>
  * <p>Copyright: Copyright (c) 2006</p>
  * @author xuesong.net
  * @version 1.0
@@ -280,6 +280,19 @@ public class Stream implements Closeable {
     }
 
     /**
+     * @param c
+     * @return boolean
+     * @throws IOException
+     */
+    public boolean next(char c) throws IOException {
+        if(this.peek(0) == c) {
+            this.read();
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param text
      * @return boolean
      * @throws IOException
@@ -469,7 +482,7 @@ public class Stream implements Closeable {
      * @throws IOException
      */
     public boolean eof() throws IOException {
-        return (this.peek() == EOF);
+        return (this.peek(0) == EOF);
     }
 
     /**
